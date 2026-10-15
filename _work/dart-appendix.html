@@ -1,0 +1,411 @@
+<h2 id="a5">附录 E · Dart 高级语法速查</h2>
+<p class="lead">前面 13 个阶段里出现过不少"看起来像关键字、但不知道它是干啥的"写法——<code class="inl">sealed</code>、<code class="inl">final</code>、<code class="inl">copyWith</code>、<code class="inl">abstract final class</code>……。这一节把它们一次讲清。每条都是<strong>它是干啥的 / 什么时候用 / 最常见的坑</strong>三段式，代码都能单独跑（贴进 <code class="inl">dartpad.dev</code> 或项目里的 <code class="inl">_scratch.dart</code> 即可）。</p>
+
+<div class="callout why"><b>为什么这些语言特性跟"工程化"有关</b>
+它们不是炫技。每一个都在替你做一件机器能做的检查：<code>sealed</code> 让编译器替你找漏掉的分支；<code>final</code> 让编译器拦住手滑的二次赋值；<code>copyWith</code> 让状态更新变成"造一个新对象"而不是"到处改字段"。<strong>你少写一行检查，就少一个能在凌晨三点炸的 bug。</strong></div>
+
+<h3>E.1 <code class="inl">var</code> / <code class="inl">final</code> / <code class="inl">const</code> / <code class="inl">late final</code>：我到底该用哪个</h3>
+
+<p>这三个是新手最容易糊在一起的。判断顺序只有一个，从上往下问：</p>
+
+<figure>
+  <pre class="tree">值在编译期就能算出来吗？（字面量、纯运算）
+  ├─ 能 → const     常量，编译期内联，零运行时开销
+  └─ 不能
+      ├─ 只赋值一次，之后永不改 → final
+      │     ├─ 值要等运行时才知道（读配置文件、拿 context）→ late final
+      │     └─ 立即能算出来 → final
+      └─ 之后还要改 → var（局部变量）/ 具名字段别用 var，见下面坑 3</pre>
+  <figcaption>选修饰符的判断顺序。90% 的场景走左边分支。</figcaption>
+</figure>
+
+<div class="code"><div class="code-head"><span class="fn">lib/scratch/qualifiers.dart</span><span class="lang">dart</span><button class="copy">复制</button></div><pre><code data-lang="dart">// ── const：编译期常量。同一份字面量在整个 App 里只存在一份。
+const double kPagePadding = 16;          // 字面量 → 可以 const
+const Color kBrandSeed = Color(0xFF6750A4); // 构造函数是 const → 可以 const
+
+// ── final：运行期只赋值一次。它是"实例字段"，每个实例一份。
+class DemoController {
+  final DemoRepository _repo;            // 构造进来后就不换了 —— 这正是我们要的
+  const DemoController(this._repo);      // 构造函数能标 const 的条件：所有字段都是 final 且初始化表达式是常量
+}
+
+// ── final 局部变量：写代码时习惯性写 final，编译器帮你挡住手滑
+void expand(List&lt;String&gt; raw) {
+  final cleaned = raw.where((s) =&gt; s.trim().isNotEmpty).toList();
+  // cleaned = [];                       // ← 编译错误，正合我意
+  print(cleaned.length);
+}
+
+// ── late final：声明时不赋值，第一次读的时候才求值，且只求一次。
+//    用于"依赖运行时上下文、但逻辑上只该算一次"的东西。
+class CartPage {
+  late final CartController controller = CartController();  // 用到才创建，不会被白创建
+
+  // 也可以显式初始化（配合依赖注入）：
+  // late final Analytics _analytics = Analytics(getIt());
+}</code></pre></div>
+
+<p><strong>什么时候真的用 <code class="inl">late</code>：</strong>只有两种正当理由——① 字段初始化表达式里需要 <code class="inl">this</code>（比如要调到别的方法）；② 昂贵对象想推迟到真正被读时才建。除此之外，<strong><code>late</code> 是给"我保证赋值了"这句话打白条</strong>：如果你其实忘了赋值，运行时会在第一次读它的时候抛 <code class="inl">LateInitializationError</code>——比 <code>null</code> 更迟、更难查。</p>
+
+<div class="callout warn"><b>三个最常见的坑</b>
+① <strong><code>const</code> 不等于"值不变"，是"编译期已知"。</strong><code>const now = DateTime.now()</code> 编译不过，因为 <code>DateTime.now()</code> 不是常量构造。<br>
+② <strong><code>final</code> 只锁"引用"不锁"内容"。</strong><code>final list = [];</code> 之后 <code>list.add(1)</code> 完全合法——<code>final</code> 保证的是这个变量名不再指向别的列表。想连内容都锁死，用 <code>const [1, 2, 3]</code> 或 <code>List.unmodifiable(...)</code>。<br>
+③ <strong>公开 API 上别用 <code>var</code> 当字段。</strong>类的字段默认是 <code>var</code>（可变），等于把内部状态敞开给所有人改。约束应当是"默认 <code>final</code>，确实需要才放开"。</div>
+
+<h3>E.2 <code class="inl">abstract</code> / <code class="inl">abstract final class</code> / <code class="inl">sealed</code>：三种"我不能随便被继承"</h3>
+
+<p>这三个修饰符都在回答同一个问题：<strong>谁能继承我？</strong>答案不同，编译器能帮你做的检查也不同。</p>
+
+<div class="tw"><table>
+  <thead><tr><th>写法</th><th>谁能继承 / 实现</th><th>编译器能帮你检查什么</th><th>典型用途</th></tr></thead>
+  <tbody>
+    <tr><td><code>class X</code></td><td>任何人，任何地方</td><td>无</td><td>普通业务类</td></tr>
+    <tr><td><code>abstract class X</code></td><td>任何人；自己不能 <code>new</code></td><td>无（子类可能来自第三方）</td><td>仓储接口、可扩展的基类</td></tr>
+    <tr><td><code>final class X</code></td><td>同库内可继承；库外只能 <code>new</code></td><td>库外不许 <code>extends</code></td><td>不想让别人改我行为的类</td></tr>
+    <tr><td><code>abstract final class X</code></td><td>没人能继承；自己也不能 <code>new</code></td><td><strong>彻底封死</strong>，只能当命名空间用</td><td>设计令牌容器（<code>AppSpacing</code>）</td></tr>
+    <tr><td><code>sealed class X</code></td><td>同库内的子类，且<strong>全集已知</strong></td><td><strong>switch 穷尽性检查</strong>（最强）</td><td>失败类型、状态类型、UI 状态机</td></tr>
+  </tbody>
+</table></div>
+
+<h4>先说 <code class="inl">abstract final class</code>：纯常量容器</h4>
+<p>你在阶段 4 写的令牌类就是这个。它存在的唯一意思是"这个类只是给常量分组的命名空间，别 <code>new</code> 它、别继承它"：</p>
+
+<div class="code"><div class="code-head"><span class="fn">lib/core/theme/app_tokens.dart（只摘 3 个值示意）</span><span class="lang">dart</span><button class="copy">复制</button></div><pre><code data-lang="dart">/// 间距令牌。abstract final class 是 Dart 的"static 命名空间"惯用写法。
+/// - abstract：不许 new（构造一个只有常量的对象毫无意义）
+/// - final   ：不许 extends / implements（否则别人可以改语义）
+abstract final class AppSpacing {
+  static const double xs  = 4;
+  static const double sm  = 8;
+  static const double md  = 12;   // 页面默认内边距
+  // 完整清单（lg / xl / xxl）见阶段 4.1，以那份为准。
+  // ⚠️ 别在这里"顺手补全"——同一份常量在文档里存两份，就一定会漂移。
+}
+
+// 用的时候：padding: const EdgeInsets.all(AppSpacing.md)
+// 好处：全 App 只有这一处数字。设计说"内边距改成 20"，你改一行，不搜索替换。
+
+// 反例 —— 别这样写，它会坑你：
+// class AppSpacing { static const md = 12; }   // 能 new、能 extends，语义没人守</code></pre></div>
+
+<div class="callout why"><b>为什么是 <code>abstract final</code> 而不是 <code>enum</code> 或顶层常量</b>
+顶层常量（<code>const kMd = 12;</code>）会污染全局命名空间，且无法用类型系统分组——你没法写"接受一个间距令牌"的参数。枚举只能装整数等有限类型，装不下 <code>double</code>、<code>Duration</code>、<code>Color</code>。而 <code>abstract final class</code> + <code>static const</code> 两者兼得：<strong>有命名空间、有类型、零运行时开销</strong>（const 会被内联）。</div>
+
+<h4>再重点说 <code class="inl">sealed</code>：让编译器替你找漏掉的分支</h4>
+
+<p><code class="inl">sealed</code> 的含义是：<strong>这个类的所有子类我都写在同一个文件里了，别人不可能再偷偷加一个。</strong>既然全集已知，编译器就能在 <code class="inl">switch</code> 时检查你有没有覆盖每一个分支——漏一个，<strong>直接编译报错</strong>，而不是运行时崩。</p>
+
+<div class="code"><div class="code-head"><span class="fn">lib/core/error/failure.dart</span><span class="lang">dart</span><button class="copy">复制</button></div><pre><code data-lang="dart">/// 所有失败类型。sealed 保证：这个文件之外不可能存在别的 Failure 子类。
+sealed class Failure implements Exception {
+  const Failure(this.message);
+  final String message;
+}
+
+/// 网络不可用 / 超时
+class NetworkFailure extends Failure {
+  const NetworkFailure([super.message = '网络不可用，请检查连接']);
+}
+
+/// 服务端返回了业务错误
+class ServerFailure extends Failure {
+  const ServerFailure(super.message, {required this.statusCode});
+  final int statusCode;
+}
+
+/// 解析失败 / 数据格式不对
+class ParseFailure extends Failure {
+  const ParseFailure([super.message = '数据格式异常']);
+}
+
+/// 没登录 / Token 过期
+class UnauthorizedFailure extends Failure {
+  const UnauthorizedFailure([super.message = '登录已过期，请重新登录']);
+}</code></pre></div>
+
+<p>现在用它的地方，<strong>穷尽性检查</strong>开始工作：</p>
+
+<div class="code"><div class="code-head"><span class="fn">lib/core/error/failure_message.dart</span><span class="lang">dart</span><button class="copy">复制</button></div><pre><code data-lang="dart">/// 按失败类型给出用户可读文案 —— 注意：没有 default 分支，也不许有。
+String messageOf(Failure f) =&gt; switch (f) {
+      NetworkFailure()      =&gt; '网络好像断了，检查一下 Wi-Fi 或流量',
+      ServerFailure(:final statusCode) =&gt; '服务器开小差了（$statusCode）',
+      ParseFailure()        =&gt; '数据有点问题，我们已经在查了',
+      UnauthorizedFailure() =&gt; '登录过期了，请重新登录',
+    };
+
+// ── 关键点来了 ──
+// 半年后产品说"要加一个会员到期失败"。你在 failure.dart 里加：
+//   class MembershipExpiredFailure extends Failure { ... }
+// 然后你就没法编译通过了 —— messageOf 会报：
+//   "The type 'MembershipExpiredFailure' is not exhaustively matched
+//    by the switch expression."
+// 编译器直接把"你忘了处理新情况"这件事拍在你脸上。
+//
+// ⚠️ 如果你手贱加一个 default / 通配 _ 分支，上面这份保护全部失效。
+//    sealed + default 等于白用。</code></pre></div>
+
+<div class="callout bad"><b>最常见的两种用错</b>
+① <strong>给 sealed 的 switch 加了 <code>default:</code> 或 <code>_ =&gt;</code>。</strong>这是最可惜的——你付了 <code>sealed</code> 的代价，却把唯一的好处扔掉了。<br>
+② <strong>把 sealed 的子类写到别的文件。</strong>编译不过，报 <em>"The class 'X' can't be extended outside of its library because it's a sealed class."</em>。子类必须和 sealed 父类在同一个文件（或用 <code>part</code> 拼进同一库）。<br>
+实践建议：<strong>把 sealed 层次放在一个 <code>xxx.dart</code> 里，几十行，天然内聚。</strong>如果你发现这个文件涨到 300 行，说明它其实是两个概念，该拆成两组 sealed。</div>
+
+<div class="callout ok"><b>什么时候该用 sealed（判断口诀）</b>
+当你写下这个类型的瞬间，脑子里能<strong>一口气数完所有可能情况</strong>——那就是 sealed。失败类型（网络/服务端/解析/未登录）、加载状态（初始/加载中/成功/失败）、订单状态（待付/已付/已发/完成/取消）、导航事件（跳转/返回/替换）。<br>
+反过来，如果你期望<strong>未来由第三方或别的团队来扩展</strong>（比如插件体系的基类），那就不能用 sealed——那应该用 <code>abstract</code>。</div>
+
+<h3>E.3 模式匹配：<code class="inl">switch</code> 表达式、<code class="inl">when</code> 守卫、<code class="inl">:final</code> 解构</h3>
+
+<p><code class="inl">sealed</code> 是"类型全集"，模式匹配是"消费这个全集"的工具。它把原来一大坨 <code class="inl">if (x is A) { ... } else if (x is B) ...</code> 变成一段能穷尽检查的表达式。</p>
+
+<div class="code"><div class="code-head"><span class="fn">lib/scratch/patterns.dart</span><span class="lang">dart</span><button class="copy">复制</button></div><pre><code data-lang="dart">// ── 1. 类型模式 + 顺手解构出字段（:final 就是"Dart，把这个字段绑成个局部变量"）
+String describe(Failure f) =&gt; switch (f) {
+      ServerFailure(:final statusCode, :final message)
+          when statusCode &gt;= 500 =&gt; '服务端崩了：$message',
+      ServerFailure(:final statusCode)                       =&gt; '请求被拒（$statusCode）',
+      NetworkFailure(:final message)                         =&gt; '网络问题：$message',
+      _                                                      =&gt; '其他：${f.message}',
+    };
+
+// ── 2. when 守卫：同一类型下再按条件分岔。它必须紧跟在模式后面。
+String trafficLight(int seconds) =&gt; switch (seconds) {
+      final s when s &lt; 0  =&gt; '非法',
+      final s when s &lt; 30 =&gt; '红灯',
+      final s when s &lt; 60 =&gt; '绿灯',
+      _                   =&gt; '黄灯',
+    };
+
+// ── 3. record 解构：一次返回多个值，接收处直接拆开
+({String name, int age}) parseUser(String raw) {
+  final parts = raw.split(':');
+  return (name: parts[0], age: int.parse(parts[1]));
+}
+
+void demo() {
+  final (:name, :age) = parseUser('tom:18');   // 直接拆成两个局部变量
+  print('$name is $age');
+
+  // 列表 / Map 也能解构
+  final [first, second, ...rest] = [1, 2, 3, 4, 5];   // first=1, second=2, rest=[3,4,5]
+  final {'id': id, 'title': title} = {'id': 7, 'title': '耳机'};
+  print('$first $id $title');
+}
+
+// ── 4. switch 语句（不是表达式）也能用模式，且可以没有 default —— 只要类型穷尽
+void handle(Object event) {
+  switch (event) {
+    case int n when n &gt; 0:
+      print('正数 $n');
+    case int():
+      print('非正数');
+    case String s:
+      print('字符串 $s');
+    default:
+      print('其他');
+  }
+}</code></pre></div>
+
+<div class="callout warn"><b>三条容易忘的语法规则</b>
+① <strong><code>switch</code> 表达式用 <code>=&gt;</code> 不用 <code>case</code>、不用 <code>break</code>，且必须返回值（或抛异常）。</strong>写成语句块时要用 <code>=&gt; { ... yield x; }</code>。<br>
+② <strong><code>when</code> 必须紧跟在模式之后，且在 <code>case</code>/<code>=&gt;</code> 之前。</strong><code>case int n when n &gt; 0:</code> ✅；<code>case when n &gt; 0 int n:</code> ❌。<br>
+③ <strong><code>:final x</code> 是 <code>x: final x</code> 的简写</strong>——只写 <code>:final statusCode</code>，Dart 自动把字段名 <code>statusCode</code> 绑成同名局部变量，省一次命名。<code>:final code</code> 想改名的完整写法是 <code>statusCode: final code</code>。</div>
+
+<h3>E.4 <code class="inl">copyWith</code>：谁生成的、为什么必须有它</h3>
+
+<p><code class="inl">copyWith</code> <strong>不是 Dart 关键字</strong>，它是一个约定俗成的方法名，由 <code class="inl">freezed</code> 或 <code class="inl">json_serializable</code> 这类代码生成器<strong>写进 <code>.g.dart</code> / <code>.freezed.dart</code> 里</strong>。你在 <code>product_dto.dart</code> 里能调它，是因为 <code>build_runner</code> 已经替你生成了。</p>
+
+<p><strong>它解决的问题：<code>final</code> 字段没法改。</strong>你要写的是状态管理，而状态管理要求"数据不可变"。既然不可变，改一个字段就只能造一个新对象——<code>copyWith</code> 就是这个"造新对象、其余字段照抄"的快捷方式：</p>
+
+<div class="code"><div class="code-head"><span class="fn">lib/features/demo/data/demo_dto.dart</span><span class="lang">dart</span><button class="copy">复制</button></div><pre><code data-lang="dart">import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'demo_dto.freezed.dart';   // ← freezed 会把 copyWith 生成到这里
+part 'demo_dto.g.dart';         // ← json_serializable 把 fromJson/toJson 生成到这里
+
+@freezed
+abstract class DemoDto with _$DemoDto {   // ⚠️ freezed 3.x 强制要 abstract（或 sealed）
+  const factory DemoDto({
+    required String id,
+    required String title,
+    @Default(0) int likes,               // @Default 让字段可省，且 fromJson 缺字段时不炸
+    @Default(false) bool favorited,
+  }) = _DemoDto;
+
+  factory DemoDto.fromJson(Map&lt;String, dynamic&gt; json) =&gt; _$DemoDtoFromJson(json);
+}
+
+// build_runner 生成的 _$DemoDto 里，等价于手写：
+//
+// DemoDto copyWith({
+//   String? id,          // 注意：每个参数都是可空的 —— 没传 = 保持不变
+//   String? title,
+//   int? likes,
+//   bool? favorited,
+// }) =&gt; DemoDto(
+//       id: id ?? this.id,
+//       title: title ?? this.title,
+//       likes: likes ?? this.likes,
+//       favorited: favorited ?? this.favorited,
+//     );</code></pre></div>
+
+<p>用起来的样子——<strong>状态更新就是"造一个新列表"</strong>：</p>
+
+<div class="code"><div class="code-head"><span class="fn">lib/features/demo/presentation/demo_list_controller.dart</span><span class="lang">dart</span><button class="copy">复制</button></div><pre><code data-lang="dart">class DemoListController extends AsyncNotifier&lt;List&lt;DemoDto&gt;&gt; {
+  @override
+  Future&lt;List&lt;DemoDto&gt;&gt; build() =&gt; ref.watch(demoRepositoryProvider).fetchAll();
+
+  /// 点赞：不原地改列表里的对象，而是生成一份全新的列表。
+  /// 为什么非要这么绕？因为 Flutter 判断"要不要重建 UI"靠的是 == 。
+  /// 原地改的话，新状态和旧状态 == 相等，界面根本不会刷新。
+  void toggleLike(String id) {
+    final current = state.value ?? const [];
+    state = AsyncData([
+      for (final item in current)
+        item.id == id
+            ? item.copyWith(likes: item.likes + 1, favorited: !item.favorited)
+            : item,
+    ]);
+  }
+}</code></pre></div>
+
+<div class="callout why"><b><code>copyWith</code> 和 <code>==</code> / <code>hashCode</code> 是一套的</b>
+<code>freezed</code> 除了生成 <code>copyWith</code>，还会生成 <code>==</code>、<code>hashCode</code>、<code>toString</code>，并且<strong>是按字段值比较，不是一个字段一个字段手写</strong>。<br>
+这两件事必须成对出现：<strong>没有值相等的 <code>==</code>，不可变状态就是灾难</strong>——你每次 <code>copyWith</code> 都产生一个新对象，Flutter 一律认为"变了"，整棵子树白重建；测试里也没法 <code>expect(result, expected)</code>，只能去比每个字段。<br>
+所以你自己写 DTO <strong>别手写类</strong>，用 freezed，或者至少让 IDE 生成 <code>==</code>/<code>hashCode</code>。手写漏字段是高频事故。</div>
+
+<div class="callout warn"><b>三个高频坑</b>
+① <strong><code>copyWith(x: null)</code> 不会把字段设成 null。</strong>看生成的代码：<code>x ?? this.x</code>——传 <code>null</code> 等于"没传"。要把可空字段置空，freezed 会额外生成 <code>copyWith</code> 的替代方案（旧版用哨兵值 <code>Object? x = freezed</code>），现代 freezed 的推荐做法是<strong>声明成可空字段 + 用 <code>copyWith(x: null)</code> 之外的显式构造</strong>，或者干脆让这个字段不可空。<br>
+② <strong>改了类但忘了重跑生成器。</strong>报"<code>copyWith</code> isn't defined"或参数对不上时，先跑 <code>dart run build_runner build --delete-conflicting-outputs</code>，别急着改代码。<code>--delete-conflicting-outputs</code> 不是可选项。<br>
+③ <strong>freezed 版本升级（2.x → 3.x）后，用 factory 构造的类必须加 <code>abstract</code> 或 <code>sealed</code>。</strong>否则报 <em>"Missing concrete implementations of getter '_$DemoDto.id'"</em>。这条在阶段 7.5 和附录 B 都提过，它就是这个报错的根源。</div>
+
+<h3>E.5 其他你会在真实项目里天天碰到的写法</h3>
+
+<h4><code class="inl">extension</code>：给别人的类加方法</h4>
+<div class="code"><div class="code-head"><span class="fn">lib/core/ext/context_ext.dart</span><span class="lang">dart</span><button class="copy">复制</button></div><pre><code data-lang="dart">/// 给 BuildContext 加几个快捷方式 —— 不用改 Flutter 源码，也不用包一层工具类。
+extension BuildContextX on BuildContext {
+  ThemeData get theme =&gt; Theme.of(this);
+  ColorScheme get colors =&gt; Theme.of(this).colorScheme;
+  TextTheme  get text   =&gt; Theme.of(this).textTheme;
+
+  /// 一句弹 SnackBar，省掉 ScaffoldMessenger.of(context) 那一长串
+  void toast(String msg) =&gt; ScaffoldMessenger.of(this)
+    ..hideCurrentSnackBar()
+    ..showSnackBar(SnackBar(content: Text(msg)));
+}
+
+// 用起来：context.colors.primary、context.toast('已收藏')
+// 注意：调用点在 import 了 context_ext.dart 的地方才生效。</code></pre></div>
+<p><strong>坑：</strong>① extension <strong>不能被动态派发</strong>——编译期按变量的静态类型选方法，所以 <code>Object x = ...; x.toast()</code> 是调不到的。② 别用 extension 去覆盖已有方法名，容易造成"同一行代码在两个文件里行为不同"的诡异问题。<strong>用途应当是"加便利方法"，不是"改语义"。</strong></p>
+
+<h4><code class="inl">mixin</code>：横向复用行为，而不是靠继承</h4>
+<div class="code"><div class="code-head"><span class="fn">lib/core/paging/paged_mixin.dart</span><span class="lang">dart</span><button class="copy">复制</button></div><pre><code data-lang="dart">/// 分页逻辑的复用。多个 Notifier 都要"加载下一页"，
+/// 用继承会逼它们共用同一个父类（不灵活），用 mixin 只借用行为。
+mixin PagedMixin&lt;T&gt; on AsyncNotifier&lt;List&lt;T&gt;&gt; {
+  int _page = 1;
+  bool hasMore = true;
+
+  @protected
+  Future&lt;List&lt;T&gt;&gt; fetchPage(int page);
+
+  Future&lt;void&gt; loadMore() async {
+    if (!hasMore || state.isLoading) return;
+    final next = await AsyncValue.guard(() =&gt; fetchPage(++_page));
+    next.whenData((items) {
+      if (items.isEmpty) hasMore = false;
+      state = AsyncData([...state.value ?? const [], ...items]);
+    });
+  }
+}
+
+// 使用：注意 on AsyncNotifier&lt;List&lt;T&gt;&gt; 这个约束 ——
+// mixin 只能贴到 AsyncNotifier&lt;List&lt;T&gt;&gt; 及其子类上，
+// 编译器会检查，贴错地方直接报错。
+class FeedController extends AsyncNotifier&lt;List&lt;Post&gt;&gt; with PagedMixin&lt;Post&gt; {
+  @override
+  Future&lt;List&lt;Post&gt;&gt; build() =&gt; ref.watch(feedRepoProvider).first();
+
+  @override
+  Future&lt;List&lt;Post&gt;&gt; fetchPage(int page) =&gt;
+      ref.read(feedRepoProvider).page(page);
+}</code></pre></div>
+<p><strong><code>mixin ... on X</code> 里的 <code>on</code> 是访问权限声明：</strong>它告诉编译器"用我的类必须是 X 的子类"，于是 mixin 内部才敢直接调 <code>state</code>、<code>ref</code> 这些 <code>X</code> 提供的成员。<strong>别写裸 <code>mixin M {}</code> 再用 <code>on Object</code> 式的松散约束</strong>——那就退化成复制粘贴了。</p>
+
+<h4><code class="inl">async*</code> / <code class="inl">Stream</code>：一次返回多个值</h4>
+<div class="code"><div class="code-head"><span class="fn">lib/scratch/streams.dart</span><span class="lang">dart</span><button class="copy">复制</button></div><pre><code data-lang="dart">/// async   → Future&lt;T&gt;   ：未来某一个值
+/// async*  → Stream&lt;T&gt;   ：未来一串值（用 yield 往外推）
+Stream&lt;int&gt; countdown(int from) async* {
+  for (var i = from; i &gt; 0; i--) {
+    await Future.delayed(const Duration(seconds: 1));
+    yield i;                       // ← 每 yield 一次，订阅方就收到一次
+  }
+}
+
+// 消费：
+// await for (final n in countdown(3)) { print(n); }
+//
+// 在 Riverpod 里对应 StreamProvider / StreamNotifier：
+// final tickProvider = StreamProvider&lt;int&gt;((ref) =&gt; countdown(3));
+// 在 widget 里 ref.watch(tickProvider) 会拿到 AsyncValue&lt;int&gt;，
+// 每次 yield 都会重新触发一次 AsyncData。</code></pre></div>
+<p><strong>什么时候用：</strong>实时性、多次推送——WebSocket 消息、倒计时、搜索结果随输入变化（debounce 后转成 Stream）、摄像头帧。<strong>什么时候别用：</strong>一次性请求就用 <code>Future</code>，硬套 <code>Stream</code> 只会让 <code>ref.watch</code> 的状态机更难读。</p>
+
+<h4><code class="inl">required</code> 与命名参数：把"忘记传"变成编译错误</h4>
+<div class="code"><div class="code-head"><span class="fn">lib/scratch/params.dart</span><span class="lang">dart</span><button class="copy">复制</button></div><pre><code data-lang="dart">class DemoCard extends StatelessWidget {
+  const DemoCard({
+    super.key,                       // ← 永远带着它，否则 widget 无法正确复用
+    required this.title,             // ← required：调用方不写就编译不过
+    required this.onTap,
+    this.subtitle,                   // ← 可空 = 可以不传
+    this.trailing,                   // ← Widget? 同上
+  }) ;
+
+  final String title;
+  final String? subtitle;
+  final VoidCallback onTap;
+  final Widget? trailing;
+
+  @override
+  Widget build(BuildContext context) =&gt; const SizedBox.shrink();
+}
+
+// 调用方必须写 title 和 onTap，其余可选：
+// DemoCard(title: '耳机', onTap: () {});</code></pre></div>
+<div class="callout ok"><b>一个可以当团队规矩的经验</b>
+<strong>对外暴露的 API，参数默认用 <code>required</code>；只有确实有合理默认值 / 语义上可为空时才放开。</strong>"这个字段忘了传"是最常见的 bug 之一，而 <code>required</code> 能让它在编译期就死掉——零成本，收益极高。反过来，如果某个参数你发现所有调用点都传同一个值，那它就该有默认值。</div>
+
+<h4><code class="inl">?.</code>、<code class="inl">??</code>、<code class="inl">??=</code>、<code class="inl">...</code>：四个天天用的糖</h4>
+<div class="code"><div class="code-head"><span class="fn">lib/scratch/sugar.dart</span><span class="lang">dart</span><button class="copy">复制</button></div><pre><code data-lang="dart">String? name;
+
+name?.length;              // 空安全调用：null 直接短路返回 null，不抛异常
+name ?? '匿名';            // 空并：左边 null 就用右边
+name ??= '默认名';         // 空并赋值：左边是 null 才赋值（不是 null 就什么都不做）
+name!.length;              // 断言非空：你打包票它不是 null。为 null 会抛 —— 慎用
+
+final a = [1, 2];
+final b = [0, ...a, 3];    // 展开：[0, 1, 2, 3]
+final m = {'x': 1, ...{'y': 2}};   // Map 同样支持
+
+// ⚠️ name! 是"我比你（编译器）懂"。用它可以，但要确保你写过
+//    if (name == null) return; 之类的守卫，否则就是把编译期错误
+//    换成了运行期崩溃 —— 这是纯粹的倒退。</code></pre></div>
+
+<h3>E.6 一页纸总结</h3>
+<div class="tw"><table>
+  <thead><tr><th>写这个</th><th>它的意思是</th><th>你在本手册哪里见过</th></tr></thead>
+  <tbody>
+    <tr><td><code>sealed</code></td><td>子类全集已定，switch 必须穷尽；漏分支编译报错</td><td><code>failure.dart</code>、加载状态</td></tr>
+    <tr><td><code>abstract</code></td><td>不能直接 <code>new</code>，可被任何地方继承</td><td>仓储接口</td></tr>
+    <tr><td><code>abstract final class</code></td><td>不能 <code>new</code> 也不能继承，纯命名空间</td><td><code>AppSpacing</code> 等令牌</td></tr>
+    <tr><td><code>final</code></td><td>变量/字段只赋值一次（内容仍可变）</td><td>几乎所有字段</td></tr>
+    <tr><td><code>const</code></td><td>编译期常量，零运行时开销</td><td>令牌、默认值</td></tr>
+    <tr><td><code>late final</code></td><td>首次读取时才求值，只求一次</td><td>延迟创建的 controller</td></tr>
+    <tr><td><code>copyWith</code></td><td>由 freezed 生成：造一个改了部分字段的新对象</td><td>状态更新</td></tr>
+    <tr><td><code>== / hashCode</code></td><td>由 freezed 生成：按字段值比较，UI 才能判断"变没变"</td><td>配合 <code>copyWith</code></td></tr>
+    <tr><td><code>extension</code></td><td>给已有类型加便利方法，不改原类</td><td><code>context.colors</code></td></tr>
+    <tr><td><code>mixin ... on X</code></td><td>横向复用行为，且限定只能贴到 X 的子类</td><td><code>PagedMixin</code></td></tr>
+    <tr><td><code>async* / yield</code></td><td>返回 <code>Stream</code>，一次推多个值</td><td>实时数据、WebSocket</td></tr>
+    <tr><td><code>required</code></td><td>命名参数必须传，否则编译不过</td><td>Widget 构造、DTO</td></tr>
+    <tr><td><code>?? / ?. / ??=</code></td><td>空值处理三件套，短路、兜底、条件赋值</td><td>到处都有</td></tr>
+  </tbody>
+</table></div>
+
+<div class="callout why"><b>怎么"真的学会"这些</b>
+不用背。你只要做一件事：<strong>下次写代码时，凡是你打出 <code>if (x is A)</code> 或 <code>default:</code>，先停下来想一秒</strong>——"这个类型是不是 sealed？我是不是漏了分支？"。坚持两周，这些就不再需要查表了。<br>
+实在想动手，把 E.1～E.5 的代码整段贴进 <code>dartpad.dev</code>，改几个地方看它怎么报错。<strong>看懂报错信息比看懂教科书有效得多。</strong></div>
+

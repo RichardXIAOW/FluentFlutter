@@ -1,0 +1,2263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flutter 新项目工程化搭建 · 逐步清单</title>
+<style>
+:root{
+  --bg:#f5f7fa; --bg2:#ffffff; --panel:#ffffff; --panel2:#f5f7fa;
+  --line:#e4e7ed; --line2:#dcdfe6;
+  --tx:#1f2328; --tx2:#4a5058; --tx3:#8a9099;
+  --acc:#409eff; --acc2:#529b2e; --warn:#e6a23c; --bad:#f56c6c; --info:#3a8ee6;
+  --mono:'SF Mono',Menlo,Consolas,'Roboto Mono','Cascadia Mono',monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:96px}
+body{background:var(--bg);color:var(--tx);font-family:var(--sans);font-size:15px;line-height:1.7;
+  -webkit-font-smoothing:antialiased}
+
+/* ---------- 顶栏 ---------- */
+.topbar{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);
+  backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.topbar-in{max-width:1360px;margin:0 auto;padding:14px 24px;display:flex;gap:22px;
+  align-items:center;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:11px;font-weight:650;font-size:15.5px;letter-spacing:.2px}
+.brand .dot{width:9px;height:9px;border-radius:50%;background:var(--acc);
+  box-shadow:0 0 0 4px rgba(64,158,255,.15)}
+.brand small{color:var(--tx3);font-weight:400;font-size:12.5px}
+.names{display:flex;gap:10px;align-items:center;margin-left:auto;flex-wrap:wrap}
+.field{display:flex;align-items:center;gap:7px;background:var(--panel);
+  border:1px solid var(--line);border-radius:9px;padding:5px 11px}
+.field label{font-size:12px;color:var(--tx3);white-space:nowrap}
+.field input{background:transparent;border:0;outline:0;color:var(--acc2);
+  font-family:var(--mono);font-size:12.5px;width:118px}
+.prog{display:flex;align-items:center;gap:11px}
+.prog-bar{width:210px;height:7px;background:var(--panel2);border-radius:99px;overflow:hidden}
+.prog-fill{height:100%;width:0;border-radius:99px;
+  background:linear-gradient(90deg,var(--acc),var(--acc2));transition:width .35s cubic-bezier(.2,.8,.2,1)}
+.prog-txt{font-family:var(--mono);font-size:12.5px;color:var(--tx2);min-width:74px}
+.btn{background:var(--panel);border:1px solid var(--line);color:var(--tx2);
+  padding:6px 13px;border-radius:8px;font-size:12.5px;cursor:pointer;font-family:inherit;
+  transition:.16s}
+.btn:hover{border-color:var(--line2);color:var(--tx);background:var(--panel2)}
+
+/* ---------- 布局 ---------- */
+.layout{max-width:1360px;margin:0 auto;padding:0 24px 120px;display:grid;
+  grid-template-columns:214px minmax(0,1fr);gap:40px;align-items:start}
+.toc{position:sticky;top:96px;padding:28px 0;max-height:calc(100vh - 120px);overflow-y:auto}
+.toc h4{font-size:11px;letter-spacing:1.3px;text-transform:uppercase;color:var(--tx3);
+  margin-bottom:11px;font-weight:600}
+.toc a{display:flex;gap:9px;align-items:baseline;padding:5.5px 10px;border-radius:7px;
+  color:var(--tx2);text-decoration:none;font-size:13px;line-height:1.45;transition:.15s}
+.toc a:hover{background:var(--panel);color:var(--tx)}
+.toc a.on{background:var(--panel2);color:var(--tx);box-shadow:inset 2px 0 0 var(--acc)}
+.toc a i{font-style:normal;font-family:var(--mono);font-size:11px;color:var(--tx3);min-width:15px}
+.toc a.ful i{color:var(--acc2)}
+.toc .sep{margin:14px 0 8px;border-top:1px solid var(--line)}
+
+main{min-width:0;padding-top:28px}
+
+/* ---------- 段落通用 ---------- */
+h1{font-size:30px;line-height:1.3;letter-spacing:-.5px;font-weight:680;margin:8px 0 14px}
+h2{font-size:21px;font-weight:660;letter-spacing:-.2px;margin:56px 0 8px;
+  padding-top:26px;border-top:1px solid var(--line);display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+h2 .tag{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--acc);
+  background:rgba(64,158,255,.10);border:1px solid rgba(64,158,255,.30);
+  padding:2px 8px;border-radius:99px}
+h2 .pct{margin-left:auto;font-family:var(--mono);font-size:11.5px;color:var(--tx3);font-weight:400}
+h3{font-size:16px;font-weight:640;margin:30px 0 10px}
+p{margin:10px 0;color:var(--tx2)}
+p strong,li strong{color:var(--tx);font-weight:640}
+a{color:var(--acc)}
+ul,ol{margin:10px 0 10px 20px;color:var(--tx2)}
+li{margin:5px 0}
+code.inl{font-family:var(--mono);font-size:12.5px;background:var(--panel2);
+  border:1px solid var(--line);padding:1.5px 6px;border-radius:5px;color:var(--acc2);
+  white-space:nowrap}
+.lead{font-size:16px;color:var(--tx2);max-width:820px}
+
+/* ---------- 卡片 / 提示 ---------- */
+.box{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+  padding:16px 18px;margin:18px 0}
+.box>h4{font-size:13.5px;font-weight:640;margin-bottom:6px;color:var(--tx)}
+.callout{border-radius:10px;padding:13px 16px;margin:14px 0;font-size:13.8px;
+  border-left:3px solid var(--line2);background:var(--panel);color:var(--tx2);line-height:1.72}
+.callout b{display:inline-block;margin-right:7px;font-weight:650}
+.callout code{font-family:var(--mono);font-size:12.2px;color:var(--acc2)}
+.callout.ok{border-left-color:var(--acc2);background:rgba(103,194,58,.08)}
+.callout.ok b{color:var(--acc2)}
+.callout.warn{border-left-color:var(--warn);background:rgba(230,162,60,.09)}
+.callout.warn b{color:var(--warn)}
+.callout.bad{border-left-color:var(--bad);background:rgba(245,108,108,.08)}
+.callout.bad b{color:var(--bad)}
+.callout.why{border-left-color:var(--info);background:rgba(58,142,230,.08)}
+.callout.why b{color:var(--info)}
+
+/* ---------- 步骤 ---------- */
+.step{border:1px solid var(--line);border-radius:12px;margin:14px 0;
+  background:var(--bg2);overflow:hidden;transition:border-color .2s}
+.step:hover{border-color:var(--line2)}
+.step.done{border-color:rgba(103,194,58,.35);background:rgba(103,194,58,.05)}
+.step-head{display:flex;align-items:center;gap:13px;padding:14px 17px;cursor:pointer;
+  user-select:none;background:transparent}
+.step-head input{appearance:none;width:19px;height:19px;flex:0 0 19px;border-radius:6px;
+  border:1.5px solid var(--line2);background:var(--bg);cursor:pointer;position:relative;
+  transition:.16s}
+.step-head input:checked{background:var(--acc2);border-color:var(--acc2)}
+.step-head input:checked::after{content:'';position:absolute;left:6px;top:2.5px;width:4px;
+  height:9px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(42deg)}
+.step-no{font-family:var(--mono);font-size:12px;color:var(--tx3);min-width:34px}
+.step.done .step-no{color:var(--acc2)}
+.step-title{font-weight:620;font-size:14.8px;flex:1;letter-spacing:.1px}
+.step.done .step-title{color:var(--tx2)}
+.step-time{font-family:var(--mono);font-size:11.5px;color:var(--tx3);
+  border:1px solid var(--line);padding:1.5px 8px;border-radius:99px}
+.step-body{padding:0 17px 17px 66px;display:none}
+.step.open .step-body{display:block}
+.step.open{border-color:var(--line2)}
+.step-body>*:first-child{margin-top:2px}
+
+/* ---------- 代码块 ---------- */
+.code{border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:13px 0;
+  background:#f8f9fb}
+.code-head{display:flex;align-items:center;gap:10px;padding:7px 13px;
+  background:var(--panel2);border-bottom:1px solid var(--line)}
+.code-head .lang{font-family:var(--mono);font-size:11px;color:var(--tx3);letter-spacing:.5px;
+  text-transform:lowercase}
+.code-head .fn{font-family:var(--mono);font-size:11.5px;color:var(--tx2)}
+.copy{margin-left:auto;background:transparent;border:1px solid var(--line2);color:var(--tx3);
+  font-size:11.5px;padding:2.5px 10px;border-radius:6px;cursor:pointer;font-family:inherit;
+  transition:.15s}
+.copy:hover{color:var(--acc2);border-color:var(--acc2)}
+.copy.ok{color:var(--acc2);border-color:var(--acc2)}
+.code pre{margin:0;padding:14px 16px;overflow-x:auto}
+.code code{font-family:var(--mono);font-size:12.6px;line-height:1.68;color:#24292f;
+  white-space:pre;tab-size:2}
+.c-kw{color:#cf222e}.c-typ{color:#0550ae}.c-str{color:#0a3069}.c-com{color:#6e7781;font-style:italic}
+.c-num{color:#953800}.c-ann{color:#0969da}.c-key{color:#0550ae}.c-fn{color:#8250df}
+
+/* ---------- 表格 ---------- */
+.tw{overflow-x:auto;margin:14px 0;border:1px solid var(--line);border-radius:10px}
+table{width:100%;border-collapse:collapse;font-size:13.3px;min-width:540px}
+th{background:var(--panel2);color:var(--tx2);font-weight:600;text-align:left;
+  padding:9px 13px;font-size:12.4px;letter-spacing:.2px;border-bottom:1px solid var(--line)}
+td{padding:9px 13px;border-bottom:1px solid var(--line);color:var(--tx2);vertical-align:top}
+tr:last-child td{border-bottom:0}
+tbody tr:hover{background:rgba(64,158,255,.05)}
+td code,th code{font-family:var(--mono);font-size:12.1px;color:var(--acc2)}
+td b{color:var(--tx)}
+.pill{display:inline-block;font-size:11px;padding:1.5px 8px;border-radius:99px;
+  font-family:var(--mono);border:1px solid}
+.pill.g{border-color:rgba(103,194,58,.45);color:var(--acc2);background:rgba(103,194,58,.09)}
+.pill.r{border-color:rgba(240,113,108,.4);color:var(--bad);background:rgba(240,113,108,.08)}
+.pill.y{border-color:rgba(240,180,41,.4);color:var(--warn);background:rgba(240,180,41,.08)}
+
+/* ---------- 图 ---------- */
+figure{margin:20px 0;border:1px solid var(--line);border-radius:12px;
+  background:var(--panel);padding:16px 14px 8px}
+figure svg{display:block;width:100%;height:auto}
+figcaption{font-size:12.5px;color:var(--tx3);text-align:center;padding:10px 0 6px}
+.tree{font-family:var(--mono);font-size:12.4px;line-height:1.75;color:#4a5058}
+.tree .d{color:var(--acc)}
+.tree .c{color:#8a9099}
+
+@media(max-width:1040px){
+  .layout{grid-template-columns:1fr;gap:0}
+  .toc{display:none}
+  .step-body{padding-left:17px}
+  .brand small{display:none}
+  .prog-bar{width:130px}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-in">
+    <div class="brand"><span class="dot"></span>Flutter 新项目 · 工程化搭建清单
+      <small id="statLine">— 阶段 / — 步 · 约 — 小时</small></div>
+    <div class="names">
+      <span class="field"><label>项目名</label><input id="inApp" value="my_app" spellcheck="false"></span>
+      <span class="field"><label>包名</label><input id="inOrg" value="com.example" spellcheck="false"></span>
+    </div>
+    <div class="prog">
+      <div class="prog-bar"><div class="prog-fill" id="fill"></div></div>
+      <span class="prog-txt" id="ptxt">0 / 0</span>
+      <button class="btn" id="allBtn">展开全部</button>
+      <button class="btn" id="resetBtn">重置</button>
+    </div>
+  </div>
+</div>
+
+<div class="layout">
+
+<nav class="toc" id="toc">
+  <h4>阶段</h4>
+  <a href="#p0"><i>0</i><span>定名字与基线</span></a>
+  <a href="#p1"><i>1</i><span>建工程</span></a>
+  <a href="#p2"><i>2</i><span>立规矩：静态门禁</span></a>
+  <a href="#p3"><i>3</i><span>骨架目录</span></a>
+  <a href="#p4"><i>4</i><span>设计令牌与主题</span></a>
+  <a href="#p5"><i>5</i><span>多环境契约</span></a>
+  <a href="#p6"><i>6</i><span>网络层</span></a>
+  <a href="#p7"><i>7</i><span>状态管理</span></a>
+  <a href="#p8"><i>8</i><span>路由</span></a>
+  <a href="#p9"><i>9</i><span>国际化</span></a>
+  <a href="#p10"><i>10</i><span>测试脚手架</span></a>
+  <a href="#p11"><i>11</i><span>CI 门禁</span></a>
+  <a href="#p12"><i>12</i><span>交付与签名</span></a>
+  <a href="#p13"><i>13</i><span>一页纸自查</span></a>
+  <div class="sep"></div>
+  <h4>附录</h4>
+  <a href="#a1"><i>A</i><span>依赖分批总表</span></a>
+  <a href="#a2"><i>B</i><span>版本对账</span></a>
+  <a href="#a3"><i>C</i><span>报错速查</span></a>
+  <a href="#a4"><i>D</i><span>别做这些事</span></a>
+  <a href="/resources/dart"><i>E</i><span>Dart 高级语法速查</span></a>
+  <a href="#a6"><i>F</i><span>pubspec 最终形态</span></a>
+  <a href="#a7"><i>G</i><span>升级检查单</span></a>
+</nav>
+
+<main>
+
+<h1>从 <code class="inl">flutter create</code> 到能接 PR 的工程骨架</h1>
+<p class="lead">这不是一篇"介绍"，是一份<strong>照着打勾就能做完</strong>的清单。每一步都写了：做什么 → 命令 → 产出文件 → <strong>怎么验证自己真的做对了</strong>。</p>
+
+<div class="callout why"><b>三条使用约定</b>
+① <strong>从上往下做，不要跳。</strong>顺序是有依赖的：先立门禁再写代码，后面所有代码自然合规；反过来要返工。<br>
+② <strong>每一步的"怎么验证"必须真的跑一遍。</strong>没验证就往下走，问题会在三步之后以完全无关的样子爆出来，那时候排查成本是现在的十倍。<br>
+③ 左上角把<strong>项目名 / 包名</strong>改成你的，全站代码块会自动替换——命令可以直接复制粘贴。</div>
+
+<div class="callout warn"><b>关于"能不能跳步"</b>"从上往下"说的是<strong>依赖顺序</strong>，不是"每一步都得现在做完"。判断标准只有一条：<strong>后面哪一步会用到它？</strong>
+<br>· <strong>真正的前置</strong>——阶段 1（没有工程什么都做不了）、阶段 2（门禁不先立，后面所有代码都要返工）、阶段 3.2（三条铁律决定了后面文件往哪放）。
+<br>· <strong>可以延后</strong>——阶段 4 只做 <code>AppSpacing</code>，<code>AppDuration</code> 等到真有动画再加；阶段 9 可以先只建集中文案文件（9.1），接 arb（9.2/9.3）留到真要第二门语言时；阶段 10 的测试从阶段 6 结束就能建（那时已经有 <code>Failure</code> 可以测了），不必等到阶段 10。
+<br>· <strong>建议尽早做</strong>——阶段 10 的"能写纯 Dart 测试的就别写 Widget 测试"这条习惯，越早养成越省时间。它不需要等任何前置。</div>
+
+<div class="callout ok"><b>看不懂代码里的语法？先看 «Dart 语言讲解»</b>
+<code class="inl">sealed</code>、<code class="inl">final</code>、<code class="inl">const</code>、<code class="inl">copyWith</code>、<code class="inl">abstract final class</code>、<code class="inl">mixin</code>……这些"看起来像关键字但不知道干啥"的写法，<a href="/resources/dart">Dart 语言讲解 · 第 1 章「工程化必备的高级语法」</a> 每条都给了「是干啥的 / 什么时候用 / 常见坑」三段式说明，配可运行代码。<strong>不必从头读，卡在哪查哪。</strong></div>
+
+<h2 id="p0"><span class="tag">阶段 0</span>定名字与基线<span class="pct" data-pct="p0"></span></h2>
+<p>编程最大的浪费是返工。<code class="inl">flutter create</code> 之前有三样东西必须定死，因为其中一样<strong>上架后永远改不了</strong>。</p>
+
+<article class="step" data-id="s0-1">
+  <label class="step-head"><input type="checkbox"><span class="step-no">0.1</span>
+  <span class="step-title">定死三个名字（尤其 applicationId）</span><span class="step-time">5 min</span></label>
+  <div class="step-body">
+    <div class="tw"><table>
+      <thead><tr><th>名字</th><th>形态</th><th>能不能改</th></tr></thead>
+      <tbody>
+        <tr><td><b>项目名</b> project name</td><td>小写+下划线，<code>my_app</code></td><td>改起来麻烦（要动 import 前缀）</td></tr>
+        <tr><td><b>组织包名</b> org</td><td>反域名，<code>com.example</code></td><td><span class="pill r">上架后不可改</span></td></tr>
+        <tr><td><b>应用显示名</b></td><td>中文/英文随意，<code>我的应用</code></td><td>随时可改</td></tr>
+      </tbody>
+    </table></div>
+    <div class="callout bad"><b>红线</b>Android 的 <code>applicationId</code> / iOS 的 <code>bundle identifier</code> 上架后<strong>不能改</strong>——改了就是一个新 App，用户要重新下载。所以 org 想清楚：别用 <code>com.example</code>，用你自己的域名倒写。</div>
+    <div class="callout warn"><b>常见坑</b>显示名不要和项目名混为一谈。项目名是给代码用的（<code>my_app</code>），显示名是给用户看的（"我的应用"），中间隔着一层平台配置。</div>
+    <div class="callout ok"><b>怎么验证</b>把三个名字写成一句话贴在 README 顶部：<code>org=___ / project=___ / 显示名=___</code>。<strong>然后做一次反向检查</strong>：搜一下你打算用的 org，确认对应的域名/IP 不是别人的——<code>com.example</code> 是官方保留的示例前缀，上架前必须换掉，用别人的反域名会构成商标风险。</div>
+  </div>
+</article>
+
+<article class="step" data-id="s0-2">
+  <label class="step-head"><input type="checkbox"><span class="step-no">0.2</span>
+  <span class="step-title">确认工具链版本，并把它写进 README</span><span class="step-time">3 min</span></label>
+  <div class="step-body">
+    <div class="code"><div class="code-head"><span class="lang">bash</span><button class="copy">复制</button></div><pre><code data-lang="bash">flutter --version
+flutter doctor -v</code></pre></div>
+    <p><code class="inl">flutter doctor</code> 里<strong>每一项红色都要先解决掉</strong>，不要带着红叉往下走。尤其是 Android toolchain 和 CocoaPods，它们会以"某个插件编译不过"的形式在后面找上你。</p>
+    <div class="callout ok"><b>怎么验证</b><code>flutter doctor -v</code> 没有红叉（✗）。黄叉（!）可以视情况保留，但要知道它是什么。</div>
+    <div class="callout why"><b>为什么这一步现在做</b>把 <code>Flutter 3.x.x / Dart 3.x.x</code> 写进 README，就是一份<strong>团队契约</strong>。半年后新人报"我这跑不起来"，第一件事是对版本，而不是猜代码。<br><span style="opacity:.75">半年后你自己要升级时，按 <a href="#a7">附录 G · 升级检查单</a> 的顺序做——别凭感觉升。</span></div>
+  </div>
+</article>
+
+<div class="callout why"><b>阶段 0 完成标志</b>你手上有一句话：<code>org=___ / project=___ / 显示名=___</code>，而且 <code>flutter doctor</code> 干净。</div>
+
+
+<h2 id="p1"><span class="tag">阶段 1</span>建工程<span class="pct" data-pct="p1"></span></h2>
+
+<article class="step" data-id="s1-1">
+  <label class="step-head"><input type="checkbox"><span class="step-no">1.1</span>
+  <span class="step-title">flutter create（平台按需，不要全勾）</span><span class="step-time">4 min</span></label>
+  <div class="step-body">
+    <div class="code"><div class="code-head"><span class="lang">bash</span><button class="copy">复制</button></div><pre><code data-lang="bash"># 在你想放项目的空目录里执行；. 表示"就建在当前目录"
+flutter create --org com.example --project-name my_app --platforms=android,ios .
+
+# 后面想补平台随时可以（原有代码不受影响）
+flutter create --platforms=web,macos .</code></pre></div>
+    <div class="callout warn"><b>常见坑</b>目录名和 <code>--project-name</code> 不一致时会报 <code>"xxx" is not a valid Dart package name</code>。项目名只能是小写字母、数字、下划线，<strong>不能有连字符和大写</strong>。</div>
+    <div class="callout ok"><b>怎么验证</b><code>cat pubspec.yaml</code> 的 <code>name:</code> 是你想要的项目名；<code>android/app/build.gradle</code>（或 <code>.kts</code>）里的 <code>applicationId</code> 是 <code>org + "." + project</code> 拼出来的，例如 <code>com.example.my_app</code>。<strong>这两个值现在对了，阶段 12 的签名和上架才不会返工。</strong></div>
+  </div>
+</article>
+
+<article class="step" data-id="s1-2">
+  <label class="step-head"><input type="checkbox"><span class="step-no">1.2</span>
+  <span class="step-title">先跑起来，并把"热重载 / 热重启"各试一次</span><span class="step-time">5 min</span></label>
+  <div class="step-body">
+    <div class="code"><div class="code-head"><span class="lang">bash</span><button class="copy">复制</button></div><pre><code data-lang="bash">cd my_app
+flutter pub get
+flutter run</code></pre></div>
+    <p>跑起来以后，在终端里按：</p>
+    <ul>
+      <li><strong><code class="inl">r</code> 热重载</strong>——只重跑 build，状态保留。改 UI 用这个。</li>
+      <li><strong><code class="inl">R</code> 热重启</strong>——重建整棵树，状态清空。改初始化逻辑、改 Provider 用这个。</li>
+      <li><strong><code class="inl">q</code> 退出</strong>。</li>
+    </ul>
+    <div class="callout why"><b>为什么先教这个</b>新手最常问的两个问题是"改了没反应"和"为什么状态丢了"。答案分别是"你该按 R"和"你按了 R"。先建立这两个手感，后面省掉大量困惑。</div>
+    <div class="callout warn"><b>注意</b>原生代码（Android/iOS/插件的 Java·Kotlin·Swift 部分）<strong>热重载无效</strong>，必须完整重新 <code>flutter run</code>。</div>
+    <div class="callout ok"><b>怎么验证</b>改一行 <code>Text</code> 的字，按 <code>r</code> —— 界面立刻变，<strong>并且你刚才在页面上的操作状态（滚动位置、输入内容）都还在</strong>；再改一行初始化的代码（比如换掉 <code>home:</code>），按 <code>R</code> —— 状态清空。两个手感都对，说明你分清了。</div>
+  </div>
+</article>
+
+<article class="step" data-id="s1-3">
+  <label class="step-head"><input type="checkbox"><span class="step-no">1.3</span>
+  <span class="step-title">git init，做第一次提交（留一个干净的起点）</span><span class="step-time">4 min</span></label>
+  <div class="step-body">
+    <div class="code"><div class="code-head"><span class="lang">bash</span><button class="copy">复制</button></div><pre><code data-lang="bash">git init
+git add -A
+git commit -m "chore: flutter create 初始工程"</code></pre></div>
+    <p><code class="inl">flutter create</code> 生成的 <code>.gitignore</code> 已经覆盖了 <code>build/</code>、<code>.dart_tool/</code>，先不用动它。但<strong>后面有两样东西必须补进去</strong>（阶段 12 会做）：</p>
+    <ul><li><code class="inl">android/key.properties</code>（签名密码）</li><li><code class="inl">*.jks</code> / <code>*.keystore</code>（签名文件）</li></ul>
+    <div class="callout ok"><b>怎么验证</b><code>git status</code> 是干净的，<code>git log --oneline</code> 只有一条提交。<strong>这个"干净的起点"很值钱</strong>——出问题时你能一键退回原始状态，而不是靠删文件。</div>
+  </div>
+</article>
+
+
+<h2 id="p2"><span class="tag">阶段 2</span>立规矩：静态门禁<span class="pct" data-pct="p2"></span></h2>
+<p class="lead">这是整份清单里<strong>最容易被跳过、但最不该跳过</strong>的一步。理由只有一句：<strong>能由机器拦住的规范才叫规范</strong>；靠人眼和 Code Review 的规范，三个月后一定烂。</p>
+
+<article class="step" data-id="s2-1">
+  <label class="step-head"><input type="checkbox"><span class="step-no">2.1</span>
+  <span class="step-title">装 lint 规则集</span><span class="step-time">2 min</span></label>
+  <div class="step-body">
+    <div class="code"><div class="code-head"><span class="lang">bash</span><button class="copy">复制</button></div><pre><code data-lang="bash">flutter pub add dev:very_good_analysis
+flutter pub add dev:import_lint</code></pre></div>
+    <div class="callout warn"><b>别手抄版本号</b>让 <code>pub add</code> 自己取当前最新兼容版。你抄的版本号可能和你的 Flutter 版本对不上，而版本冲突的报错非常难读。<code>import_lint</code> 要求 <strong>Dart ≥ 3.10 / Flutter ≥ 3.38</strong>。</div>
+    <div class="callout ok"><b>怎么验证</b><code>cat pubspec.yaml</code> 确认两个包都在 <code>dev_dependencies:</code> 下（不是 <code>dependencies:</code>）；<code>flutter pub get</code> 无 "version solving failed"；<code>flutter pub deps --style=compact | head -5</code> 能正常输出依赖树。<strong>装完不做这一步，就到阶段 2.3 才发现规则没生效，白排一遍。</strong></div>
+  </div>
+</article>
+
+<article class="step" data-id="s2-2">
+  <label class="step-head"><input type="checkbox"><span class="step-no">2.2</span>
+  <span class="step-title">写 analysis_options.yaml（门禁的全部配置都在这里）</span><span class="step-time">6 min</span></label>
+  <div class="step-body">
+    <p>删掉原有内容，整份替换成：</p>
+    <div class="code"><div class="code-head"><span class="fn">analysis_options.yaml</span><span class="lang">yaml</span><button class="copy">复制</button></div><pre><code data-lang="yaml">include: package:very_good_analysis/analysis_options.yaml
+
+analyzer:
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+  errors:
+    # 生成代码里的注解目标校验对我们没意义，忽略以免刷屏
+    invalid_annotation_target: ignore
+
+# ── 架构边界：新 analyzer 插件机制（Dart 3.10+）──
+# ★ 必须写在 analysis_options.yaml 里。
+#   写进别的文件名（比如 import_lint.yaml）分析器根本不会读，规则静默失效。
+plugins:
+  import_lint: ^2.0.0
+
+import_lint:
+  rules:
+    # ① presentation 不许 import data —— 页面只能通过 domain 接口拿数据
+    presentation_not_depend_on_data:
+      target: "package:my_app/features/**/presentation/**"
+      from: "package:my_app/features/**/data/**"
+      except: []
+
+    # ② core 是地基，不许反向依赖业务
+    core_not_depend_on_feature:
+      target: "package:my_app/core/**"
+      from: "package:my_app/features/**"
+      except: []
+
+    # ③ domain 必须零 Flutter 依赖 —— 这样才能纯 Dart 单测
+    domain_no_flutter:
+      target: "package:my_app/features/**/domain/**"
+      from: "package:flutter/**"
+      except: []</code></pre></div>
+    <div class="callout bad"><b>最常见的失败点</b>把 <code>plugins:</code> 和 <code>import_lint:</code> 两段写进了自建的 <code>import_lint.yaml</code>。分析器只读根目录的 <strong><code>analysis_options.yaml</code></strong>，所以那样写规则<strong>一条都不会生效</strong>——而且不会报错，你会以为自己在被保护，其实没有。</div>
+    <div class="callout ok"><b>怎么验证</b>改完存盘，<strong>重启分析服务器</strong>（VS Code：命令面板 → <code>Dart: Restart Analysis Server</code>；Android Studio：<code>File → Invalidate Caches</code> 或重启 IDE）。改 <code>plugins:</code> 段之后不重启是不生效的。</div>
+  </div>
+</article>
+
+<article class="step" data-id="s2-3">
+  <label class="step-head"><input type="checkbox"><span class="step-no">2.3</span>
+  <span class="step-title">故意违规一次，亲眼看到它变红</span><span class="step-time">4 min</span></label>
+  <div class="step-body">
+    <p>这一步<strong>不能省</strong>。规则最常见的失败方式不是"写错"，而是"看起来写对了但根本没加载"。</p>
+    <p>建两个文件，然后让其中一个越界：</p>
+    <div class="code"><div class="code-head"><span class="fn">lib/features/demo/domain/demo.dart</span><span class="lang">dart</span><button class="copy">复制</button></div><pre><code data-lang="dart">class Demo {
+  const Demo(this.id);
+  final String id;
+}</code></pre></div>
+    <div class="code"><div class="code-head"><span class="fn">lib/features/demo/data/demo_repository_impl.dart</span><span class="lang">dart</span><button class="copy">复制</button></div><pre><code data-lang="dart">import '../domain/demo.dart';
+
+class DemoRepositoryImpl {
+  const DemoRepositoryImpl();
+
+  Future&lt;List&lt;Demo&gt;&gt; fetchAll() async =&gt; const [Demo('1')];
+}</code></pre></div>
+    <div class="code"><div class="code-head"><span class="fn">lib/features/demo/presentation/demo_page.dart ← 故意违规</span><span class="lang">dart</span><button class="copy">复制</button></div><pre><code data-lang="dart">import 'package:flutter/material.dart';
+
+// ❌ 违规：presentation 直接 import 了 data
+import '../data/demo_repository_impl.dart';
+
+class DemoPage extends StatelessWidget {
+  const DemoPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // 只是为了让 lint 有东西可看
+    final repo = const DemoRepositoryImpl();
+    return Text('${repo.fetchAll}', textDirection: TextDirection.ltr);
+  }
+}</code></pre></div>
+    <div class="code"><div class="code-head"><span class="lang">bash</span><button class="copy">复制</button></div><pre><code data-lang="bash">flutter analyze</code></pre></div>
+    <div class="callout ok"><b>怎么验证</b>IDE 里那一行 import 底下应该出现黄色波浪线 + 提示架构违规；<code>flutter analyze</code> 输出里应出现 <code>presentation_not_depend_on_data</code>。<br>
+    <strong>如果什么都没有</strong> → 回到 2.2：确认配置写在 <code>analysis_options.yaml</code>、缩进是合法 YAML、并且重启过分析服务器。</div>
+    <p>验证完删掉那个违规 import（这三个文件留着当"骨架示例"也行）。</p>
+  </div>
+</article>
+
+<article class="step" data-id="s2-4">
+  <label class="step-head"><input type="checkbox"><span class="step-no">2.4</span>
+  <span class="step-title">把格式化变成自动动作，而不是靠自觉</span><span class="step-time">4 min</span></label>
+  <div class="step-body">
+    <p>开 <strong>保存即格式化</strong>：VS Code 设置里找 <code>editor.formatOnSave: true</code>（Dart 插件默认接管 <code>.dart</code>）；Android Studio 里 <code>Settings → Languages &amp; Frameworks → Flutter → Format code on save</code>。</p>
+    <div class="code"><div class="code-head"><span class="lang">bash</span><button class="copy">复制</button></div><pre><code data-lang="bash"># 想一次性全项目整理
+dart format .
+
+# CI 里用的"只检查、不改动"版本（有文件不规范就退出码非 0）
+dart format --output=none --set-exit-if-changed .</code></pre></div>
+    <div class="callout why"><b>为什么</b>格式问题如果进了 Code Review，会变成"你改了一行但 diff 三百行"。让机器在保存时处理掉，评审只讨论逻辑。这是团队协作里<strong>性价比最高的一条</strong>。</div>
+    <div class="callout ok"><b>怎么验证</b>故意在文件里多敲两个空格存盘——应该自动被整理掉。再跑 <code>dart format --output=none --set-exit-if-changed .</code>，退出码应该是 0（<code>echo $?</code> 看）。<strong>如果它报"Changed 1 file"说明保存即格式化没生效</strong>，回上一步检查设置。</div>
+  </div>
+</article>
+
+<div class="callout ok"><b>阶段 2 完成标志</b>你有一个"故意的违规能被机器抓到"的项目。之后所有代码在这个笼子里写，架构不会烂。</div>
+
+
+<h2 id="p3"><span class="tag">阶段 3</span>骨架目录（目标形态）<span class="pct" data-pct="p3"></span></h2>
+<p class="lead"><strong>先立一条规矩：现在不要 <code class="inl">mkdir -p</code> 建十几层空目录。</strong>空目录里没有代码，你就不知道每一层<strong>是为了什么而存在</strong>的；三个星期后你自己都忘了 <code>services/</code> 和 <code>providers/</code> 的区别。下面的树是<strong>目标形态</strong>，不是"现在就去建"——写文件时让 IDE 自动建父目录，目录跟着需求长出来，每一层诞生时你都知道原因。</p>
+
+<figure>
+<svg viewBox="0 0 680 306" xmlns="http://www.w3.org/2000/svg" font-family="'SF Mono',Menlo,Consolas,monospace">
+  <defs>
+    <marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto">
+      <path d="M0,0 L7,3.2 L0,6.4 z" fill="#606266"/></marker>
+    <marker id="ah2" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto">
+      <path d="M0,0 L7,3.2 L0,6.4 z" fill="#409eff"/></marker>
+  </defs>
+  <rect x="18" y="16" width="186" height="52" rx="9" fill="#ffffff" stroke="#dcdfe6"/>
+  <text x="111" y="39" fill="#1f2328" font-size="12.5" text-anchor="middle">core/</text>
+  <text x="111" y="56" fill="#8a9099" font-size="10.5" text-anchor="middle">地基：网络·存储·主题·日志</text>
+
+  <rect x="18" y="228" width="186" height="52" rx="9" fill="#ffffff" stroke="#dcdfe6"/>
+  <text x="111" y="251" fill="#1f2328" font-size="12.5" text-anchor="middle">shared/ui/</text>
+  <text x="111" y="268" fill="#8a9099" font-size="10.5" text-anchor="middle">跨 feature 复用的组件</text>
+
+  <rect x="247" y="16" width="186" height="52" rx="9" fill="#ffffff" stroke="#dcdfe6"/>
+  <text x="340" y="39" fill="#1f2328" font-size="12.5" text-anchor="middle">features/x/presentation/</text>
+  <text x="340" y="56" fill="#8a9099" font-size="10.5" text-anchor="middle">页面 · 控制器 · 局部组件</text>
+
+  <rect x="476" y="16" width="186" height="52" rx="9" fill="#ffffff" stroke="#dcdfe6"/>
+  <text x="569" y="39" fill="#1f2328" font-size="12.5" text-anchor="middle">features/x/data/</text>
+  <text x="569" y="56" fill="#8a9099" font-size="10.5" text-anchor="middle">DTO · 数据源 · 仓储实现</text>
+
+  <rect x="247" y="118" width="415" height="60" rx="10" fill="rgba(64,158,255,.07)" stroke="#409eff" stroke-width="1.4"/>
+  <text x="454" y="143" fill="#337ecc" font-size="13" text-anchor="middle" font-weight="bold">features/x/domain/</text>
+  <text x="454" y="162" fill="#337ecc" font-size="10.5" text-anchor="middle">实体 + 仓储接口 · 零依赖（不许 import flutter）</text>
+
+  <path d="M340 68 L400 118" stroke="#409eff" stroke-width="1.5" fill="none" marker-end="url(#ah2)"/>
+  <path d="M569 68 L510 118" stroke="#409eff" stroke-width="1.5" fill="none" marker-end="url(#ah2)"/>
+  <path d="M111 68 L111 228" stroke="#a8abb2" stroke-width="1.3" fill="none" stroke-dasharray="4 4"/>
+  <path d="M204 242 L247 205" stroke="#a8abb2" stroke-width="1.3" fill="none" stroke-dasharray="4 4" marker-end="url(#ah)"/>
+
+  <text x="418" y="100" fill="#409eff" font-size="10.5" text-anchor="middle">依赖</text>
+  <text x="150" y="152" fill="#606266" font-size="10.5">core 不依赖 features</text>
+  <text x="30" y="86" fill="#606266" font-size="10.5">← 谁都可以用 core</text>
+  <rect x="18" y="196" width="288" height="22" rx="6" fill="rgba(240,113,108,.07)" stroke="rgba(240,113,108,.4)"/>
+  <text x="32" y="211" fill="#f56c6c" font-size="10.5">✗ presentation --import--&gt; data（由 lint 拦截）</text>
+</svg>
+<figcaption>图 1 · 依赖方向：所有箭头一律指向 domain；越界的那条被 import_lint 拦成红灯</figcaption>
+</figure>
+
+<article class="step" data-id="s3-1">
+  <label class="step-head"><input type="checkbox"><span class="step-no">3.1</span>
+  <span class="step-title">记住目标形态，但只先建两层</span><span class="step-time">3 min</span></label>
+  <div class="step-body">
+    <p class="lead" style="margin-bottom:12px">下面是<strong>目标形态</strong>（一次列全，省得你到处找"这个文件该放哪"）——但<strong>现在只建 <code class="inl">lib/app</code> 和 <code class="inl">lib/core</code> 两个空目录</strong>，其余等写文件时让 IDE 建。</p>
+    <div class="code"><div class="code-head"><span class="lang">目标形态</span><button class="copy">复制</button></div><pre><code data-lang="tree">lib/
+├─ main.dart                     # 只做：装 ProviderScope + runApp
+├─ app/
+│  ├─ app.dart                   # MaterialApp.router + 主题 + i18n 装配
+│  ├─ router/
+│  │  ├─ app_routes.dart         # 路径常量，全项目唯一的路径真相
+│  │  └─ app_router.dart         # GoRouter 配置（含守卫）
+│  └─ ui/
+│     ├─ main_scaffold.dart      # 底部导航 / Rail 的外壳
+│     ├─ env_banner.dart         # 非 prod 环境色带（阶段 5.3）
+│     └─ not_found_page.dart     # 路由兜底页
+├─ core/                         # ← 地基：不依赖任何 feature
+│  ├─ config/env.dart            # 编译期环境契约
+│  ├─ error/
+│  │  ├─ failure.dart            # sealed 错误类型
+│  │  └─ failure_message.dart    # Failure → 用户可读文案（附录 E.4）
+│  ├─ network/
+│  │  ├─ api_client.dart         # 全项目唯一 import dio 的地方
+│  │  └─ dio_provider.dart       # ApiClient 的 Provider（阶段 7.2）
+│  ├─ storage/prefs_store.dart
+│  ├─ theme/
+│  │  ├─ app_tokens.dart         # 间距/圆角/尺寸/时长令牌
+│  │  └─ app_theme.dart
+│  ├─ logging/app_logger.dart
+│  ├─ ext/context_ext.dart       # 扩展方法（附录 E.5）
+│  └─ paging/paged_mixin.dart    # 分页 mixin（附录 E.5）
+├─ features/&lt;feature&gt;/
+│  ├─ domain/                    # 实体 + 仓储接口 · 零依赖
+│  ├─ data/                      # dto + 数据源 + 仓储实现
+│  └─ presentation/              # 页面 + 控制器 + 局部组件
+└─ shared/                       # 跨 feature 复用
+   ├─ ui/                        # AppButton / AppCard / AsyncValueView ...
+   └─ utils/                     # debouncer / formatters ...
+
+test/                            # 目录结构镜像 lib/
+├─ core/
+├─ features/
+└─ shared/
+
+# 注：附录 E 里的 lib/scratch/*.dart（qualifiers / patterns / streams /
+# params / sugar）是"贴进编辑器看报错"的临时演练文件，不属于工程结构，
+# 看完就删。别把它当成需要长期维护的目录。</code></pre></div>
+    <p>现在只做两件事：</p>
+    <div class="code"><div class="code-head"><span class="lang">bash</span><button class="copy">复制</button></div><pre><code data-lang="bash">mkdir -p lib/app lib/core
+# 其余目录：写文件时让 IDE 建。不要现在建空目录。</code></pre></div>
+    <div class="callout ok"><b>怎么验证</b><code>ls -R lib</code> 应该只有 <code>lib/main.dart</code>＋空的 <code>app/</code>、<code>core/</code>。<strong>一旦你发现自己在手动 <code>mkdir</code> 第三个目录，就把手停下</strong>——那说明你在建"以后可能用到"的目录，而不是"现在需要"的目录。</div>
+  </div>
+</article>
+
+<article class="step" data-id="s3-2">
+  <label class="step-head"><input type="checkbox"><span class="step-no">3.2</span>
+  <span class="step-title">把三条依赖方向铁律背下来</span><span class="step-time">2 min</span></label>
+  <div class="step-body">
+    <ol>
+      <li><strong>domain 零依赖</strong>——不许 import <code class="inl">flutter/</code>、不许 import <code class="inl">data/</code>。它只放实体和"我要什么数据"的接口。<em>好处：纯 Dart，测试 3 毫秒跑完，不需要起引擎。</em></li>
+      <li><strong>presentation 不许 import data</strong>——页面只认 domain 的接口，具体实现由 Provider 注入。<em>好处：换数据源（Mock → 真实 API）不用动任何页面。</em></li>
+      <li><strong>core 不许 import features</strong>——地基不能反过来依赖楼房。<em>好处：core 可以被任何 feature 安全复用，不会形成环。</em></li>
+    </ol>
+    <div class="callout ok"><b>这三条不需要你记牢</b>它们已经写进阶段 2 的 <code>analysis_options.yaml</code> 了。人眼不可靠，让机器拦。</div>
+    <div class="callout ok"><b>怎么验证</b>如果你在阶段 2.3 已经跑过那个"故意违规"的文件，这里就是同一个验证——<code>flutter analyze</code> 输出 <code>presentation_not_depend_on_data</code>。<strong>区别在于：2.3 验证的是"规则有没有加载"，这一步验证的是"你理解了它的边界"</strong>——试着让 <code>domain</code> 里 import 一次 <code>package:flutter/material.dart</code>，看它是否报 <code>domain_no_flutter</code>。</div>
+  </div>
+</article>
+
+
+<h2 id="p4"><span class="tag">阶段 4</span>设计令牌与主题<span class="pct" data-pct="p4"></span></h2>
+<p>先有令牌，再有页面。反过来做的话，你会写 200 个裸数字再去全局搜索替换。</p>
+
+<article class="step" data-id="s4-1">
+  <label class="step-head"><input type="checkbox"><span class="step-no">4.1</span>
+  <span class="step-title">设计令牌 + 主题：先有令牌，再有页面</span><span class="step-time">12 min</span></label>
+  <div class="step-body">
+    <div class="code"><div class="code-head"><span class="fn">lib/core/theme/app_tokens.dart</span><span class="lang">dart</span><button class="copy">复制</button></div><pre><code data-lang="dart">import 'package:flutter/material.dart';
+
+/// 间距令牌。全项目的间距只能从这里取，不许写裸数字。
+abstract final class AppSpacing {
+  static const double xs = 4;
+  static const double sm = 8;
+  static const double md = 12;
+  static const double lg = 16;
+  static const double xl = 24;
+  static const double xxl = 32;
+}
+
+/// 圆角令牌。
+abstract final class AppRadius {
+  static const double sm = 6;
+  static const double md = 10;
+  static const double lg = 14;
+  static const double pill = 999;
+}
+
+/// 尺寸令牌：按钮高度、缩略图这类固定尺寸。
+abstract final class AppSize {
+  static const double buttonHeight = 48; // 触摸目标下限，别再小
+  static const double listThumb = 56;
+  static const double appBar = 56;
+}
+
+/// 动画时长令牌。全项目动画时长统一，交互手感才会一致。
+abstract final class AppDuration {
+  static const Duration fast = Duration(milliseconds: 150);
+  static const Duration normal = Duration(milliseconds: 250);
+  static const Duration slow = Duration(milliseconds: 400);
+}</code></pre></div>
+    <div class="callout why"><b>为什么用 <code>abstract final class</code></b>它只放 <code>static const</code>，不需要被实例化，也不该被继承。<code>abstract</code> 挡住 <code>new</code>，<code>final</code> 挡住继承——这是 Dart 3 里"纯常量容器"的标准写法（比 <code>class</code> + 私有构造器干净）。详见 <a href="/resources/dart">附录 E.2</a>。</div>
+    <div class="callout warn"><b>常见坑</b>别用 <code>enum</code> 干这事。枚举值必须是实例，装不下 <code>static const double</code>。</div>
+    <p>令牌立好，紧接着就把它们<strong>焊进主题</strong>——不然每个页面还会各写一遍样式：</p>
+    <div class="code"><div class="code-head"><span class="fn">lib/core/theme/app_theme.dart</span><span class="lang">dart</span><button class="copy">复制</button></div><pre><code data-lang="dart">import 'package:flutter/material.dart';
+
+import 'app_tokens.dart';
+
+/// 品牌种子色。改这一个值，全站主色跟着变。
+/// 品牌色允许硬编码（它不随深浅色模式变），语义色则一律从 ColorScheme 取。
+const Color kSeedColor = Color(0xFF6750A4);
+
+ThemeData buildLightTheme() =&gt; _base(
+      ColorScheme.fromSeed(seedColor: kSeedColor, brightness: Brightness.light),
+    );
+
+ThemeData buildDarkTheme() =&gt; _base(
+      ColorScheme.fromSeed(seedColor: kSeedColor, brightness: Brightness.dark),
+    );
+
+/// 圆角、按钮高度这类"全站一致"的东西，在这里统一兜住，
+/// 免得每个页面各写一遍 style。
+ThemeData _base(ColorScheme scheme) =&gt; ThemeData(
+      useMaterial3: true,
+      colorScheme: scheme,
+      scaffoldBackgroundColor: scheme.surface,
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          minimumSize: const Size.fromHeight(AppSize.buttonHeight),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppRadius.md),
+          ),
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppRadius.md),
+        ),
+      ),
+    );</code></pre></div>
+    <div class="callout warn"><b>深色模式翻车三件套</b>① 硬编码 <code>Colors.white</code>/<code>Colors.black</code>；② 文字颜色写死而不从 <code>scheme.onSurface</code> 取；③ 图片上盖了写死的白底。规则：<strong>除了品牌色，一切颜色都从 <code>ColorScheme</code> 取。</strong></div>
+    <div class="callout ok"><b>怎么验证</b><code>flutter analyze</code> 干净；再写三行 <code>test</code> 断言 <code>AppSpacing.md == 12</code>、<code>buildLightTheme().colorScheme.brightness == Brightness.light</code>、<code>buildDarkTheme()</code> 不为 null。<strong>令牌是"全项目唯一的数字真相"，它错了后面全错，所以值得一个测试钉住。</strong></div>
+  </div>
+</article>
+
+<article class="step" data-id="s4-2">
+  <label class="step-head"><input type="checkbox"><span class="step-no">4.2</span>
+  <span class="step-title">装配 MaterialApp，跟随系统亮度</span><span class="step-time">6 min</span></label>
+  <div class="step-body">
+    <div class="code"><div class="code-head"><span class="fn">lib/app/app.dart</span><span class="lang">dart</span><button class="copy">复制</button></div><pre><code data-lang="dart">import 'package:flutter/material.dart';
+
+import '../core/theme/app_theme.dart';
+
+class App extends StatelessWidget {
+  const App({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // ★ 这里现在用的是 MaterialApp（还没接路由）。
+    //   到阶段 8 会换成 MaterialApp.router + routerConfig；
+    //   到阶段 9 再加 localizationsDelegates。届时回来改这一个文件即可。
+    return MaterialApp(
+      title: '我的应用',
+      debugShowCheckedModeBanner: false,
+      theme: buildLightTheme(),
+      darkTheme: buildDarkTheme(),
+      // ★ 跟随系统亮度。不要再自己写一个监听 MediaQuery.platformBrightness
+      //   的 Observer —— themeMode.system 已经做了，而且是框架级的。
+      themeMode: ThemeMode.system,
+      home: const _Home(),
+    );
+  }
+}
+
+class _Home extends StatelessWidget {
+  const _Home();
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Scaffold(
+      appBar: AppBar(title: const Text('骨架已就绪')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('主色由种子色生成', style: TextStyle(color: scheme.primary)),
+            const SizedBox(height: AppSpacing.md),
+            FilledButton(onPressed: () {}, child: const Text('一个统一高度的按钮')),
+          ],
+        ),
+      ),
+    );
+  }
+}</code></pre></div>
+    <div class="code"><div class="code-head"><span class="fn">lib/main.dart（整份替换）</span><span class="lang">dart</span><button class="copy">复制</button></div><pre><code data-lang="dart">import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'app/app.dart';
+
+void main() {
+  runApp(const ProviderScope(child: App()));
+}</code></pre></div>
+    <p><small>（<code class="inl">flutter_riverpod</code> 到阶段 7 才装；现在先换成 <code class="inl">runApp(const App())</code> 也行。）</small></p>
+    <div class="callout ok"><b>怎么验证</b>切系统到深色模式，App 立刻跟着变；按钮高度是 48；圆角和令牌一致。<strong>注意：用"跟随系统"验证，而不是在 App 里手动切</strong>——后者测不出 <code>themeMode: system</code> 有没有生效。</div>
+  </div>
+</article>
+
+
+<h2 id="p5"><span class="tag">阶段 5</span>多环境契约<span class="pct" data-pct="p5"></span></h2>
+
+<article class="step" data-id="s5-1">
+  <label class="step-head"><input type="checkbox"><span class="step-no">5.1</span>
+  <span class="step-title">环境不是变量，是一组编译期契约</span><span class="step-time">12 min</span></label>
+  <div class="step-body">
+    <div class="code"><div class="code-head"><span class="fn">lib/core/config/env.dart</span><span class="lang">dart</span><button class="copy">复制</button></div><pre><code data-lang="dart">enum LogLevel { verbose, info, warning, error }
+
+/// 三套环境各自把该定死的东西定死。
+/// 用 enum 而不是 Map&lt;String, dynamic&gt;：写错字段名编译期就报，
+/// 而且 switch 到它时能被穷尽检查。
+enum AppEnv {
+  dev(
+    name: 'dev',
+    apiBaseUrl: 'https://api-dev.example.com',
+    useMock: true,
+    logLevel: LogLevel.verbose,
+    showEnvBanner: true,
+  ),
+  staging(
+    name: 'staging',
+    apiBaseUrl: 'https://api-staging.example.com',
+    useMock: false,
+    logLevel: LogLevel.info,
+    showEnvBanner: true,
+  ),
+  prod(
+    name: 'prod',
+    apiBaseUrl: 'https://api.example.com',
+    useMock: false,
+    logLevel: LogLevel.error,
+    showEnvBanner: false,
+  );
+
+  const AppEnv({
+    required this.name,
+    required this.apiBaseUrl,
+    required this.useMock,
+    required this.logLevel,
+    required this.showEnvBanner,
+  });
+
+  final String name;
+  final String apiBaseUrl;
+  final bool useMock;
+  final LogLevel logLevel;
+  final bool showEnvBanner;
+}
+
+/// 全项目只认这一个入口。
+/// ★ 只用一个 --dart-define，不要散落五六个 --dart-define=API_URL=... 
+///   那样等于把环境拆成了六个互相不知道的变量，迟早配错一个。
+const String _envName = String.fromEnvironment('ENV', defaultValue: 'dev');
+
+AppEnv get currentEnv =&gt; switch (_envName) {
+      'prod' =&gt; AppEnv.prod,
+      'staging' =&gt; AppEnv.staging,
+      _ =&gt; AppEnv.dev,
+    };</code></pre></div>
+    <div class="callout why"><b>为什么用 <code>String.fromEnvironment</code> 而不是 <code>Platform.environment</code></b>编译期常量能被 tree-shake：漏进 prod 包的 dev 地址、Mock 数据、调试开关会被编译器直接删掉。<code>Platform.environment</code> 是运行时的，删不掉，还有泄漏风险。</div>
+    <div class="callout ok"><b>怎么验证（这一步一定要做，它是全文最有价值的一次验证）</b>写两行临时代码：<code>debugPrint('env=${currentEnv.name} url=${currentEnv.apiBaseUrl}');</code>，然后
+    <br>① <code>flutter run</code>（不加 define）→ 应打印 <code>dev + api-dev...</code>（兜底分支生效）；
+    <br>② <code>flutter run --dart-define=ENV=prod</code> → 应打印 <code>prod + api.example.com</code>；
+    <br>③ <strong>打断它一下</strong>：把 <code>switch</code> 里的 <code>'staging' =&gt; AppEnv.staging,</code> 那行删掉，重新运行 —— 应该照常编译（因为有 <code>_ =&gt;</code> 兜底），但传 <code>--dart-define=ENV=staging</code> 会静默变成 dev。
+    <br>③ 是个真实的坑：<strong><code>_ =&gt;</code> 兜底保护了编译，也掩盖了拼写错误。</strong>所以更严的写法是把兜底改成显式报错，见下面的进阶提示。</div>
+    <div class="callout warn"><b>进阶：想让拼错的 ENV 直接崩，而不是静默降级</b>把 <code>_ =&gt;</code> 那行换成 <code>throw ArgumentError('未知的 ENV: $_envName')</code>。这样 CI 里 <code>--dart-define=ENV=prd</code> 这种手滑会在启动时立刻暴露，而不是"看起来跑起来了但连的是 dev 库"。<strong>环境配错是生产事故的常见来源，值得用崩溃换确定性。</strong></div>
+    <div class="callout bad"><b>延伸红线：API Key 不要走 <code>--dart-define</code></b>
+    上面这套机制适合<strong>非敏感</strong>的编译期开关（环境名、功能开关、日志级别）。但它<strong>不能用来传 API Key / 密钥</strong>，原因很直接：<br>
+    · <code>--dart-define</code> 的值会<strong>被编译进产物</strong>，反编译 <code>.aab</code>/<code>.ipa</code> 就能捞出来；<br>
+    · 打包好的 App 是<strong>发给用户</strong>的，任何写进客户端的字符串都要假设"用户能看到"。<br>
+    <strong>正确做法：只把"不敏感的地址和开关"放客户端，需要鉴权的第三方调用一律走你自己的服务端代理</strong>——密钥存在服务端的环境变量里，客户端只带自己的登录 token。<br>
+    <span style="opacity:.75">这条比 6.3 的"证书校验不能关"更容易被违反，因为它在开发阶段"看起来完全正常"。</span></div>
+  </div>
+</article>
+
+<article class="step" data-id="s5-2">
+  <label class="step-head"><input type="checkbox"><span class="step-no">5.2</span>
+  <span class="step-title">三个脚本，别让人记参数</span><span class="step-time">8 min</span></label>
+  <div class="step-body">
+    <div class="code"><div class="code-head"><span class="fn">scripts/run_dev.sh</span><span class="lang">bash</span><button class="copy">复制</button></div><pre><code data-lang="bash">#!/usr/bin/env bash
+set -euo pipefail
+flutter run --dart-define=ENV=dev "$@"</code></pre></div>
+    <div class="code"><div class="code-head"><span class="fn">scripts/run_staging.sh</span><span class="lang">bash</span><button class="copy">复制</button></div><pre><code data-lang="bash">#!/usr/bin/env bash
+set -euo pipefail
+flutter run --dart-define=ENV=staging "$@"</code></pre></div>
+    <div class="code"><div class="code-head"><span class="fn">scripts/build_prod.sh</span><span class="lang">bash</span><button class="copy">复制</button></div><pre><code data-lang="bash">#!/usr/bin/env bash
+set -euo pipefail
+flutter build appbundle --release --dart-define=ENV=prod "$@"</code></pre></div>
+    <div class="code"><div class="code-head"><span class="lang">bash</span><button class="copy">复制</button></div><pre><code data-lang="bash">chmod +x scripts/*.sh</code></pre></div>
+    <div class="callout warn"><b>Windows 注意</b>这些是 bash 脚本。<strong>用 Git Bash 跑</strong>（随 Git for Windows 自带，右键目录 → Git Bash Here）。不想装的话，下面是三个等价的 PowerShell 版本，一起建齐——只建一个的话第二次就会卡住：</div>
+    <div class="code"><div class="code-head"><span class="fn">scripts/run_dev.ps1</span><span class="lang">powershell</span><button class="copy">复制</button></div><pre><code data-lang="powershell">$ErrorActionPreference = 'Stop'
+flutter run --dart-define=ENV=dev @args</code></pre></div>
+    <div class="code"><div class="code-head"><span class="fn">scripts/run_staging.ps1</span><span class="lang">powershell</span><button class="copy">复制</button></div><pre><code data-lang="powershell">$ErrorActionPreference = 'Stop'
+flutter run --dart-define=ENV=staging @args</code></pre></div>
+    <div class="code"><div class="code-head"><span class="fn">scripts/build_prod.ps1</span><span class="lang">powershell</span><button class="copy">复制</button></div><pre><code data-lang="powershell">$ErrorActionPreference = 'Stop'
+flutter build appbundle --release --dart-define=ENV=prod @args</code></pre></div>
+    <div class="callout ok"><b>怎么验证</b><code>bash scripts/run_dev.sh</code>（或 PowerShell 里 <code>.\scripts\run_dev.ps1</code>）能起来，并且<strong>不带任何参数</strong>也跑得通——如果它要求你手动补 <code>--dart-define</code>，说明脚本没写对。<code>"$@"</code> / <code>@args</code> 的作用就是把你额外传的参数（比如 <code>-d chrome</code>）透传给 <code>flutter run</code>。</div>
+  </div>
+</article>
+
+<article class="step" data-id="s5-3">
+  <label class="step-head"><input type="checkbox"><span class="step-no">5.3</span>
+  <span class="step-title">让当前环境在界面上无法被忽略</span><span class="step-time">6 min</span></label>
+  <div class="step-body">
+    <p>测试同学最怕的一句话是"我确定装的是 dev 包"。别让他靠确定。</p>
+    <div class="code"><div class="code-head"><span class="fn">lib/app/ui/env_banner.dart</span><span class="lang">dart</span><button class="copy">复制</button></div><pre><code data-lang="dart">import 'package:flutter/material.dart';
+
+import '../../core/config/env.dart';
+
+/// 非 prod 环境在 AppBar 下方挂一条色带。
+/// prod 里 showEnvBanner 为 false，这段会被编译期裁掉。
+class EnvBanner extends StatelessWidget {
+  const EnvBanner({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final env = currentEnv;
+    if (!env.showEnvBanner) return const SizedBox.shrink();
+
+    final color = switch (env) {
+      AppEnv.dev =&gt; Colors.orange.shade700,
+      AppEnv.staging =&gt; Colors.blueGrey.shade600,
+      AppEnv.prod =&gt; Colors.transparent,
+    };
+
+    return Container(
+      width: double.infinity,
+      color: color,
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Text(
+        '${env.name} · ${env.apiBaseUrl}',
+        textAlign: TextAlign.center,
+        style: const TextStyle(color: Colors.white, fontSize: 11),
+      ),
+    );
+  }
+}</code></pre></div>
+    <div class="callout ok"><b>怎么验证</b><code>bash scripts/run_dev.sh</code> 顶部有橙色带；<code>bash scripts/run_staging.sh</code> 变成灰蓝色。prod 构建出来应该完全没有这条带。</div>
+  </div>
+</article>
+
+
+<h2 id="p6"><span class="tag">阶段 6</span>网络层<span class="pct" data-pct="p6"></span></h2>
+
+<article class="step" data-id="s6-1">
+  <label class="step-head"><input type="checkbox"><span class="step-no">6.1</span>
+  <span class="step-title">错误归一化：先把"失败"变成一种类型</span><span class="step-time">10 min</span></label>
+  <div class="step-body">
+    <div class="code"><div class="code-head"><span class="fn">lib/core/error/failure.dart</span><span class="lang">dart</span><button class="copy">复制</button></div><pre><code data-lang="dart">/// 全项目唯一的"失败"类型。
+/// sealed = 子类只能在本文件里定义 → switch 时编译器能穷尽检查。
+/// 好处：以后新增一种失败，所有没处理它的地方都会编译报错。
+sealed class Failure implements Exception {
+  const Failure(this.message);
+  final String message;
+}
+
+class NetworkFailure extends Failure {
+  const NetworkFailure([super.message = '网络不可用，请检查连接']);
+}
+
+class TimeoutFailure extends Failure {
+  const TimeoutFailure([super.message = '请求超时，请重试']);
+}
+
+class UnauthorizedFailure extends Failure {
+  const UnauthorizedFailure([super.message = '登录已过期，请重新登录']);
+}
+
+class NotFoundFailure extends Failure {
+  const NotFoundFailure([super.message = '内容不存在']);
+}
+
+class ParseFailure extends Failure {
+  const ParseFailure([super.message = '数据格式异常']);
+}
+
+class ServerFailure extends Failure {
+  const ServerFailure(super.message, {this.statusCode});
+  final int? statusCode;
+}
+
+class UnknownFailure extends Failure {
+  const UnknownFailure([super.message = '出了点问题，请稍后再试']);
+}</code></pre></div>
+    <div class="callout why"><b>为什么值得单独一个文件</b>因为"错误"是跨层的通用词汇。页面只说"我要显示 <code>failure.message</code>"，不该知道 <code>DioException</code> 长什么样。<strong>dio 的类型绝不允许泄漏到 presentation 层。</strong></div>
+    <div class="callout ok"><b>怎么验证</b>写 5 行单测：拿一个 <code>TimeoutFailure</code> 去 <code>switch</code> 全部 7 个子类，能编译过就说明"全集已知"。<strong>更关键的是反向验证</strong>：给 <code>Failure</code> 新增一个子类（比如 <code>CancelledFailure</code>），此时<strong>之前所有 switch 过它的地方都应该编译报错</strong>——这就是 <code>sealed</code> 给你的保护。（完整的测试代码见阶段 10.1，这里可以直接抄过去。）</div>
+  </div>
+</article>
+
+<article class="step" data-id="s6-2">
+  <label class="step-head"><input type="checkbox"><span class="step-no">6.2</span>
+  <span class="step-title">dio 门面：全项目只有一个文件 import dio</span><span class="step-time">14 min</span></label>
+  <div class="step-body">
+    <div class="code"><div class="code-head"><span class="lang">bash</span><button class="copy">复制</button></div><pre><code data-lang="bash">flutter pub add dio</code></pre></div>
+    <div class="code"><div class="code-head"><span class="fn">lib/core/network/api_client.dart</span><span class="lang">dart</span><button class="copy">复制</button></div><pre><code data-lang="dart">import 'package:dio/dio.dart';
+
+import '../config/env.dart';
+import '../error/failure.dart';
+
+/// 网络门面。全项目只有这个文件 import dio。
+/// 哪天要换网络库（或换 HTTP/2、换 mock 方案），只改这里。
+class ApiClient {
+  ApiClient(this._dio);
+
+  final Dio _dio;
+
+  factory ApiClient.create() {
+    final dio = Dio(
+      BaseOptions(
+        baseUrl: currentEnv.apiBaseUrl,
+        connectTimeout: const Duration(seconds: 10),
+        receiveTimeout: const Duration(seconds: 20),
+        // ★ 证书校验绝对不能关。见 6.3 的"两条合规红线"。
+        validateStatus: (code) =&gt; code != null && code &lt; 500,
+      ),
+    );
+    return ApiClient(dio);
+  }
+
+  Future&lt;T&gt; get&lt;T&gt;(
+    String path, {
+    Map&lt;String, dynamic&gt;? query,
+    required T Function(Object? data) fromJson,
+    CancelToken? cancelToken,
+  }) async {
+    try {
+      final res = await _dio.get&lt;Object?&gt;(
+        path,
+        queryParameters: query,
+        cancelToken: cancelToken,
+      );
+      return fromJson(res.data);
+    } on DioException catch (e) {
+      throw e.toFailure(); // 归一化，禁止把 DioException 抛出这一层
+    }
+  }
+}
+
+/// DioException → Failure 的唯一映射表。
+/// 放在这里而不是散落在各处，是因为"404 应该显示什么"必须是全局一致的。
+extension DioExceptionX on DioException {
+  Failure toFailure() {
+    final code = response?.statusCode;
+    if (code == 401 || code == 403) return const UnauthorizedFailure();
+    if (code == 404) return const NotFoundFailure();
+
+    return switch (type) {
+      DioExceptionType.connectionTimeout ||
+      DioExceptionType.sendTimeout ||
+      DioExceptionType.receiveTimeout =&gt;
+        const TimeoutFailure(),
+      DioExceptionType.connectionError =&gt; const NetworkFailure(),
+      DioExceptionType.badResponse =&gt; ServerFailure(
+          '服务异常（$code）',
+          statusCode: code,
+        ),
+      DioExceptionType.cancel =&gt; const UnknownFailure('请求已取消'),
+      DioExceptionType.badCertificate =&gt; const NetworkFailure('证书校验失败'),
+      DioExceptionType.unknown =&gt; const NetworkFailure(),
+    };
+  }
+}</code></pre></div>
+    <div class="callout warn"><b>注意方向</b>失败是<strong>从 data 层抛出去</strong>的，页面不 catch。UI 只负责把 <code>Failure.message</code> 画出来。这样"错误文案"就只有一处真相。</div>
+    <div class="callout ok"><b>怎么验证</b>把 <code>baseUrl</code> 故意改成 <code>https://httpbin.org/status/404</code> 之类，发一个请求 —— 应该拿到 <code>NotFoundFailure</code> 而不是 <code>DioException</code>。再断网发一次 → <code>NetworkFailure</code>。<strong>判断标准只有一条：你的 <code>catch</code> 里能不能完全不用出现 <code>DioException</code> 这个词。</strong>能，说明门面封住了。</div>
+  </div>
+</article>
+
+<article class="step" data-id="s6-3">
+  <label class="step-head"><input type="checkbox"><span class="step-no">6.3</span>
+  <span class="step-title">拦截器顺序 + 日志脱敏两条红线</span><span class="step-time">10 min</span></label>
+  <div class="step-body">
+    <p>需要拦截器时，顺序是<strong>由外到内</strong>这样排（写反了会出很隐蔽的问题）：</p>
+    <div class="code"><div class="code-head"><span class="fn">顺序与理由（写在注释里，别只留在脑子里）</span><span class="lang">dart</span><button class="copy">复制</button></div><pre><code data-lang="dart">dio.interceptors.addAll([
+  // ① 日志：放最外面，才能看到"最终真正发出去的请求"
+  LogInterceptor(requestHeader: false, responseHeader: false),
+
+  // ② 认证：给请求带上 Token；并负责 401 时刷新后重放
+  AuthInterceptor(container),
+
+  // ③ 重试：放在认证之后 —— 刷新 Token 后的重放不该再叠加一层重试
+  RetryInterceptor(maxAttempts: 2),
+]);</code></pre></div>
+    <div class="callout bad"><b>两条合规红线（不是"最佳实践"，是"别出事"）</b>
+    ① <strong>证书校验绝对不能关。</strong>网上教你 <code>badCertificateCallback = (_, __, ___) =&gt; true</code> 绕过证书错误的，一律不要抄——那等于把 App 变成中间人攻击的靶子。<br>
+    ② <strong>日志必须脱敏。</strong>Token、手机号、密码、身份证不能进日志。写一个 <code>_redact()</code> 把 <code>Authorization</code> 头替换成 <code>***</code>。</div>
+    <p>Token 刷新用一个<strong>共享 Future 当锁</strong>，防止并发请求把刷新接口打爆：</p>
+    <div class="code"><div class="code-head"><span class="fn">核心思路</span><span class="lang">dart</span><button class="copy">复制</button></div><pre><code data-lang="dart">class AuthInterceptor extends Interceptor {
+  AuthInterceptor(this._ref);
+
+  final Ref _ref;
+
+  /// ★ 关键：所有并发请求共享同一个刷新 Future。
+  /// 第一个请求发起刷新，后面的直接 await 它，不会重复刷。
+  Future&lt;String&gt;? _refreshing;
+
+  Future&lt;String&gt; _refreshToken() {
+    return _refreshing ??= _doRefresh().whenComplete(() {
+      _refreshing = null; // 刷完清锁
+    });
+  }
+
+  Future&lt;String&gt; _doRefresh() async {
+    // ...真正去调刷新接口
+    return 'new-token';
+  }
+}</code></pre></div>
+    <div class="callout ok"><b>怎么验证</b>并发发三个请求、同时把 Token 设为过期 → 网络面板里刷新接口<strong>只被调用一次</strong>。</div>
+  </div>
+</article>
+
+
+<h2 id="p7"><span class="tag">阶段 7</span>状态管理<span class="pct" data-pct="p7"></span></h2>
+
+<article class="step" data-id="s7-1">
+  <label class="step-head"><input type="checkbox"><span class="step-no">7.1</span>
+  <span class="step-title">先理解本质：Provider 就是"被缓存的函数返回值"</span><span class="step-time">4 min</span></label>
+  <div class="step-body">
+    <p>不要一上来背 API。一句话心智模型：</p>
+    <div class="box"><h4>Provider = 一个被缓存的函数返回值 + 依赖变化时自动重算</h4>
+      <p>你把"怎么得到这个东西"写成函数交给容器。之后任何位置 <code class="inl">ref.watch</code> 它，拿到的都是同一个实例；它依赖的东西变了，它自动重算，用到它的 UI 自动重建。</p></div>
+    <div class="code"><div class="code-head"><span class="lang">bash</span><button class="copy">复制</button></div><pre><code data-lang="bash">flutter pub add flutter_riverpod</code></pre></div>
+    <div class="callout warn"><b>只装 <code>flutter_riverpod</code>。</b>现在<strong>不要</strong>顺手装 <code>riverpod_annotation</code>——它和注解生成器是配套的，单独装上会把整个 Riverpod 锁在旧版本（详见阶段 7.5）。</div>
+    <div class="callout ok"><b>怎么验证</b><code>main()</code> 里包上 <code>ProviderScope(child: App())</code> 后能正常跑起来。<strong>故意去掉 <code>ProviderScope</code> 再跑一次</strong> —— 应该报 <code>No ProviderScope found</code> 之类的错。这个错误信息值得亲眼看一次：以后在线上看到它，你会立刻知道是嵌套出了问题，而不是去翻业务代码。</div>
+  </div>
+</article>
+
+<article class="step" data-id="s7-2">
+  <label class="step-head"><input type="checkbox"><span class="step-no">7.2</span>
+  <span class="step-title">第一个 Provider（同步）+ 依赖注入</span><span class="step-time">8 min</span></label>
+  <div class="step-body">
+    <div class="code"><div class="code-head"><span class="fn">lib/core/network/dio_provider.dart</span><span class="lang">dart</span><button class="copy">复制</button></div><pre><code data-lang="dart">import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'api_client.dart';
+
+/// Provider 当 DI 容器用：
+/// 谁需要什么，声明依赖；谁提供什么，在这里注册。
+final apiClientProvider = Provider&lt;ApiClient&gt;((ref) =&gt; ApiClient.create());</code></pre></div>
+    <div class="code"><div class="code-head"><span class="fn">lib/features/demo/data/demo_repository.dart</span><span class="lang">dart</span><button class="copy">复制</button></div><pre><code data-lang="dart">import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../core/network/api_client.dart';
+import '../../../core/network/dio_provider.dart';
+import '../domain/demo.dart';
+
+/// 接口放 domain，实现放 data —— 这是能在测试里替换掉它的前提。
+class DemoRepositoryImpl implements DemoRepository {
+  DemoRepositoryImpl(this._api);
+
+  final ApiClient _api;
+
+  @override
+  Future&lt;List&lt;Demo&gt;&gt; fetchAll() {
+    return _api.get&lt;List&lt;Demo&gt;&gt;(
+      '/demos',
+      fromJson: (data) =&gt; (data! as List)
+          .map((e) =&gt; Demo.fromJson(e as Map&lt;String, dynamic&gt;))
+          .toList(),
+    );
+  }
+}
+
+/// Provider 声明放在实现旁边。
+final demoRepositoryProvider = Provider&lt;DemoRepository&gt;((ref) {
+  return DemoRepositoryImpl(ref.watch(apiClientProvider));
+});</code></pre></div>
+    <div class="callout warn"><b>不要在页面里 <code>new DemoRepositoryImpl()</code></b>三个理由：① 测试时替换不掉；② 每次 new 都建一个实例、浪费；③ 页面知道了具体实现，耦合。这就是依赖注入的全部意义。</div>
+    <div class="callout ok"><b>怎么验证</b>在 <code>main()</code> 里加一行 <code>debugPrint('${ApiClient.create().hashCode}');</code>，再在页面里 <code>ref.read(apiClientProvider)</code> 打印一次 —— <strong>两个 hashCode 应该一致</strong>（同一实例被复用）。如果每次都不同，说明 Provider 被放错了位置或者用了 <code>ref.read</code> 之外的路径新建。</div>
+  </div>
+</article>
+
+<article class="step" data-id="s7-3">
+  <label class="step-head"><input type="checkbox"><span class="step-no">7.3</span>
+  <span class="step-title">有行为的异步状态：AsyncNotifier（★ 别用 AutoDispose*）</span><span class="step-time">12 min</span></label>
+  <div class="step-body">
+    <div class="code"><div class="code-head"><span class="fn">lib/features/demo/presentation/demo_list_controller.dart</span><span class="lang">dart</span><button class="copy">复制</button></div><pre><code data-lang="dart">import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../data/demo_repository.dart';
+import '../domain/demo.dart';
+
+/// 有"行为"（刷新、加载更多）的异步状态用 AsyncNotifier。
+///
+/// ★★ Riverpod 3 已经把 AutoDisposeNotifier / AutoDisposeAsyncNotifier
+///    这些基类删掉了。基类统一用 Notifier / AsyncNotifier，
+///    "没有监听者就销毁"改用 provider 上的 .autoDispose 修饰。
+///    （写 AutoDisposeAsyncNotifier 会直接报 "找不到这个类"。）
+class DemoListController extends AsyncNotifier&lt;List&lt;Demo&gt;&gt; {
+  @override
+  Future&lt;List&lt;Demo&gt;&gt; build() {
+    // 用 watch：仓库变了会自动重新加载
+    return ref.watch(demoRepositoryProvider).fetchAll();
+  }
+
+  Future&lt;void&gt; refresh() async {
+    state = const AsyncLoading();
+    // guard 负责把"抛异常"变成 AsyncError，省掉一层 try-catch
+    state = await AsyncValue.guard(
+      () =&gt; ref.read(demoRepositoryProvider).fetchAll(),
+    );
+  }
+
+  /// 手动重新拉取
+  void reload() =&gt; ref.invalidateSelf();
+}
+
+final demoListControllerProvider =
+    AsyncNotifierProvider&lt;DemoListController, List&lt;Demo&gt;&gt;(
+  DemoListController.new,
+);
+
+/// 需要"离开页面就销毁"时，只加一个 .autoDispose 修饰，
+/// 不要换基类：
+final demoDetailProvider = AsyncNotifierProvider.autoDispose&lt;
+    DemoDetailController, Demo&gt;(DemoDetailController.new);</code></pre></div>
+    <div class="callout bad"><b>Riverpod 3 的三条硬变更（这是全文唯一展开讲的地方，附录只做索引）</b>
+    ① <code>AutoDisposeNotifier</code> / <code>AutoDisposeAsyncNotifier</code> <strong>基类已删除</strong>，改用 <code>Notifier</code> / <code>AsyncNotifier</code> + <code>.autoDispose</code> 修饰；<br>
+    ② <code>AsyncValue.valueOrNull</code> <strong>已删除</strong>，改用 <code>.value</code>；<br>
+    ③ <code>StateProvider</code> / <code>StateNotifierProvider</code> / <code>ChangeNotifierProvider</code> 被移到 legacy，必须 <code>import 'package:flutter_riverpod/legacy.dart';</code>。<strong>新项目建议直接不用它们，一律走 Notifier。</strong></div>
+    <div class="callout ok"><b>怎么验证</b>把 <code>AutoDisposeAsyncNotifier</code> 敲进编辑器（故意写错的那个），看报错是不是 "Undefined class"——<strong>亲眼确认这个类真的不存在了</strong>。然后跑 <code>flutter analyze</code>，应该干净。真正跑起来后，<code>refresh()</code> 触发时 UI 应经历 <code>AsyncLoading → AsyncData</code> 两个状态（可以 <code>debugPrint(state)</code> 观察）。</div>
+  </div>
+</article>
+
+<article class="step" data-id="s7-4">
+  <label class="step-head"><input type="checkbox"><span class="step-no">7.4</span>
+  <span class="step-title">watch / read / listen / select 各自用在哪</span><span class="step-time">8 min</span></label>
+  <div class="step-body">
+    <div class="tw"><table>
+      <thead><tr><th>API</th><th>用在哪</th><th>一句话记法</th></tr></thead>
+      <tbody>
+        <tr><td><code>ref.watch</code></td><td>build 方法里</td><td>"我依赖它，它变了我重建"</td></tr>
+        <tr><td><code>ref.read</code></td><td>回调、事件处理里（onPressed）</td><td>"我现在读一次，不订阅"</td></tr>
+        <tr><td><code>ref.listen</code></td><td>build 里，做副作用</td><td>"它变了我要弹窗/跳转/埋点"</td></tr>
+        <tr><td><code>.select</code></td><td>只要对象的一个字段</td><td>"其它字段变了别烦我"</td></tr>
+        <tr><td><code>ref.invalidate</code></td><td>任何地方</td><td>"作废它，下次读时重算"</td></tr>
+      </tbody>
+    </table></div>
+    <div class="code"><div class="code-head"><span class="fn">select 的价值：只订阅一个字段，避免整页重建</span><span class="lang">dart</span><button class="copy">复制</button></div><pre><code data-lang="dart">// ❌ 对象里任何一个字段变，这个 widget 都重建
+final user = ref.watch(userProvider);
+
+// ✅ 只订阅 name：头像变了、积分变了，这里不重建
+final name = ref.watch(userProvider.select((u) =&gt; u.name));
+
+// ✅ listen 做副作用：登录态翻转才跳转
+ref.listen(authProvider.select((s) =&gt; s.isLoggedIn), (prev, next) {
+  if (prev != next) {
+    context.go(next ? AppRoutes.home : AppRoutes.login);
+  }
+});</code></pre></div>
+    <div class="callout warn"><b>最常见的两个错</b>① 在 <code>onPressed</code> 里用 <code>watch</code>（会报错，也可能造成意外订阅）；② <code>build</code> 里用 <code>read</code> 拿状态（UI 不会跟着更新）。<strong>记法：build 里 watch，回调里 read。</strong></div>
+    <div class="callout ok"><b>怎么验证</b>开着 Flutter DevTools 的 <strong>Widget rebuild 高亮</strong>（或 IDE 里的 "Track widget rebuilds"）。切换 <code>select</code> 前后各改一次不相关字段：用 <code>select</code> 时该 widget 不闪，不用时整块闪。<strong>这是肉眼能看到的性能差异</strong>，比记 API 名字有用。</div>
+  </div>
+</article>
+
+<article class="step" data-id="s7-5">
+  <label class="step-head"><input type="checkbox"><span class="step-no">7.5</span>
+  <span class="step-title">什么时候才引入代码生成（要装就四个一起装）</span><span class="step-time">6 min</span></label>
+  <div class="step-body">
+    <p><strong>现在不要引。</strong>等你写完十几个 Provider、手写 <code class="inl">copyWith</code> 写到烦，再回头看这一节。</p>
+    <div class="callout bad"><b>最容易踩的一个坑</b>只装 <code>riverpod_annotation</code> 而不装生成器，会把整个 Riverpod 栈<strong>锁死在旧版本</strong>（<code>riverpod_annotation</code> 与 <code>riverpod</code> 是精确配套的，实测会让 <code>flutter_riverpod</code> 卡在 3.0.x 上不去）。要用注解，就<strong>一次装齐四个</strong>：</div>
+    <div class="code"><div class="code-head"><span class="fn">要引注解式 Provider 时，四个一起装</span><span class="lang">bash</span><button class="copy">复制</button></div><pre><code data-lang="bash">flutter pub add riverpod_annotation
+flutter pub add dev:riverpod_generator dev:custom_lint dev:riverpod_lint
+flutter pub add dev:build_runner
+
+# 生成 / 监听
+dart run build_runner build --delete-conflicting-outputs
+dart run build_runner watch --delete-conflicting-outputs</code></pre></div>
+    <div class="tw"><table>
+      <thead><tr><th>方式</th><th>省了什么</th><th>代价</th><th>建议</th></tr></thead>
+      <tbody>
+        <tr><td><b>手写 Provider</b></td><td>—</td><td>样板多、容易漏改</td><td>业务理解期、Provider 少于 15 个</td></tr>
+        <tr><td><b>@riverpod 注解</b></td><td>几乎零样板，自带 family/autoDispose</td><td>多跑一条生成命令、新人要懂 part 与 .g.dart</td><td>Provider 多了之后</td></tr>
+      </tbody>
+    </table></div>
+    <div class="callout ok"><b>一个纪律</b><code>build_runner</code> 的 <code>--delete-conflicting-outputs</code> <strong>不要省</strong>。不写它，遇到冲突时它不是自动覆盖，而是让你手动选——在 CI 里会直接卡死。</div>
+    <div class="callout ok"><b>怎么验证</b>跑完 <code>dart run build_runner build --delete-conflicting-outputs</code> 后，<code>ls lib/**/*.g.dart</code> 应该出现对应的生成文件。<strong>另外提前定一个团队规矩：生成文件提不提交 Git，二选一，别混。</strong>提交的好处是队友 clone 后不用跑生成器；不提交的好处是 diff 干净、不会有人手改生成文件。多数团队选<strong>提交</strong>（配合 CI 里跑一次 build 校验"生成文件是否最新"）。</div>
+  </div>
+</article>
+
+
+<h2 id="p8"><span class="tag">阶段 8</span>路由<span class="pct" data-pct="p8"></span></h2>
+
+<article class="step" data-id="s8-1">
+  <label class="step-head"><input type="checkbox"><span class="step-no">8.1</span>
+  <span class="step-title">路径常量与访问策略集中，早于任何跳转代码</span><span class="step-time">6 min</span></label>
+  <div class="step-body">
+    <div class="code"><div class="code-head"><span class="lang">bash</span><button class="copy">复制</button></div><pre><code data-lang="bash">flutter pub add go_router</code></pre></div>
+    <div class="code"><div class="code-head"><span class="fn">lib/app/router/app_routes.dart</span><span class="lang">dart</span><button class="copy">复制</button></div><pre><code data-lang="dart">/// 全项目唯一的路径真相。任何地方都不许写字符串字面量 '/product/1'。
+abstract final class AppRoutes {
+  static const String home = '/';
+  static const String cart = '/cart';
+  static const String profile = '/profile';
+  static const String login = '/login';
+  static const String productDetail = '/product/:id';
+
+  /// 详情页路径由函数生成，调用方不需要知道格式。
+  static String productDetailPath(int id) =&gt; '/product/$id';
+
+  /// 登录页带上"从哪来"，登录成功后能回原页面。
+  static String loginPath(String redirectTo) =&gt;
+      '/login?from=${Uri.encodeComponent(redirectTo)}';
+
+  /// 需要登录才能访问的路径前缀。
+  static const List&lt;String&gt; protectedPrefixes = ['/cart', '/profile'];
+}</code></pre></div>
+    <div class="callout why"><b>为什么值得单独一个文件</b>路径写错时，字符串字面量要跑起来才发现；常量写错 IDE 直接标红。另外改路径格式（比如加版本前缀）只改一处。</div>
+    <div class="callout ok"><b>怎么验证</b>在全项目搜一次字符串字面量路径：<code>grep -rn "'/" lib --include=*.dart | grep -v app_routes.dart</code>。<strong>结果里应该只剩下 <code>AppRoutes</code> 之外的合理用法（比如 <code>pathParameters['id']</code> 里的 key 名）。</strong>每多出一条裸路径，就多一个"改路径时会漏掉"的地方。</div>
+  </div>
+</article>
+
+<article class="step" data-id="s8-2">
+  <label class="step-head"><input type="checkbox"><span class="step-no">8.2</span>
+  <span class="step-title">带底部导航的架子：StatefulShellRoute.indexedStack</span><span class="step-time">16 min</span></label>
+  <div class="step-body">
+    <div class="code"><div class="code-head"><span class="fn">lib/app/router/app_router.dart</span><span class="lang">dart</span><button class="copy">复制</button></div><pre><code data-lang="dart">import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../features/cart/presentation/cart_page.dart';
+import '../../features/product/presentation/product_list_page.dart';
+import '../../features/profile/presentation/profile_page.dart';
+import '../ui/main_scaffold.dart';
+import '../ui/not_found_page.dart';
+import 'app_routes.dart';
+
+final appRouterProvider = Provider&lt;GoRouter&gt;((ref) {
+  /// refreshListenable 只需要一个"会通知我重新求值"的对象。
+  /// 用一个自增计数器最稳：不依赖任何具体状态类型，
+  /// 也不需要在 redirect 里自己比较前后值。
+  final refresh = ValueNotifier&lt;int&gt;(0);
+  ref.listen(authControllerProvider, (_, __) =&gt; refresh.value++);
+  ref.onDispose(refresh.dispose);
+
+  return GoRouter(
+    initialLocation: AppRoutes.home,
+    refreshListenable: refresh,
+    errorBuilder: (context, state) =&gt; const NotFoundPage(),
+
+    redirect: (context, state) {
+      final loggedIn = ref.read(authControllerProvider).value ?? false;
+      final loc = state.matchedLocation;
+
+      final needsAuth =
+          AppRoutes.protectedPrefixes.any((p) =&gt; loc.startsWith(p));
+      if (needsAuth && !loggedIn) return AppRoutes.loginPath(loc);
+
+      // 已登录就别再停在登录页
+      if (loc == AppRoutes.login && loggedIn) return AppRoutes.home;
+
+      return null; // null = 放行
+    },
+
+    routes: [
+      // 带底部导航的三个 Tab：用 indexedStack 保住各自的滚动位置与页面栈
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) =&gt;
+            MainScaffold(navigationShell: navigationShell),
+        branches: [
+          StatefulShellBranch(routes: [
+            GoRoute(
+              path: AppRoutes.home,
+              builder: (context, state) =&gt; const ProductListPage(),
+            ),
+          ]),
+          StatefulShellBranch(routes: [
+            GoRoute(
+              path: AppRoutes.cart,
+              builder: (context, state) =&gt; const CartPage(),
+            ),
+          ]),
+          StatefulShellBranch(routes: [
+            GoRoute(
+              path: AppRoutes.profile,
+              builder: (context, state) =&gt; const ProfilePage(),
+            ),
+          ]),
+        ],
+      ),
+
+      // 不在 Tab 里的页面：放在 shell 外面，自然就没有底部栏
+      GoRoute(
+        path: AppRoutes.productDetail,
+        builder: (context, state) {
+          // 参数是字符串，一定要自己校验 —— 路径对不代表参数对
+          final id = int.tryParse(state.pathParameters['id'] ?? '');
+          if (id == null) return const NotFoundPage();
+          return ProductDetailPage(productId: id);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.login,
+        builder: (context, state) =&gt; LoginPage(
+          redirectTo: state.uri.queryParameters['from'],
+        ),
+      ),
+    ],
+  );
+});</code></pre></div>
+    <div class="callout why"><b>为什么是 <code>indexedStack</code></b>它让每个 Tab 有自己的 Navigator 和滚动位置：切到购物车再切回来，列表还停在原来的位置。用普通 <code>ShellRoute</code> 或手写 <code>IndexedStack</code> 都要自己处理这些状态。</div>
+    <div class="callout bad"><b>不要把 router 建在全局变量里</b>有些人会写 <code>final _container = ProviderContainer();</code> 再在 main 里同时用 <code>ProviderScope</code>——那会变成<strong>两个互不相通的容器</strong>，你在 App 里改的状态，router 看不见。<strong>正确做法就是像上面这样把 router 写成 provider。</strong></div>
+    <div class="callout ok"><b>怎么验证（三个动作，逐个做）</b>
+    ① <strong>Tab 记忆</strong>：在首页列表往下滚，切到购物车，再切回来——<strong>列表还停在原位置</strong>。这是 <code>indexedStack</code> 唯一能证明自己的方式。<br>
+    ② <strong>守卫</strong>：未登录状态访问 <code>/cart</code>（手输深链接），应被弹到 <code>/login?from=%2Fcart</code>；登录成功后应自动回到 <code>/cart</code>，而不是首页。<br>
+    ③ <strong>参数校验</strong>：访问 <code>/product/abc</code>（非数字 id）——应该看到兜底页，<strong>不是崩溃</strong>。</div>
+  </div>
+</article>
+
+<article class="step" data-id="s8-3">
+  <label class="step-head"><input type="checkbox"><span class="step-no">8.3</span>
+  <span class="step-title">兜底页：用户迷路时，只要给一条出路</span><span class="step-time">6 min</span></label>
+  <div class="step-body">
+    <div class="code"><div class="code-head"><span class="fn">lib/app/ui/not_found_page.dart</span><span class="lang">dart</span><button class="copy">复制</button></div><pre><code data-lang="dart">import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../core/theme/app_tokens.dart';
+import 'app_routes.dart';
+
+class NotFoundPage extends StatelessWidget {
+  const NotFoundPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Scaffold(
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.xl),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.explore_off_outlined, size: 56, color: scheme.outline),
+              const SizedBox(height: AppSpacing.lg),
+              Text('这个页面不存在', style: Theme.of(context).textTheme.titleMedium),
+              const SizedBox(height: AppSpacing.sm),
+              Text(
+                '链接可能已失效，或者你被带到了一个错误的地址。',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: scheme.onSurfaceVariant),
+              ),
+              const SizedBox(height: AppSpacing.xl),
+              FilledButton(
+                onPressed: () =&gt; context.go(AppRoutes.home),
+                child: const Text('回到首页'),
+              ),
+              // ★ 不要放"返回上一页" —— 用户很可能是被外链直接带进来的，
+              //   他没有上一页，点了会退出 App。
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}</code></pre></div>
+    <div class="callout ok"><b>怎么验证</b>随便访问一个不存在的路径（深链接、或 <code>context.go('/nope')</code>），应该看到兜底页而不是白屏或崩溃。</div>
+  </div>
+</article>
+
+
+<h2 id="p9"><span class="tag">阶段 9</span>国际化<span class="pct" data-pct="p9"></span></h2>
+
+<article class="step" data-id="s9-1">
+  <label class="step-head"><input type="checkbox"><span class="step-no">9.1</span>
+  <span class="step-title">从一开始就只做集中文案，不做硬编码</span><span class="step-time">6 min</span></label>
+  <div class="step-body">
+    <div class="code"><div class="code-head"><span class="lang">bash</span><button class="copy">复制</button></div><pre><code data-lang="bash">flutter pub add flutter_localizations --sdk=flutter
+flutter pub add intl</code></pre></div>
+    <div class="callout why"><b>真正的成本不在翻译</b>而在于"要不要为了加一门语言去改 200 个文件"。只要从第一天起就<strong>没有硬编码文案</strong>，加语言就是加一个 arb 文件的事。</div>
+    <div class="callout ok"><b>怎么验证</b>搜一次正文里残留的中文：<code>grep -rn "[一-龥]" lib --include=*.dart</code>。<strong>结果里应该只有注释和 arb 文件本身（<code>*_zh.arb</code>）。</strong>每多出一条 <code>Text('...')</code> 里的中文，就多一个以后要改的地方。</div>
+    <p>如果项目还很小、暂时不接 arb，也请<strong>至少</strong>建一个集中文案文件，别把中文散在页面里：</p>
+    <div class="code"><div class="code-head"><span class="fn">lib/core/l10n/app_strings.dart（两段式：先克制版，后接 arb）</span><span class="lang">dart</span><button class="copy">复制</button></div><pre><code data-lang="dart">/// 临时文案集中处。接入 arb 之后这个文件就该删掉，
+/// 引用统一换成 AppLocalizations.of(context)!。
+abstract final class AppStrings {
+  static const String appName = '我的应用';
+  static const String retry = '重试';
+  static const String empty = '这里还没有内容';
+  static const String loadFailed = '加载失败，请重试';
+}</code></pre></div>
+  </div>
+</article>
+
+<article class="step" data-id="s9-2">
+  <label class="step-head"><input type="checkbox"><span class="step-no">9.2</span>
+  <span class="step-title">接 arb：让它成为工作流，而不是一份字符串表</span><span class="step-time">14 min</span></label>
+  <div class="step-body">
+    <div class="code"><div class="code-head"><span class="fn">l10n.yaml</span><span class="lang">yaml</span><button class="copy">复制</button></div><pre><code data-lang="yaml">arb-dir: lib/l10n
+template-arb-file: app_zh.arb
+output-localization-file: app_localizations.dart
+output-class: AppLocalizations
+nullable-getter: false</code></pre></div>
+    <div class="callout bad"><b>别写 <code class="inl">synthetic-package: false</code></b>
+网上很多老教程（包括一些 2024 年前的博客）还在让你写这一行，<strong>它已经过时了</strong>。<br>
+① 写 <code class="inl">false</code>：Flutter 3.47 会<strong>打印警告</strong>——<em>"The argument 'synthetic-package' no longer has any effect and should be removed."</em> 无害，但不该出现。<br>
+② 写 <code class="inl">true</code>：<strong>直接编译失败</strong>——<em>"Cannot enable 'synthetic-package', this feature has been removed."</em> 因为 synthetic 包（<code class="inl">package:flutter_gen</code>）已在 Flutter 3.32 前后被彻底移除。<br>
+<strong>结论：这一行压根不要出现。</strong>不写任何东西时，生成代码本来就落在 <code class="inl">arb-dir</code> 指定的目录里——这正是你想要的。<br>
+<span style="opacity:.75">（本手册 2026-10 实测于 Flutter 3.47.6，源码见 <code class="inl">flutter_tools/lib/src/localizations/localizations_utils.dart:490-505</code>。）</span></div>
+    <div class="code"><div class="code-head"><span class="fn">lib/l10n/app_zh.arb（模板，带元数据）</span><span class="lang">json</span><button class="copy">复制</button></div><pre><code data-lang="json">{
+  "@@locale": "zh",
+  "appName": "我的应用",
+  "cartItemCount": "{count, plural, other{{count} 件商品}}",
+  "@cartItemCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "greeting": "你好，{name}",
+  "@greeting": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  }
+}</code></pre></div>
+    <div class="code"><div class="code-head"><span class="fn">lib/app/app.dart（接入）</span><span class="lang">dart</span><button class="copy">复制</button></div><pre><code data-lang="dart">// ✅ 相对 import。生成代码就在 lib/l10n/ 里，是普通源文件，不是包。
+import '../l10n/app_localizations.dart';
+
+// ❌ 千万别写这个 —— 早年的旧写法，synthetic 包已被移除，必然报
+//    "Target of URI doesn't exist: 'package:flutter_gen/gen_l10n/app_localizations.dart'"
+// import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+// ★ 在阶段 4.2 那份 app.dart 上改两处：
+//   ① MaterialApp → MaterialApp.router（阶段 8 加的 routerConfig 继续留着）
+//   ② 加上下面这三行。theme / darkTheme / themeMode 都不用动。
+MaterialApp.router(
+  routerConfig: ref.watch(appRouterProvider),   // ← 阶段 8 已经加过了
+  localizationsDelegates: AppLocalizations.localizationsDelegates,
+  supportedLocales: AppLocalizations.supportedLocales,
+  locale: locale,            // 由语言控制器提供，null = 跟随系统
+  // ...
+)</code></pre></div>
+    <div class="callout warn"><b>相对路径写几层，按"你所在文件"算</b>
+<code class="inl">app_localizations.dart</code> 生成在 <code class="inl">lib/l10n/</code>。不同位置的文件引它，层数不一样：
+
+<div class="tw" style="margin:10px 0 0"><table>
+  <thead><tr><th>你所在的文件</th><th>正确的 import</th></tr></thead>
+  <tbody>
+    <tr><td><code>lib/app/app.dart</code></td><td><code>import '../l10n/app_localizations.dart';</code></td></tr>
+    <tr><td><code>lib/main.dart</code></td><td><code>import 'l10n/app_localizations.dart';</code></td></tr>
+    <tr><td><code>lib/core/router/app_router.dart</code></td><td><code>import '../../l10n/app_localizations.dart';</code></td></tr>
+  </tbody>
+</table></div>
+<div style="margin-top:10px"><strong>省事的办法：让 IDE 替你算。</strong>先把 <code class="inl">AppLocalizations</code> 打进编辑器（此时会标红），然后把光标放上去按 <code class="inl">Alt+Enter</code>（macOS <code class="inl">Option+Enter</code>）选 "Import library"——IDE 会写对路径。<strong>不要凭记忆手敲层数</strong>，多一个 <code class="inl">../</code> 少一个 <code class="inl">../</code> 都是编译期才发现的错。</div></div>
+    <div class="code"><div class="code-head"><span class="lang">bash</span><button class="copy">复制</button></div><pre><code data-lang="bash">flutter gen-l10n
+flutter pub get</code></pre></div>
+    <div class="callout warn"><b>两个高频坑</b>① 复数不要自己用 <code class="inl">if (n == 1)</code> 拼字符串——阿拉伯语有六种复数形式，用 arb 的 <code class="inl">plural</code>。<br>② 语言选择要<strong>持久化</strong>（写进 <code class="inl">prefs_store</code>），否则用户每次冷启都变回系统语言。</div>
+    <div class="callout ok"><b>怎么验证</b>把系统语言切成 English，界面跟着变；杀掉 App 重进，语言没有被重置。</div>
+  </div>
+</article>
+
+<article class="step" data-id="s9-3">
+  <label class="step-head"><input type="checkbox"><span class="step-no">9.3</span>
+  <span class="step-title">让"漏翻译"变成红灯</span><span class="step-time">6 min</span></label>
+  <div class="step-body">
+    <div class="code"><div class="code-head"><span class="fn">scripts/check_l10n.sh</span><span class="lang">bash</span><button class="copy">复制</button></div><pre><code data-lang="bash">#!/usr/bin/env bash
+# 比对模板 arb 与各语言 arb 的 key 数量：缺了就让 CI 变红
+set -euo pipefail
+
+base="lib/l10n/app_zh.arb"
+fail=0
+
+keys() { grep -o '^  "[^@][^"]*"' "$1" | sort -u; }
+
+for f in lib/l10n/app_*.arb; do
+  [ "$f" = "$base" ] && continue
+  missing=$(comm -23 &lt;(keys "$base") &lt;(keys "$f") || true)
+  if [ -n "$missing" ]; then
+    echo "✗ $f 缺少以下文案："
+    echo "$missing"
+    fail=1
+  fi
+done
+
+[ "$fail" -eq 0 ] && echo "✓ 文案完整"
+exit $fail</code></pre></div>
+    <div class="callout why"><b>为什么值得写这 20 行</b>"少翻译一条"这种问题，靠人眼在几百个 key 里找是不可能的，等用户发现又太久。<strong>把人的记性换成脚本。</strong></div>
+    <div class="callout ok"><b>怎么验证</b>故意从 <code>app_en.arb</code> 里删掉一个 key，跑 <code>bash scripts/check_l10n.sh</code> —— 应该打印 <code>✗</code> 并列出缺的那个 key，退出码非 0。<strong>加回来应该恢复 <code>✓ 文案完整</code>。</strong>这个"故意弄坏一次"的动作对所有门禁脚本都适用——没被验证过的门禁，等于没有。</div>
+  </div>
+</article>
+
+
+<h2 id="p10"><span class="tag">阶段 10</span>测试脚手架<span class="pct" data-pct="p10"></span></h2>
+
+<article class="step" data-id="s10-1">
+  <label class="step-head"><input type="checkbox"><span class="step-no">10.1</span>
+  <span class="step-title">先写纯 Dart 测试，别急着测 Widget</span><span class="step-time">8 min</span></label>
+  <div class="step-body">
+    <div class="code"><div class="code-head"><span class="fn">test/core/error/failure_test.dart</span><span class="lang">dart</span><button class="copy">复制</button></div><pre><code data-lang="dart">import 'package:flutter_test/flutter_test.dart';
+import 'package:my_app/core/error/failure.dart';
+
+void main() {
+  group('Failure 家族', () {
+    test('sealed 类型能被 switch 穷尽匹配', () {
+      const Failure f = TimeoutFailure();
+
+      final text = switch (f) {
+        NetworkFailure(:final message) =&gt; 'net:$message',
+        TimeoutFailure(:final message) =&gt; 'timeout:$message',
+        UnauthorizedFailure(:final message) =&gt; 'auth:$message',
+        NotFoundFailure(:final message) =&gt; '404:$message',
+        ParseFailure(:final message) =&gt; 'parse:$message',
+        ServerFailure(:final message) =&gt; 'server:$message',
+        UnknownFailure(:final message) =&gt; 'unknown:$message',
+      };
+
+      expect(text, startsWith('timeout:'));
+    });
+  });
+}</code></pre></div>
+    <div class="callout why"><b>能写纯 Dart 测试的就别写 Widget 测试</b>纯 Dart 测试 <strong>3 毫秒</strong>跑完，Widget 测试要起引擎、要 pump、要等帧，一次 <strong>3 秒</strong>。100 个测试差 5 分钟——这个差距会决定你愿不愿意经常跑测试。</div>
+    <div class="callout ok"><b>怎么验证</b><code>flutter test test/core/error/failure_test.dart</code> 应该绿；<strong>顺便看它的耗时</strong>（输出里的 <code>+1: All tests passed!</code> 会带时间）。感受一下"3 毫秒"是什么概念——这会让你以后更愿意写纯 Dart 测试。</div>
+  </div>
+</article>
+
+<article class="step" data-id="s10-2">
+  <label class="step-head"><input type="checkbox"><span class="step-no">10.2</span>
+  <span class="step-title">Riverpod 测试：override 是核心</span><span class="step-time">10 min</span></label>
+  <div class="step-body">
+    <div class="code"><div class="code-head"><span class="fn">test/features/demo/demo_list_controller_test.dart</span><span class="lang">dart</span><button class="copy">复制</button></div><pre><code data-lang="dart">import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:my_app/features/demo/data/demo_repository.dart';
+import 'package:my_app/features/demo/domain/demo.dart';
+import 'package:my_app/features/demo/presentation/demo_list_controller.dart';
+
+/// 假实现：把"数据从哪来"这件事，从测试里抽掉
+class _FakeRepo implements DemoRepository {
+  _FakeRepo(this.items);
+  final List&lt;Demo&gt; items;
+
+  @override
+  Future&lt;List&lt;Demo&gt;&gt; fetchAll() async =&gt; items;
+}
+
+void main() {
+  test('拿到数据后状态是 AsyncData', () async {
+    final container = ProviderContainer(
+      overrides: [
+        // ★ 90% 的 Riverpod 测试失败都是因为忘了 override，
+        //   结果真的去发了网络请求
+        demoRepositoryProvider.overrideWithValue(
+          _FakeRepo(const [Demo('1'), Demo('2')]),
+        ),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    final data = await container.read(demoListControllerProvider.future);
+    expect(data, hasLength(2));
+  });
+}</code></pre></div>
+    <div class="callout bad"><b>测的是行为，不是实现</b>不要断言"repository.fetchAll 被调用了 3 次"。一旦重构（比如加了缓存），这种测试会<strong>在功能完全正常的情况下失败</strong>。断言语义：结果是两条数据、状态是成功。</div>
+    <div class="callout ok"><b>怎么验证</b><code>flutter test</code> 应该绿。<strong>更重要的验证是"它真的用上了假实现"</strong>：把 <code>_FakeRepo</code> 改成 <code>throw Exception('boom')</code>，测试应该失败——如果还绿，说明 override 没生效，你连的是真网络。</div>
+  </div>
+</article>
+
+<article class="step" data-id="s10-3">
+  <label class="step-head"><input type="checkbox"><span class="step-no">10.3</span>
+  <span class="step-title">覆盖率门禁：定基线，不追 100%</span><span class="step-time">6 min</span></label>
+  <div class="step-body">
+    <div class="code"><div class="code-head"><span class="lang">bash</span><button class="copy">复制</button></div><pre><code data-lang="bash">flutter test --coverage
+# 覆盖率报告在 coverage/lcov.info</code></pre></div>
+    <div class="callout warn"><b>100% 是错误目标</b>为了凑覆盖率，人会去写断言 <code>expect(widget, isNotNull)</code> 这种没有任何价值的测试。<strong>正确的门禁是"不许下降"</strong>：定一个现状基线（比如 60%），PR 让它掉了就打回。数字只应上升。</div>
+    <div class="tw"><table>
+      <thead><tr><th>层</th><th>该测什么</th><th>覆盖率期望</th></tr></thead>
+      <tbody>
+        <tr><td>domain / core</td><td>金额、解析、错误映射、状态机</td><td><b>尽量高</b>（这些地方 bug 代价最大）</td></tr>
+        <tr><td>presentation</td><td>关键交互路径</td><td>只测主干，别追数字</td></tr>
+        <tr><td>纯 UI 组件</td><td>Golden 像素回归</td><td>只给稳定的核心组件</td></tr>
+      </tbody>
+    </table></div>
+    <div class="callout ok"><b>怎么验证</b><code>flutter test --coverage</code> 跑完后 <code>coverage/lcov.info</code> 应该存在，且能被 <code>genhtml</code> 或 IDE 插件渲染成可视报告。用 <code>awk -F: '/^LF:/{lf+=$2} /^LH:/{lh+=$2} END{printf "%.1f%%\n", lh/lf*100}' coverage/lcov.info</code> 能直接看到行覆盖率数字。<strong>把这个数字记下来，它就是你的基线</strong>——阶段 11.1 的 CI 门禁要填的就是它。</div>
+  </div>
+</article>
+
+
+<h2 id="p11"><span class="tag">阶段 11</span>CI 门禁<span class="pct" data-pct="p11"></span></h2>
+
+<article class="step" data-id="s11-1">
+  <label class="step-head"><input type="checkbox"><span class="step-no">11.1</span>
+  <span class="step-title">PR 只做门禁，不做分发（两段式）</span><span class="step-time">14 min</span></label>
+  <div class="step-body">
+    <div class="callout why"><b>为什么分两段</b>把"检查代码"和"产出安装包"混在一个流程里，会导致：每个 PR 都跑一遍签名和构建，慢、贵、还把签名密钥暴露给所有分支。<strong>PR 要的是快和确定；分发要的是安全。</strong></div>
+    <div class="code"><div class="code-head"><span class="fn">.github/workflows/ci.yml</span><span class="lang">yaml</span><button class="copy">复制</button></div><pre><code data-lang="yaml">name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - run: flutter pub get
+
+      # ① 格式：有文件不规范就失败
+      - run: dart format --output=none --set-exit-if-changed .
+
+      # ② 静态检查：lint + 架构边界（import_lint 报告在这里出现）
+      - run: flutter analyze
+
+      # ③ 文案完整性
+      - run: bash scripts/check_l10n.sh
+
+      # ④ 测试 + 覆盖率
+      - run: flutter test --coverage
+
+      # ⑤ 覆盖率不许下降（把 60 换成你项目的现状基线）
+      - name: 覆盖率门禁
+        run: |
+          COV=$(awk -F: '/^LF:/{lf+=$2} /^LH:/{lh+=$2} \
+                END{ if (lf == 0) { print "0"; exit } printf "%.1f", lh/lf*100 }' \
+                coverage/lcov.info)
+          echo "lines coverage = ${COV}%"
+          awk -v c="$COV" 'BEGIN{ if (c+0 &lt; 60) { print "覆盖率低于基线 60%"; exit 1 } }'</code></pre></div>
+    <div class="callout ok"><b>怎么验证</b>发一个故意有 lint 错误的 PR，CI 应该在 <code>flutter analyze</code> 那一步就红。<strong>门禁必须被验证过一次，否则你不知道它是否真的在跑。</strong></div>
+  </div>
+</article>
+
+<article class="step" data-id="s11-2">
+  <label class="step-head"><input type="checkbox"><span class="step-no">11.2</span>
+  <span class="step-title">提交前先在本地跑同一套</span><span class="step-time">6 min</span></label>
+  <div class="step-body">
+    <div class="code"><div class="code-head"><span class="fn">tool/pre_push.sh</span><span class="lang">bash</span><button class="copy">复制</button></div><pre><code data-lang="bash">#!/usr/bin/env bash
+# 和 CI 完全同一套命令，避免"本地好好的，PR 红了"
+set -euo pipefail
+
+echo "→ 格式化"
+dart format --output=none --set-exit-if-changed .
+
+echo "→ 静态检查"
+flutter analyze
+
+echo "→ 文案"
+bash scripts/check_l10n.sh
+
+echo "→ 测试"
+flutter test
+
+echo "✓ 全绿，可以提了"</code></pre></div>
+    <p>想让它自动在 <code class="inl">git push</code> 前跑，两种办法：</p>
+    <ul>
+      <li><strong>最省事</strong>：<code class="inl">git config core.hooksPath tool/hooks</code>，把脚本放进 <code class="inl">tool/hooks/pre-push</code>（本地配置，不进仓库）。</li>
+      <li><strong>团队共享</strong>：用 lefthook 这类 hook 管理器（<code class="inl">brew install lefthook</code> / Windows：<code class="inl">scoop install lefthook</code>），配置文件提交进仓库，队友 clone 后跑一次 <code class="inl">lefthook install</code> 即生效。</li>
+    </ul>
+    <div class="callout warn"><b>注意</b>hook 只在<strong>本机</strong>拦得住，绕过它易如反掌。所以 hook 是"提前提醒"，<strong>CI 才是真门禁</strong>，两个都要有。</div>
+    <div class="callout ok"><b>怎么验证</b>配置好 hook 后制造一个 lint 错误，<code>git push</code> 应该被拦下并打印 <code>→ 静态检查</code> 那一步的报错。<strong>如果 push 直接成功了，说明 hook 没生效</strong>——最常见的两个原因是：<code>core.hooksPath</code> 设成了相对路径（应为仓库根的相对路径）、或脚本没有可执行权限（<code>chmod +x tool/hooks/pre-push</code>）。</div>
+  </div>
+</article>
+
+
+<h2 id="p12"><span class="tag">阶段 12</span>交付与签名<span class="pct" data-pct="p12"></span></h2>
+
+<article class="step" data-id="s12-1">
+  <label class="step-head"><input type="checkbox"><span class="step-no">12.1</span>
+  <span class="step-title">签名：文件不进 Git，密钥不进代码</span><span class="step-time">12 min</span></label>
+  <div class="step-body">
+    <div class="code"><div class="code-head"><span class="lang">bash</span><button class="copy">复制</button></div><pre><code data-lang="bash">keytool -genkey -v \
+  -keystore upload-keystore.jks \
+  -storetype JKS \
+  -keyalg RSA -keysize 2048 -validity 10000 \
+  -alias upload</code></pre></div>
+    <div class="code"><div class="code-head"><span class="fn">android/key.properties ← 绝不提交</span><span class="lang">properties</span><button class="copy">复制</button></div><pre><code data-lang="properties">storePassword=你的密码
+keyPassword=你的密码
+keyAlias=upload
+storeFile=upload-keystore.jks</code></pre></div>
+    <div class="code"><div class="code-head"><span class="fn">.gitignore 追加</span><span class="lang">bash</span><button class="copy">复制</button></div><pre><code data-lang="bash">android/key.properties
+*.jks
+*.keystore</code></pre></div>
+    <div class="callout warn"><b>这一步真的会卡人：三个高频报错</b>
+    ① <code>keytool: command not found</code> —— <code>keytool</code> 随 JDK 而来，不在 PATH 里就找不到。<strong>用 <code>flutter doctor -v</code> 里那条 "Java binary at:" 的路径推</strong>：它通常和 <code>keytool</code> 同目录。或者直接去 Android Studio 内置的 JBR 里找。<br>
+    ② <code>storeFile</code> 的相对路径<strong>不是相对项目根</strong>，而是相对 <code>android/app/build.gradle</code>。<code>upload-keystore.jks</code> 的实际落点是 <code>android/app/upload-keystore.jks</code>，所以 <code>storeFile=upload-keystore.jks</code> 才是对的——写成 <code>../upload-keystore.jks</code> 反而会报找不到。<br>
+    ③ 路径里有空格或中文会失败。<code>-keystore</code> 后面接的路径<strong>加引号</strong>，或者干脆别放在带空格的目录里。</div>
+    <div class="callout bad"><b>签名的三条底线</b>① keystore 文件丢了你<strong>无法再更新这个 App</strong>——请同时备份到密码管理器；② 密码不要写进任何被提交的文件；③ CI 里用 repository secrets，用 base64 传文件：</div>
+    <div class="code"><div class="code-head"><span class="lang">bash</span><button class="copy">复制</button></div><pre><code data-lang="bash"># 本地把 keystore 变成一行文本，贴进 GitHub Secrets
+base64 -w 0 upload-keystore.jks</code></pre></div>
+    <div class="callout ok"><b>怎么验证</b>跑一次 <code>flutter build appbundle --release</code>。<strong>如果 key.properties 没被读到，Gradle 会警告 "Signing with the debug keys"</strong>——看到这句就说明签名没接上。产出的 aab 可以用 <code>keytool -printcert -jarfile build/app/outputs/bundle/release/app-release.aab</code> 确认签名者是你刚建的 alias（不是 <code>androiddebugkey</code>）。</div>
+  </div>
+</article>
+
+<article class="step" data-id="s12-2">
+  <label class="step-head"><input type="checkbox"><span class="step-no">12.2</span>
+  <span class="step-title">分发流程只在打 tag 时跑</span><span class="step-time">12 min</span></label>
+  <div class="step-body">
+    <div class="code"><div class="code-head"><span class="fn">.github/workflows/release.yml</span><span class="lang">yaml</span><button class="copy">复制</button></div><pre><code data-lang="yaml">name: release
+
+on:
+  push:
+    tags: ['v*']      # ★ 只有打 tag 才跑
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: 还原签名文件
+        run: |
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d &gt; android/app/upload-keystore.jks
+          cat &gt; android/key.properties &lt;&lt;EOF
+          storePassword=${{ secrets.ANDROID_STORE_PASSWORD }}
+          keyPassword=${{ secrets.ANDROID_KEY_PASSWORD }}
+          keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}
+          storeFile=upload-keystore.jks
+          EOF
+
+      - run: flutter pub get
+      - run: flutter build appbundle --release --dart-define=ENV=prod
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-release
+          path: build/app/outputs/bundle/release/app-release.aab</code></pre></div>
+    <div class="callout ok"><b>怎么验证</b>先推一个 tag（<code>git tag v0.0.1 &amp;&amp; git push --tags</code>），看它真的产出了 aab。<strong>别等到要发版那天才第一次跑 CI</strong>——那时候你同时面对签名、密钥、Gradle 三个问题。</div>
+  </div>
+</article>
+
+
+<h2 id="p13"><span class="tag">阶段 13</span>一页纸自查清单<span class="pct" data-pct="p13"></span></h2>
+
+<article class="step" data-id="s13-1">
+  <label class="step-head"><input type="checkbox"><span class="step-no">13.1</span>
+  <span class="step-title">把这份清单贴在显示器旁（每次提 PR 扫一遍）</span><span class="step-time">3 min</span></label>
+  <div class="step-body">
+    <p>这是<strong>代码纪律</strong>层面的自查。结构层面的自查在下一步 13.2。</p>
+    <div class="tw"><table>
+      <thead><tr><th>类别</th><th>自查项</th></tr></thead>
+      <tbody>
+        <tr><td><b>视觉</b></td><td>除了品牌色，没有硬编码颜色 · 间距圆角都取自令牌 · 深色模式看过一遍 · 按钮高度没小于 48</td></tr>
+        <tr><td><b>文案</b></td><td>没有硬编码中文 · 新文案加进了 arb · 复数用 plural 而不是 if · 漏翻译脚本通过</td></tr>
+        <tr><td><b>状态</b></td><td>加载/空/错误/有数据四种画面都真的能看到 · build 里 watch、回调里 read · 没有在 build 里调 setState 或发请求</td></tr>
+        <tr><td><b>边界</b></td><td>presentation 没 import data · core 没 import features · domain 没 import flutter · <code>flutter analyze</code> 干净</td></tr>
+        <tr><td><b>交互</b></td><td>提交按钮在请求中会禁用 · 网络失败有出路（重试）· 没有连点造成重复提交 · 长列表滚动不卡</td></tr>
+        <tr><td><b>交付</b></td><td>有测试覆盖新增逻辑 · 覆盖率没下降 · 没有把密钥/token 提交进去</td></tr>
+      </tbody>
+    </table></div>
+    <div class="callout why"><b>机器查纪律，人查体验</b>上面大部分条目其实能脚本化（阶段 11 的 <code>pre_push.sh</code> 就是干这个的）。剩下三条<strong>脚本永远查不出来</strong>，但它们是"能跑"和"好用"的分界线，每条只要 2 分钟：
+      <br>① <strong>断网跑一遍</strong>——飞行模式下打开本 PR 涉及的页面，有没有白屏？文案看不看得懂？重试按钮有用吗？
+      <br>② <strong>深色模式跑一遍</strong>——有没有哪块还是白底？有没有字看不见？
+      <br>③ <strong>低端机跑一遍</strong>（或 DevTools 限流 6x CPU）——列表掉不掉帧？图片爆不爆内存？</div>
+  </div>
+</article>
+
+<article class="step" data-id="s13-2">
+  <label class="step-head"><input type="checkbox"><span class="step-no">13.2</span>
+  <span class="step-title">对照目录树，检查文件有没有放错层</span><span class="step-time">5 min</span></label>
+  <div class="step-body">
+    <p>上面那张表查的是"代码写得对不对"，这一步查的是<strong>"文件放得对不对"</strong>。做到这里你手上已经有几十个文件了，而放错层的文件<strong>不会报错、不会被 lint 拦</strong>，只会在半年后变成"这个 import 怎么这么绕"。</p>
+    <div class="tw"><table>
+      <thead><tr><th>检查项</th><th>怎么看</th></tr></thead>
+      <tbody>
+        <tr><td>没有"孤儿目录"</td><td><code>ls lib</code> 下的每一项，你都能一句话说出它是干嘛的。说不出就说明它是被教程"顺手建的"</td></tr>
+        <tr><td><code>core/</code> 里没有业务词</td><td><code>ls lib/core</code> 不应该出现 <code>cart</code> / <code>product</code> / <code>order</code> 这类名词</td></tr>
+        <tr><td><code>features/</code> 之间不互相 import</td><td><code>grep -rn "features/cart" lib/features/product</code> 应该没有输出。跨 feature 要共用的东西，上移到 <code>shared/</code> 或 <code>core/</code></td></tr>
+        <tr><td>每个 feature 是完整的三角</td><td>有 <code>presentation</code> 就应该有 <code>domain</code>；只有 <code>presentation</code> 说明它要么是纯 UI（该挪去 <code>shared/ui</code>），要么是漏了抽象</td></tr>
+        <tr><td><code>shared/</code> 里的东西真的被 ≥2 个 feature 用</td><td>只有一个 feature 用的组件不叫 shared，它该待在那个 feature 的 <code>presentation/</code> 里</td></tr>
+        <tr><td><code>test/</code> 镜像 <code>lib/</code></td><td><code>test/core/error/failure_test.dart</code> 对应 <code>lib/core/error/failure.dart</code>。不镜像的话，找测试会变成翻箱倒柜</td></tr>
+      </tbody>
+    </table></div>
+    <div class="callout ok"><b>怎么验证</b>跑一遍这个组合，输出应该很短：
+    <div class="code" style="margin:8px 0 0"><div class="code-head"><span class="lang">bash</span><button class="copy">复制</button></div><pre><code data-lang="bash"># ① core 里不该有业务词
+ls lib/core | grep -E 'cart|product|order|user|profile'
+
+# ② feature 之间不该互相 import（把 cart 换成每个 feature 名各跑一次）
+grep -rn "features/cart" lib/features --include=*.dart | grep -v "features/cart/"
+
+# ③ 裸路径（应只剩 app_routes.dart）
+grep -rn "'/" lib --include=*.dart | grep -v app_routes.dart</code></pre></div>
+    <strong>三条都为空 = 结构是干净的。</strong>有输出不代表一定错，但每一条输出都值得你回答一次"它为什么在这儿"。</div>
+    <div class="callout why"><b>为什么值得花这 5 分钟</b>结构问题是<strong>唯一一种"越晚发现、修复成本呈指数上升"</strong>的问题。改一个 lint 规则要 1 分钟；把一个文件从 <code>presentation</code> 挪到 <code>domain</code>，要动它所有的 import；等 50 个文件都放错了再改，你宁愿重写项目。</div>
+  </div>
+</article>
+
+
+<h2 id="a1">附录 A · 依赖分批总表</h2>
+<p>原则只有一句：<strong>用到哪一章才装哪一个</strong>。一次性装 15 个包有三个问题——你不知道每个干嘛用、出问题不知道谁和谁打架、并且会以为"做 Flutter 项目必须装这么多东西"。</p>
+<div class="tw"><table>
+  <thead><tr><th>批</th><th>什么时候装</th><th>命令</th><th>为什么是这个时机</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>建工程当天</td><td><code>flutter pub add dev:very_good_analysis</code><br><code>flutter pub add dev:import_lint</code></td><td>先把规矩立起来，后面写的代码自然合规</td></tr>
+    <tr><td>2</td><td>第一次要发请求</td><td><code>flutter pub add dio</code></td><td>网络层一出现就要有错误归一化</td></tr>
+    <tr><td>3</td><td>第一次要管共享状态</td><td><code>flutter pub add flutter_riverpod</code></td><td>页面之间开始互相传数据时</td></tr>
+    <tr><td>4</td><td>第一次要记住偏好</td><td><code>flutter pub add shared_preferences</code></td><td>语言、主题这类非敏感偏好</td></tr>
+    <tr><td>5</td><td>第一次要存 Token</td><td><code>flutter pub add flutter_secure_storage</code></td><td><span class="pill r">Token 绝不进 prefs</span></td></tr>
+    <tr><td>6</td><td>第一次需要多页面</td><td><code>flutter pub add go_router</code></td><td>出现"要跳转"和"要深链接"时</td></tr>
+    <tr><td>7</td><td>第一次要第二种语言</td><td><code>flutter pub add flutter_localizations --sdk=flutter</code><br><code>flutter pub add intl</code></td><td>越晚接，越可能面对几百处硬编码</td></tr>
+    <tr><td>8</td><td>JSON 字段手写到烦</td><td><code>flutter pub add json_annotation</code><br><code>flutter pub add dev:build_runner dev:json_serializable</code></td><td>手写 fromJson 有教学价值，但字段过 20 个就只剩风险</td></tr>
+    <tr><td>9</td><td>copyWith / 联合状态手写到烦</td><td><code>flutter pub add freezed_annotation</code><br><code>flutter pub add dev:freezed</code></td><td>注意 <code>pub add freezed</code> 会进 <b>dependencies</b>，装完手动挪到 dev</td></tr>
+    <tr><td>10</td><td>决定用注解式 Provider</td><td><code>flutter pub add riverpod_annotation</code><br><code>flutter pub add dev:riverpod_generator dev:custom_lint dev:riverpod_lint</code></td><td><span class="pill r">四个必须一起装</span>只装 annotation 会锁死 Riverpod 版本</td></tr>
+    <tr><td>11</td><td>图片要磁盘缓存</td><td><code>flutter pub add cached_network_image</code></td><td>Image.network 没有磁盘缓存，流量会翻倍</td></tr>
+  </tbody>
+</table></div>
+<p style="margin-top:10px">全部装完之后，<code>pubspec.yaml</code> 应该长什么样（谁在 <code>dependencies</code>、谁在 <code>dev_dependencies</code>、哪几行必须手写）→ <a href="#a6">附录 F · pubspec.yaml 最终形态</a>。</p>
+<div class="callout warn"><b>三条通用经验</b>① <strong>别手抄版本号</strong>——<code>pub add</code> 会自动取当前最新兼容版，你抄的数字可能和你的 Flutter 对不上；② <strong>运行时 / 开发期分清</strong>——带 <code>dev:</code> 的只在写代码时起作用，不进最终产物（build_runner、freezed、riverpod_generator 都是这类），搞反了会把几十 MB 的生成器打进 App；③ <strong>含原生代码的包要重新构建</strong>——shared_preferences、flutter_secure_storage 这类装完必须完整 <code>flutter run</code>，热重载无效。<br>
+<span style="opacity:.75">这一节讲的是"<b>按什么顺序装</b>"；"<b>别做什么</b>"（比如别第一天装 15 个包、别只装 annotation）见附录 D。</span></div>
+
+<h2 id="a2">附录 B · 版本对账（2026-10 实测）</h2>
+<p>下表是在 <strong>Flutter 3.47.6 / Dart 3.13.5</strong> 上真实执行 <code>flutter pub get</code> 得到的解析结果，供你核对。注意：<strong>请不要把这里的版本号抄进 pubspec</strong>，让 <code>pub add</code> 自己决定。</p>
+<div class="tw"><table>
+  <thead><tr><th>包</th><th>实测解析到</th><th>备注</th></tr></thead>
+  <tbody>
+    <tr><td><code>flutter_riverpod</code></td><td>3.4.3</td><td>不加 <code>riverpod_annotation</code> 才能上到这个版本</td></tr>
+    <tr><td><code>riverpod</code></td><td>3.4.3</td><td>加 <code>riverpod_annotation</code> 会被锁回 3.0.3</td></tr>
+    <tr><td><code>go_router</code></td><td>17.x</td><td>需要 Flutter 3.22+</td></tr>
+    <tr><td><code>dio</code></td><td>5.x</td><td>—</td></tr>
+    <tr><td><code>freezed</code> / <code>freezed_annotation</code></td><td>3.2.5 / 3.1.0</td><td><span class="pill y">3.x 要求 class 写 abstract 或 sealed</span></td></tr>
+    <tr><td><code>shared_preferences</code></td><td>2.5.6</td><td>—</td></tr>
+    <tr><td><code>flutter_secure_storage</code></td><td>9.x</td><td>—</td></tr>
+    <tr><td><code>import_lint</code></td><td>2.0.0</td><td>要求 Dart ≥ 3.10 / Flutter ≥ 3.38</td></tr>
+    <tr><td><code>very_good_analysis</code></td><td>6.0.0（若约束 <code>^6.0.0</code>）</td><td>不约束会取到 11.x；新项目建议用最新</td></tr>
+  </tbody>
+</table></div>
+<div class="callout why"><b>Riverpod 3 的硬变更（完整说明见阶段 7.3）</b>
+① <code>AutoDisposeNotifier</code> / <code>AutoDisposeAsyncNotifier</code> 基类已删除 → 用 <code>Notifier</code> / <code>AsyncNotifier</code> + <code>.autoDispose</code> 修饰；
+② <code>AsyncValue.valueOrNull</code> 已删除 → 用 <code>.value</code>；
+③ <code>StateProvider</code> 等已移到 legacy。<br>
+<span style="opacity:.75">这三条在阶段 7.3 有逐条展开和代码；这里只做索引，不重复正文。</span></div>
+
+<h2 id="a3">附录 C · 报错速查</h2>
+<div class="tw"><table>
+  <thead><tr><th>报错 / 现象</th><th>真正的原因</th><th>怎么办</th></tr></thead>
+  <tbody>
+    <tr><td><code>Undefined name 'MaterialApp'</code></td><td>漏 import 或拼错——这是 Flutter 最高频报错</td><td>看报错里的 <code>lib/xxx.dart:行号</code>，补 import</td></tr>
+    <tr><td><code>Undefined class 'AutoDisposeAsyncNotifier'</code></td><td>Riverpod 3 已删除这个基类</td><td>换成 <code>AsyncNotifier</code>，要自动销毁用 <code>AsyncNotifierProvider.autoDispose</code>。详见 <a href="#p7">阶段 7.3</a></td></tr>
+    <tr><td><code>The getter 'valueOrNull' isn't defined</code></td><td>Riverpod 3 把 <code>valueOrNull</code> 改名成 <code>value</code></td><td>全局替换 <code>valueOrNull</code> → <code>value</code>。详见 <a href="#p7">阶段 7.3</a></td></tr>
+    <tr><td><code>Undefined name 'StateProvider'</code></td><td>它被移到 legacy 了</td><td><code>import 'package:flutter_riverpod/legacy.dart';</code>，或改用 <code>Notifier</code>。详见 <a href="#p7">阶段 7.3</a></td></tr>
+    <tr><td><code>Classes using @freezed must be abstract or sealed</code></td><td>freezed 3 的强制要求</td><td><code>@freezed class X</code> → <code>@freezed abstract class X</code>。详见 <a href="/resources/dart">附录 E.4</a></td></tr>
+    <tr><td><code>Missing concrete implementations of getter _$X.id</code></td><td>同一件事的另一种报法（上面那个不会报错时用这个判）</td><td>同上，补 <code>abstract</code>。详见 <a href="/resources/dart">附录 E.4</a></td></tr>
+    <tr><td><code>The type 'X' is not exhaustively matched by the switch</code></td><td>你给一个 <code>sealed</code> 类新加了子类，但某个 <code>switch</code> 没跟着加分支</td><td><strong>这正是它该报的错</strong>——去补分支，别加 <code>default</code></td></tr>
+    <tr><td><code>The class 'X' can't be extended outside of its library because it's a sealed class</code></td><td><code>sealed</code> 的子类必须和父类同文件</td><td>把子类挪进同一个 <code>.dart</code>（或用 <code>part</code>）。详见 <a href="/resources/dart">附录 E.2</a></td></tr>
+    <tr><td><code>The method 'copyWith' isn't defined for the class 'X'</code></td><td>改了类但没重跑生成器，或忘了 <code>part</code> 声明</td><td>跑 <code>dart run build_runner build --delete-conflicting-outputs</code>；核对 <code>part 'x.freezed.dart';</code></td></tr>
+    <tr><td><code>LateInitializationError: Field '_x' has not been initialized</code></td><td>声明了 <code>late</code> 却没走到赋值就先把值读了</td><td>检查赋值路径是否在所有分支都会执行；大多数情况下你根本不需要 <code>late</code>。见 <a href="/resources/dart">附录 E.1</a></td></tr>
+    <tr><td><code>Target of URI doesn't exist: 'package:flutter_gen/…'</code></td><td>你抄了旧教程：synthetic 包（<code>package:flutter_gen</code>）已被移除</td><td>改用相对 import，层数按你所在文件算。<strong>顺手把 l10n.yaml 里的 <code>synthetic-package</code> 那行删掉</strong>。详见 <a href="#p9">阶段 9.2</a></td></tr>
+    <tr><td><code>Cannot enable 'synthetic-package', this feature has been removed</code></td><td>l10n.yaml 里写了 <code>synthetic-package: true</code></td><td>删掉这一行（写 <code>false</code> 也只会换来一条"no longer has any effect"警告）</td></tr>
+    <tr><td>import_lint 规则"写了但不生效"</td><td>配置写进了 <code>import_lint.yaml</code>，而分析器只读 <code>analysis_options.yaml</code></td><td>把 <code>plugins:</code> 和 <code>import_lint:</code> 两段挪进 <code>analysis_options.yaml</code>，然后<strong>重启分析服务器</strong></td></tr>
+    <tr><td><code>Tried to use 'ref' after 'dispose' was called</code></td><td>await 之后页面已销毁还在用 ref</td><td>await 之后写 state 前先判 <code>ref.mounted</code></td></tr>
+    <tr><td><code>RenderFlex overflowed by 12 pixels</code></td><td>布局溢出，不是崩溃但很难看</td><td>给它 <code>Expanded</code>/<code>Flexible</code>，或换 <code>Wrap</code></td></tr>
+    <tr><td>改了原生代码，热重载没反应</td><td>热重载只重载 Dart</td><td>完整重跑 <code>flutter run</code>；iOS 还要 <code>cd ios &amp;&amp; pod install</code></td></tr>
+    <tr><td><code>version solving failed</code></td><td>某个包被另一个包精确依赖锁住了</td><td>把报错原文看完——它会告诉你<strong>是谁锁的谁</strong>，通常只需删掉一个多余依赖</td></tr>
+    <tr><td><code>Minimum OS version</code> / pods 报错</td><td>iOS 部署版本与插件要求不一致</td><td>改 <code>ios/Podfile</code> 的 <code>platform :ios, '...'</code>，再 <code>pod install</code></td></tr>
+  </tbody>
+</table></div>
+
+<h2 id="a4">附录 D · 别做这些事</h2>
+<div class="tw"><table>
+  <thead><tr><th>别做</th><th>因为</th></tr></thead>
+  <tbody>
+    <tr><td>一次性 <code>mkdir -p</code> 建十几层空目录</td><td>不知道每层为什么存在；建的时候你还不懂它要装什么（阶段 3 开头）</td></tr>
+    <tr><td>第一天装 15 个包</td><td>出问题不知道谁和谁打架；也会误以为这是"必须"。<strong>替代方案见附录 A 的 11 批装法</strong></td></tr>
+    <tr><td>先写页面，最后才立 lint</td><td>返工量等于全部代码；先立规矩后面自然合规</td></tr>
+    <tr><td>在 presentation 里 <code>new</code> 一个仓储实现</td><td>测试替换不掉；页面知道了具体实现</td></tr>
+    <tr><td>把 Token 存 SharedPreferences</td><td>明文，越狱/root 后可读</td></tr>
+    <tr><td>关掉证书校验"先让它能跑"</td><td>把 App 变成中间人攻击靶子。这类"临时方案"从不被删掉</td></tr>
+    <tr><td>只装 <code>riverpod_annotation</code> 不装生成器</td><td>会把整个 Riverpod 锁在旧版本</td></tr>
+    <tr><td>把 import_lint 配置写进自建文件名</td><td>分析器不读，规则静默失效，你以为在被保护</td></tr>
+    <tr><td>追求 100% 覆盖率</td><td>逼着人写无价值断言。门禁应该是"不许下降"</td></tr>
+    <tr><td>断言"某方法被调用了 3 次"</td><td>重构时功能正常也会失败。测行为，不测实现</td></tr>
+    <tr><td>把 keystore / key.properties 提交进 Git</td><td>泄露签名密钥，且永远洗不掉</td></tr>
+    <tr><td>把 dev 环境的地址留在 prod 包里</td><td>用 <code>String.fromEnvironment</code> + 单一 <code>--dart-define</code> 从结构上避免</td></tr>
+  </tbody>
+</table></div>
+
+<h2 id="a5">附录 E · Dart 高级语法速查</h2>
+<p class="lead">这一节已独立成篇，搬到配套站点的 <b>Dart 语言讲解</b> 页面里 —— 并且在那里补齐了前置的语言基础（类型、空安全、函数、类、集合、异步），不再只有高级语法。</p>
+
+<div class="callout why"><b>为什么搬走</b>
+Dart 是 Flutter 的地基，放在"工程化指南的附录"里位置不对 —— 它应该在学组件<b>之前</b>就能读到。现在它和 Flutter 讲解、组件手册一起构成一条按依赖关系排好的学习路线。
+
+<div class="box" style="margin:14px 0 2px"><h4>去这里读</h4>
+<p style="margin:6px 0 10px">第 1 章「工程化必备的高级语法」收录了原先在这里的全部内容：<code class="inl">var/final/const/late final</code>、<code class="inl">abstract final class</code> / <code class="inl">sealed</code>、模式匹配、<code class="inl">copyWith</code>、<code class="inl">extension</code>、<code class="inl">mixin</code>、<code class="inl">async*</code>/<code class="inl">Stream</code>、<code class="inl">required</code> 命名参数与四个语法糖。</p>
+<a class="btn" href="/resources/dart" style="display:inline-flex;align-items:center;gap:6px;background:var(--acc);border-color:var(--acc);color:#fff;padding:7px 14px">打开 Dart 语言讲解 →</a>
+</div>
+</div>
+
+<p>下面是本附录原有的小节索引，点击会跳到新页面里的对应位置：</p>
+<ul>
+  <li><a href="/resources/dart#d-qualifiers">E.1 <code class="inl">var</code> / <code class="inl">final</code> / <code class="inl">const</code> / <code class="inl">late final</code>：我到底该用哪个</a></li>
+  <li><a href="/resources/dart#d-sealed">E.2 <code class="inl">abstract</code> / <code class="inl">abstract final class</code> / <code class="inl">sealed</code></a></li>
+  <li><a href="/resources/dart#d-pattern">E.3 模式匹配：switch 表达式、when 守卫、:final 解构</a></li>
+  <li><a href="/resources/dart#d-copywith">E.4 <code class="inl">copyWith</code>：谁生成的、为什么必须有它</a></li>
+  <li><a href="/resources/dart#d-misc">E.5 其他天天碰到的写法（extension / mixin / async* / required / 语法糖）</a></li>
+  <li><a href="/resources/dart#d-cheatsheet">E.6 一页纸总结</a></li>
+</ul>
+
+<h2 id="a6">附录 F · pubspec.yaml 最终形态</h2>
+<p>前面 11 批 <code>flutter pub add</code> 敲完之后，<code>pubspec.yaml</code> 应该长这样。下面<strong>不是让你照抄</strong>（版本号让 <code>pub add</code> 自己定），而是让你核对<strong>三件事</strong>：谁在 <code>dependencies</code>、谁在 <code>dev_dependencies</code>、以及哪几行是必须手写的。</p>
+<div class="code"><div class="code-head"><span class="fn">pubspec.yaml</span><span class="lang">yaml</span><button class="copy">复制</button></div><pre><code data-lang="yaml">name: my_app
+description: 我的应用
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  # ★ 手写。下限写你团队的最低 Flutter 版本（阶段 0.2 写进 README 的那个）
+  sdk: ^3.13.0
+
+dependencies:
+  flutter:
+    sdk: flutter                # ★ 手写，flutter create 自动带的
+
+  # ── 运行时依赖：会打进最终产物 ──
+  dio: ^5.9.0                   # pub add dio
+  flutter_riverpod: ^3.4.3      # pub add flutter_riverpod
+  go_router: ^17.0.0            # pub add go_router
+  shared_preferences: ^2.5.6    # pub add shared_preferences
+  flutter_secure_storage: ^9.2.4 # pub add flutter_secure_storage
+  intl: ^0.20.2                 # pub add intl
+
+  flutter_localizations:        # ★ 这个必须手写或用 --sdk=flutter
+    sdk: flutter
+
+  # 只有引入代码生成时才加（阶段 7.5 / 附录 A 第 8、9、10 批）
+  # json_annotation: ^4.9.0
+  # freezed_annotation: ^3.1.0
+  # riverpod_annotation: ^3.0.3
+  # cached_network_image: ^3.4.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter                # ★ 手写，flutter create 自动带的
+
+  # ── 开发期依赖：不进产物 ──
+  flutter_lints: ^6.0.0
+  very_good_analysis: ^6.0.0    # pub add dev:very_good_analysis
+  import_lint: ^2.0.0           # pub add dev:import_lint
+
+  # 代码生成器（用了注解才加）
+  # build_runner: ^2.4.13
+  # json_serializable: ^6.9.0
+  # freezed: ^3.2.5
+  # riverpod_generator: ^3.0.3
+  # custom_lint: ^0.7.5
+  # riverpod_lint: ^3.0.3
+
+flutter:
+  uses-material-design: true    # ★ 不加这个，Material 图标会显示成方块
+
+  # 需要本地图片/字体时手写（注意缩进：两个空格）
+  # assets:
+  #   - assets/images/
+  #   - assets/fonts/</code></pre></div>
+<div class="callout warn"><b>核对清单（三条最容易错的）</b>
+① <strong><code>freezed</code> 会跑进 <code>dependencies</code></strong> —— <code>flutter pub add freezed</code> 默认装到运行时依赖里，装完<strong>手动挪到 <code>dev_dependencies</code></strong>。（附录 A 第 9 批提过，这里再钉一次。）<br>
+② <strong><code>flutter_localizations</code> / <code>flutter_test</code> 不能写版本号</strong> —— 它们是 SDK 包，必须写 <code>sdk: flutter</code>。写 <code>^0.x</code> 会 version solving failed。<br>
+③ <strong>三行"必须手写"的</strong>：<code>environment.sdk</code>、两个 <code>sdk: flutter</code>、以及 <code>uses-material-design: true</code>。<code>pub add</code> 不会帮你加这些。</div>
+
+<h2 id="a7">附录 G · 升级检查单</h2>
+<p>这份文档里出现的所有"坑"——<code>freezed</code> 要 <code>abstract</code>、<code>riverpod_annotation</code> 会锁版本、<code>import_lint</code> 要求 Dart ≥ 3.10——都是<strong>版本变了之后才成立的</strong>。所以半年后你升 Flutter，会遇到"文档里没写的新坑"。这份清单就是那时候用的：<strong>按顺序跑，一次只改一类东西</strong>。</p>
+<div class="tw"><table>
+  <thead><tr><th>顺序</th><th>命令</th><th>看什么 / 为什么是这个顺序</th></tr></thead>
+  <tbody>
+    <tr><td>① 备份</td><td><code>git checkout -b chore/flutter-upgrade</code></td><td><strong>一定在分支上做。</strong>升级失败时你要能一键回到能跑的状态，而不是逐个撤销</td></tr>
+    <tr><td>② 升 SDK</td><td><code>flutter upgrade</code><br><code>flutter doctor -v</code></td><td>先确认工具链本身干净。带着红叉升依赖，报错会互相掩盖</td></tr>
+    <tr><td>③ 看依赖</td><td><code>flutter pub outdated</code></td><td><strong>先只读不写。</strong>看"Resolvable"列：能升的和被锁住的，一次看清</td></tr>
+    <tr><td>④ 升依赖</td><td><code>flutter pub upgrade --major-versions</code></td><td>跨大版本升级。<strong>升完先别改代码</strong>，让下面几步告诉你哪里断了</td></tr>
+    <tr><td>⑤ 看 lint</td><td><code>flutter analyze</code></td><td><strong>规则集本身也升级了</strong>——<code>very_good_analysis</code> 新版会加新规则，可能凭空冒出几百条告警。分两批处理：先修真问题，再把"我认为不该守"的规则显式关掉并写注释说明原因</td></tr>
+    <tr><td>⑥ 跑测试</td><td><code>flutter test</code></td><td>测试是升级唯一的安全网。绿了才继续</td></tr>
+    <tr><td>⑦ 生成器</td><td><code>dart run build_runner build --delete-conflicting-outputs</code></td><td>生成器的产物格式会变，<strong>必须重跑</strong>。忘了这步会得到一堆看不懂的编译错误</td></tr>
+    <tr><td>⑧ 真机验证</td><td><code>flutter run</code> ×3 个环境</td><td>dev / staging / prod 各跑一次。升级最容易破坏的是<strong>构建配置</strong>（Gradle、Podfile），而不是业务代码</td></tr>
+  </tbody>
+</table></div>
+<div class="callout bad"><b>两条纪律</b>
+① <strong>一次只升一类东西。</strong>同时升 Flutter SDK + 所有大版本依赖，出问题你无法定位是哪一边造成的——回退也没法回退一半。<br>
+② <strong>别在发版前一周升级。</strong>升级引入的问题通常不是"编译不过"（那反而好办），而是"编译过了但运行时行为变了"。留出至少两周的观察期。</div>
+<div class="callout ok"><b>升级后回来改这份文档</b>如果你发现某条"坑"已经不成立了（比如某个包修好了），或者遇到了第六条<code>analyze</code>才冒出来的新规则——<strong>把它加进附录 C</strong>。这份文档的价值就在于它记录的是"实测过的版本行为"，而不是"理论上应该怎样"。</div>
+
+<div class="box" style="margin-top:44px">
+  <h4>做完之后你会得到什么</h4>
+  <p style="margin-bottom:0">一个<strong>架构不会烂</strong>（lint 机器拦）、<strong>换数据源不动页面</strong>（依赖倒置）、<strong>改主题只改一个种子色</strong>（令牌）、<strong>加语言只加一个文件</strong>（i18n 工作流）、<strong>PR 不合规提不进主干</strong>（CI 门禁）的工程骨架。之后所有功能都是往这个骨架里填肉，而不是边写边改地基。</p>
+</div>
+
+</main>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  var LS_DONE = 'flutter-setup-progress-v1';
+  var LS_NAME = 'flutter-setup-names-v1';
+
+  /* ───────────── 1. 代码高亮 ───────────── */
+  function esc(s){
+    return s.replace(/&/g,'\u0000').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+  var DART_KW = new Set(('abstract as assert async await break case catch class const continue covariant '
+    + 'default deferred do dynamic else enum export extends extension external factory false final finally '
+    + 'for get hide if implements import in interface is late library mixin new null on operator part '
+    + 'required rethrow return sealed set show static super switch sync this throw true try typedef var '
+    + 'void when while with yield').split(' '));
+
+  function hlDart(src){
+    var body = esc(src).replace(
+      /(\/\/[^\n]*)|('(?:\\.|[^'\\\n])*'|"(?:\\.|[^"\\\n])*")|(@[A-Za-z_]\w*)|\b(0[xX][0-9A-Fa-f]+|\d[\d._]*)\b|([A-Za-z_$][\w$]*)/g,
+      function(m, com, str, ann, num, w){
+        if (com) return '<span class="c-com">' + com + '</span>';
+        if (str) return '<span class="c-str">' + str + '</span>';
+        if (ann) return '<span class="c-ann">' + ann + '</span>';
+        if (num) return '<span class="c-num">' + num + '</span>';
+        if (w) {
+          if (DART_KW.has(w)) return '<span class="c-kw">' + w + '</span>';
+          if (/^[A-Z]/.test(w)) return '<span class="c-typ">' + w + '</span>';
+          return w;
+        }
+        return m;
+      });
+    return body.replace(/\u0000/g, '&amp;');
+  }
+
+  function hlYaml(src){
+    return esc(src).split('\n').map(function(line){
+      if (/^\s*#/.test(line)) return '<span class="c-com">' + line + '</span>';
+      var out = line.replace(/^(\s*(?:-\s+)?)([A-Za-z_@][\w.@/-]*)(\s*:)/,
+        function(m,a,b,c){ return a + '<span class="c-key">' + b + '</span>' + c; });
+      out = out.replace(/(#(?!\{).*)$/, '<span class="c-com">$1</span>');
+      out = out.replace(/\b(true|false|null)\b/g, '<span class="c-num">$1</span>');
+      return out;
+    }).join('\n').replace(/\u0000/g, '&amp;');
+  }
+
+  function hlBash(src){
+    return esc(src).split('\n').map(function(line){
+      if (/^\s*#/.test(line)) return '<span class="c-com">' + line + '</span>';
+      var com = '', i = line.indexOf(' # ');
+      if (i >= 0) { com = '<span class="c-com">' + line.slice(i) + '</span>'; line = line.slice(0, i); }
+      line = line.replace(/^(\s*)([\w./-]+)/, function(m,a,b){
+        return a + '<span class="c-fn">' + b + '</span>'; });
+      line = line.replace(/(\$[A-Za-z_{][\w}]*)/g, '<span class="c-num">$1</span>');
+      return line + com;
+    }).join('\n').replace(/\u0000/g, '&amp;');
+  }
+
+  function hlTree(src){
+    return esc(src).split('\n').map(function(line){
+      var i = line.search(/\s#/);
+      if (i < 0) return line;
+      return line.slice(0, i) + '<span class="c-com">' + line.slice(i) + '</span>';
+    }).join('\n').replace(/\u0000/g, '&amp;');
+  }
+
+  var HL = {
+    dart: hlDart, yaml: hlYaml, bash: hlBash, json: hlDart,
+    // PowerShell 的注释符是 #、变量是 $x，与 bash 同构，
+    // 复用 hlBash（唯一差别是行尾注释也用 #，hlBash 已按行首处理）。
+    powershell: hlBash, ps1: hlBash,
+    // properties 与 .gitignore 都是 k=v / 纯行，别名到 bash 即可（都是 # 注释）
+    properties: hlBash,
+    tree: hlTree,
+    text: function(s){ return esc(s).replace(/\u0000/g, '&amp;'); }
+  };
+
+  /* 缓存每个代码块的原始文本 */
+  var blocks = [];
+  document.querySelectorAll('.code pre > code').forEach(function(code){
+    blocks.push({ el: code, raw: code.textContent, lang: code.dataset.lang || 'text' });
+  });
+
+  /* ───────────── 2. 项目名 / 包名替换 ───────────── */
+  var inApp = document.getElementById('inApp');
+  var inOrg = document.getElementById('inOrg');
+
+  function normApp(v){
+    v = (v || '').trim().toLowerCase().replace(/[^a-z0-9_]/g, '_');
+    return v || 'my_app';
+  }
+  function normOrg(v){
+    v = (v || '').trim().replace(/[^A-Za-z0-9_.]/g, '');
+    return v || 'com.example';
+  }
+
+  function renderCode(){
+    var app = normApp(inApp.value);
+    var org = normOrg(inOrg.value);
+    blocks.forEach(function(b){
+      var src = b.raw.replace(/\bmy_app\b/g, app).replace(/\bcom\.example\b/g, org);
+      b.el.innerHTML = (HL[b.lang] || HL.text)(src);
+      b.el.dataset.out = src;
+    });
+  }
+
+  /* ───────────── 3. 复制按钮 ───────────── */
+  document.querySelectorAll('.code').forEach(function(wrap){
+    var btn = wrap.querySelector('.copy');
+    var code = wrap.querySelector('pre > code');
+    if (!btn || !code) return;
+    btn.addEventListener('click', function(){
+      var txt = code.dataset.out || code.textContent;
+      var done = function(){
+        btn.textContent = '已复制'; btn.classList.add('ok');
+        setTimeout(function(){ btn.textContent = '复制'; btn.classList.remove('ok'); }, 1400);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(txt).then(done, function(){ fallback(txt, done); });
+      } else { fallback(txt, done); }
+    });
+  });
+  function fallback(txt, cb){
+    var ta = document.createElement('textarea');
+    ta.value = txt; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); cb(); } catch(e) {}
+    document.body.removeChild(ta);
+  }
+
+  /* ───────────── 4. 进度与勾选 ───────────── */
+  var steps = Array.prototype.slice.call(document.querySelectorAll('.step'));
+  var saved = {};
+  try { saved = JSON.parse(localStorage.getItem(LS_DONE) || '{}') || {}; } catch(e){}
+
+  var fill = document.getElementById('fill');
+  var ptxt = document.getElementById('ptxt');
+
+  /* 按阶段号取出属于该阶段的所有步骤（p0 → data-id^="s0-"）
+     ★ 只认 p<数字>；附录 a1/a2… 没有步骤，返回空数组，绝不借用到阶段上 */
+  function stepsOf(phaseId){
+    if (!/^p\d+$/.test(phaseId)) return [];
+    return Array.prototype.slice.call(
+      document.querySelectorAll('.step[data-id^="s' + phaseId.slice(1) + '-"]'));
+  }
+  function tally(phaseId){
+    var n = 0, d = 0;
+    stepsOf(phaseId).forEach(function(x){ n++; if (x.classList.contains('done')) d++; });
+    return { n: n, d: d };
+  }
+
+  function refresh(){
+    var done = 0;
+    steps.forEach(function(s){ if (s.classList.contains('done')) done++; });
+    var pct = steps.length ? Math.round(done / steps.length * 100) : 0;
+    fill.style.width = pct + '%';
+    ptxt.textContent = done + ' / ' + steps.length;
+
+    document.querySelectorAll('[data-pct]').forEach(function(el){
+      var t = tally(el.dataset.pct);
+      el.textContent = t.n ? t.d + ' / ' + t.n : '';
+    });
+
+    document.querySelectorAll('#toc a').forEach(function(a){
+      var id = (a.getAttribute('href') || '').slice(1);
+      var nav = a.querySelector('i');
+      var t = tally(id);
+      if (!t.n) return;                       // 附录没有步骤，不动它
+      if (t.d === t.n) { a.classList.add('ful'); nav.textContent = '✓'; }
+      else { a.classList.remove('ful'); nav.textContent = id.slice(1); }
+    });
+
+    try { localStorage.setItem(LS_DONE, JSON.stringify(saved)); } catch(e){}
+  }
+
+  steps.forEach(function(s){
+    var id = s.dataset.id;
+    var cb = s.querySelector('.step-head input');
+    if (saved[id]) { cb.checked = true; s.classList.add('done'); } else { s.classList.add('open'); }
+
+    s.querySelector('.step-head').addEventListener('click', function(ev){
+      if (ev.target === cb) return;
+      s.classList.toggle('open');
+    });
+    cb.addEventListener('change', function(){
+      s.classList.toggle('done', cb.checked);
+      if (cb.checked) { saved[id] = 1; } else { delete saved[id]; }
+      refresh();
+    });
+  });
+
+  /* ───────────── 5. 顶部按钮 ───────────── */
+  var allBtn = document.getElementById('allBtn');
+  var expanded = true;                       // 初始全部展开，与按钮文案保持一致
+  allBtn.textContent = '收起全部';
+  allBtn.addEventListener('click', function(){
+    expanded = !expanded;
+    steps.forEach(function(s){
+      if (expanded) s.classList.add('open');
+      else if (!s.classList.contains('done')) s.classList.remove('open');
+    });
+    allBtn.textContent = expanded ? '收起全部' : '展开全部';
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', function(){
+    saved = {};
+    steps.forEach(function(s){
+      s.classList.remove('done');
+      s.querySelector('.step-head input').checked = false;
+      s.classList.add('open');
+    });
+    expanded = true;
+    allBtn.textContent = '收起全部';
+    refresh();
+  });
+
+  /* ───────────── 6. 目录高亮当前阶段 ───────────── */
+  if ('IntersectionObserver' in window) {
+    var links = {};
+    document.querySelectorAll('#toc a').forEach(function(a){
+      links[(a.getAttribute('href') || '').slice(1)] = a;
+    });
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if (en.isIntersecting) {
+          Object.keys(links).forEach(function(k){ links[k].classList.remove('on'); });
+          var a = links[en.target.id];
+          if (a) a.classList.add('on');
+        }
+      });
+    }, { rootMargin: '-90px 0px -70% 0px', threshold: 0 });
+    document.querySelectorAll('h2[id]').forEach(function(h){ io.observe(h); });
+  }
+
+  /* ───────────── 7. 初始化 ───────────── */
+
+  /* 顶部统计由脚本算出来，不写死。
+     写死的话一旦加一步、删一步就对不上了（这份文档就曾经写死过一组
+     已经过时的数字），所以改成从 DOM 现算，永远和正文一致。 */
+  (function statLine(){
+    var el = document.getElementById('statLine');
+    if (!el) return;
+    var phaseN = document.querySelectorAll('h2[id^="p"]').length;
+    var stepN = steps.length;
+    var mins = 0;
+    document.querySelectorAll('.step-time').forEach(function(t){
+      var m = /(\d+)/.exec(t.textContent);
+      if (m) mins += parseInt(m[1], 10);
+    });
+    var hours = mins / 60;
+    // 5.03 → "约 5 小时"；5.6 → "约 5.5 小时"
+    var hstr = (Math.round(hours * 2) / 2).toString().replace(/\.0$/, '');
+    el.textContent = phaseN + ' 阶段 / ' + stepN + ' 步 · 约 ' + hstr + ' 小时';
+  })();
+
+  try {
+    var nm = JSON.parse(localStorage.getItem(LS_NAME) || '{}') || {};
+    if (nm.app) inApp.value = nm.app;
+    if (nm.org) inOrg.value = nm.org;
+  } catch(e){}
+
+  inApp.addEventListener('input', function(){
+    renderCode();
+    try { localStorage.setItem(LS_NAME, JSON.stringify({ app: inApp.value, org: inOrg.value })); } catch(e){}
+  });
+  inOrg.addEventListener('input', function(){
+    renderCode();
+    try { localStorage.setItem(LS_NAME, JSON.stringify({ app: inApp.value, org: inOrg.value })); } catch(e){}
+  });
+
+  renderCode();
+  refresh();
+})();
+</script>
+</body>
+</html>

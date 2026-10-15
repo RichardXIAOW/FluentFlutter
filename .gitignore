@@ -1,0 +1,18 @@
+node_modules/
+.next/
+out/
+build/
+.env*.local
+.vercel
+*.tsbuildinfo
+tsconfig.tsbuildinfo
+next-env.d.ts
+.DS_Store
+npm-debug.log*
+
+# 开发期临时产物（巡检脚本保留）
+_work/_*.html
+
+# 手册改造过程中的本地备份（仅作回滚用，不入库）
+public/handbook/index.html.*-backup
+public/handbook/index.html.pre-*
