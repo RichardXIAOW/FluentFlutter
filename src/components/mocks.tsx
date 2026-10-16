@@ -48,9 +48,10 @@ export const mocks: Record<string, () => ReactNode> = {
     </MockFrame>
   ),
   'outlined-button': () => (
+    // 与首个示例代码一致：Row[OutlinedButton('取消'), FilledButton('保存')]
     <MockFrame className="gap-2.5">
       <Btn kind="outlined">取消</Btn>
-      <Btn kind="outlined">查看详情</Btn>
+      <Btn kind="filled">保存</Btn>
     </MockFrame>
   ),
   'text-button': () => (
@@ -157,15 +158,14 @@ export const mocks: Record<string, () => ReactNode> = {
     <MockFrame className="w-full max-w-[300px]">
       <div className="flex w-full items-center gap-2 rounded-lg border border-dashed border-brand-300 p-2">
         {[
-          ['A', 'flex-1', '#dceafb', '#1e4e84'],
-          ['B', 'w-14', '#e2f2e4', '#3d7a4a'],
-          ['C', 'w-20', '#fae6e5', '#b0524c'],
-        ].map(([t, w, bg, c]) => (
+          ['A', 'flex-1', 'bg-brand-100 text-brand-800'],
+          ['B', 'w-14', 'bg-ok/20 text-ok'],
+          ['C', 'w-20', 'bg-danger/15 text-danger'],
+        ].map(([t, w, cls]) => (
           <button
             key={t}
             type="button"
-            className={`flex h-8 items-center justify-center rounded text-[13px] transition active:scale-95 ${w}`}
-            style={{ backgroundColor: bg, color: c }}
+            className={`flex h-8 items-center justify-center rounded text-[13px] transition active:scale-95 ${w} ${cls}`}
           >
             {t}
           </button>
@@ -177,15 +177,14 @@ export const mocks: Record<string, () => ReactNode> = {
     <MockFrame className="w-full max-w-[180px]">
       <div className="flex w-full flex-col items-stretch gap-2 rounded-lg border border-dashed border-brand-300 p-2">
         {[
-          ['子项 1', '#dceafb', '#1e4e84'],
-          ['子项 2', '#e2f2e4', '#3d7a4a'],
-          ['子项 3', '#fae6e5', '#b0524c'],
-        ].map(([t, bg, c]) => (
+          ['子项 1', 'bg-brand-100 text-brand-800'],
+          ['子项 2', 'bg-ok/20 text-ok'],
+          ['子项 3', 'bg-danger/15 text-danger'],
+        ].map(([t, cls]) => (
           <button
             key={t}
             type="button"
-            className="flex h-7 items-center justify-center rounded text-[13px] transition active:scale-95"
-            style={{ backgroundColor: bg, color: c }}
+            className={`flex h-7 items-center justify-center rounded text-[13px] transition active:scale-95 ${cls}`}
           >
             {t}
           </button>
@@ -749,13 +748,13 @@ export const mocks: Record<string, () => ReactNode> = {
   theme: () => (
     <MockFrame className="gap-3">
       {[
-        ['#409eff', 'seed'],
-        ['#67c23a', 'ok'],
-        ['#e6a23c', 'warn'],
-        ['#f56c6c', 'danger'],
-      ].map(([c, t]) => (
+        ['bg-solid', 'primary'],
+        ['bg-ok', 'ok'],
+        ['bg-warn', 'warn'],
+        ['bg-danger', 'danger'],
+      ].map(([cls, t]) => (
         <button key={t} type="button" className="flex flex-col items-center gap-1 transition active:scale-90">
-          <span className="h-9 w-9 rounded-full" style={{ backgroundColor: c }} />
+          <span className={`h-9 w-9 rounded-full ${cls}`} />
           <span className="text-[12px] text-ink-500">{t}</span>
         </button>
       ))}

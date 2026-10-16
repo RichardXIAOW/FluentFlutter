@@ -200,20 +200,20 @@ ScaffoldMessenger(
       // 一份种子色生成两套方案，保证亮/暗模式色相一致
       theme: ThemeData(
         useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF409EFF)),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF0E7490)),
         appBarTheme: const AppBarTheme(centerTitle: true),
         cardTheme: CardTheme(
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
-            side: const BorderSide(color: Color(0xFFE4E7ED)),
+            side: const BorderSide(color: Color(0xFFE2E8F0)),
           ),
         ),
       ),
       darkTheme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF409EFF),
+          seedColor: const Color(0xFF0E7490),
           brightness: Brightness.dark,
         ),
       ),

@@ -11,7 +11,7 @@ import CodeBlock from './CodeBlock';
  * 首屏会变成十几 MB，SEO 也拿不到内容。
  *
  * 复刻的忠实度按 Material 3 的默认规格来：
- *   FilledButton 高 40、内边距水平 24、圆角 20（药丸形）、主色 #409EFF
+ *   FilledButton 高 40、内边距水平 24、圆角 20（药丸形）、主色 #0E7490
  *   Card 圆角 12、elevation 1 的阴影
  *   列表项高 72（双行）、左图标 24、右箭头 24
  */

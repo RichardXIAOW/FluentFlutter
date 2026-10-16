@@ -550,7 +550,7 @@ export function StepperI({ steps }: { steps: string[] }) {
 }
 
 /** SnackBar（点「撤销」会消失） */
-export function SnackBarI() {
+export function SnackBarI({ label = '已加入购物车' }: { label?: string }) {
   const [gone, setGone] = useState(false);
   if (gone) {
     return (
@@ -565,7 +565,7 @@ export function SnackBarI() {
   }
   return (
     <div className="flex w-full items-center gap-3 rounded-lg bg-[#2c3038] px-4 py-3 shadow-pop anim-in">
-      <span className="text-[14.5px] text-white">已加入购物车</span>
+      <span className="text-[14.5px] text-white">{label}</span>
       <button
         type="button"
         onClick={() => setGone(true)}
@@ -586,6 +586,7 @@ export function DialogI({
   okDanger = false,
   withInput = false,
   onlyOk = false,
+  placeholder = '请输入备注内容…',
 }: {
   title: string;
   body: string;
@@ -594,6 +595,7 @@ export function DialogI({
   okDanger?: boolean;
   withInput?: boolean;
   onlyOk?: boolean;
+  placeholder?: string;
 }) {
   const [gone, setGone] = useState(false);
   if (gone) {
@@ -613,7 +615,7 @@ export function DialogI({
       {withInput ? (
         <div className="mt-3 rounded-lg border border-ink-200 px-3 py-2">
           <input
-            placeholder="请输入备注内容…"
+            placeholder={placeholder}
             className="w-full bg-transparent text-[14.5px] text-ink-900 outline-none placeholder:text-ink-400"
           />
         </div>

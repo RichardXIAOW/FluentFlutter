@@ -825,13 +825,13 @@ class _AgreementCheckboxState extends State<AgreementCheckbox> {
                   const TextSpan(text: '我已阅读并同意 '),
                   TextSpan(
                     text: '《用户协议》',
-                    style: const TextStyle(color: Color(0xFF409EFF)),
+                    style: const TextStyle(color: Color(0xFF0E7490)),
                     recognizer: _agreementTap,
                   ),
                   const TextSpan(text: ' 与 '),
                   TextSpan(
                     text: '《隐私政策》',
-                    style: const TextStyle(color: Color(0xFF409EFF)),
+                    style: const TextStyle(color: Color(0xFF0E7490)),
                     recognizer: TapGestureRecognizer()
                       ..onTap = () => Navigator.pushNamed(context, '/privacy'),
                   ),

@@ -12,10 +12,34 @@ const DIR = path.join(__dirname, '..', 'src', 'data', 'components');
 const MOCKS = path.join(__dirname, '..', 'src', 'components', 'demo-mocks.tsx');
 
 // ── 1. 收集真实 (slug, 标题) ──
+/* 关键：先把模板字符串整段遮蔽成 \u0000，再去找 title: '...'。
+ * 否则 Dart 代码里的 MaterialApp(title: 'PulseShop') 会被误当成示例标题 ——
+ * 既凭空多出一个「示例」，又让注册表里对应的孤儿键看起来是合法的。 */
+function maskTemplates(s) {
+  let out = '';
+  let i = 0;
+  while (i < s.length) {
+    if (s[i] === '`') {
+      let j = i + 1;
+      while (j < s.length) {
+        if (s[j] === '\\') { j += 2; continue; }
+        if (s[j] === '`') break;
+        j++;
+      }
+      out += '`' + '\u0000'.repeat(Math.max(0, j - i - 1)) + '`';
+      i = j + 1;
+    } else {
+      out += s[i];
+      i++;
+    }
+  }
+  return out;
+}
+
 const perComp = {};
 for (const f of fs.readdirSync(DIR)) {
   if (!f.endsWith('.ts')) continue;
-  const src = fs.readFileSync(path.join(DIR, f), 'utf8');
+  const src = maskTemplates(fs.readFileSync(path.join(DIR, f), 'utf8'));
   const marks = [];
   const re = /slug:\s*'([^']+)'/g;
   let m;

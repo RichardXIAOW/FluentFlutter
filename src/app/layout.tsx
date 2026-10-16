@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     template: '%s · FluentFlutter',
   },
   description:
-    'Flutter 中文学习站：Dart 语言讲解、Flutter 框架与组件封装、67 个 Material 组件手册（135 个可交互图形示例）、从零搭建项目的工程化指南。一条线从入门走到能独立交付。',
+    'Flutter 中文学习站：Dart 语言讲解、Flutter 框架与组件封装、67 个 Material 组件手册（134 个可交互图形示例）、从零搭建项目的工程化指南。一条线从入门走到能独立交付。',
   keywords: [
     'Flutter',
     'Flutter 教程',
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'FluentFlutter · Flutter 从入门到工程化',
     description:
-      'Dart → Flutter 框架 → 组件手册 → 工程化 → 实战。67 个 Material 组件、135 个图形示例，附从零搭建项目的完整指南。',
+      'Dart → Flutter 框架 → 组件手册 → 工程化 → 实战。67 个 Material 组件、134 个图形示例，附从零搭建项目的完整指南。',
     type: 'website',
     siteName: 'FluentFlutter',
   },
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  themeColor: '#409eff',
+  themeColor: '#0e7490',
 };
 
 /** 首屏防闪烁：在浏览器绘制前就把主题 class 打到 <html> 上。

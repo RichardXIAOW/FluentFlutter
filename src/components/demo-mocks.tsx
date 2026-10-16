@@ -110,22 +110,25 @@ function StepsRow({ steps, cur }: { steps: string[]; cur: number }) {
 
 /** IndexedStack：切页保留各自状态 */
 function IndexedStackDemo() {
+  // 与代码一一对应：4 个 tab（首页/分类/购物车/我的），IndexedStack 让每个页面的 State 都保留
+  const tabs = ['首页', '分类', '购物车', '我的'];
   const [idx, setIdx] = useState(0);
-  const [countA, setCountA] = useState(3);
-  const [countB, setCountB] = useState(0);
+  const [counts, setCounts] = useState([3, 0, 1, 0]);
+  const bump = () =>
+    setCounts((c) => c.map((v, i) => (i === idx ? v + 1 : v)));
   return (
     <Frame className="w-full max-w-[300px] p-4">
       <div className="w-full rounded-xl border border-dashed border-brand-300 p-2.5">
         <div className="flex h-11 items-center justify-center rounded-lg bg-brand-50 text-[13.5px] font-medium text-brand-700">
-          {idx === 0 ? `页 A · 计数 ${countA}` : `页 B · 计数 ${countB}`}
+          {tabs[idx]} · 计数 {counts[idx]}
         </div>
-        <div className="mt-2 flex items-center gap-1.5">
-          {['首页', '购物车'].map((t, i) => (
+        <div className="mt-2 flex items-center gap-1">
+          {tabs.map((t, i) => (
             <button
               key={t}
               type="button"
               onClick={() => setIdx(i)}
-              className={`rounded px-2 py-1 text-[12.5px] transition ${
+              className={`flex-1 rounded px-1 py-1 text-[12px] transition ${
                 idx === i ? 'bg-solid text-white' : 'bg-ink-50 text-ink-500'
               }`}
             >
@@ -135,14 +138,14 @@ function IndexedStackDemo() {
           <span className="mx-0.5 h-4 w-px bg-ink-200" />
           <button
             type="button"
-            onClick={() => (idx === 0 ? setCountA((v) => v + 1) : setCountB((v) => v + 1))}
+            onClick={bump}
             className="rounded bg-ink-100 px-2 py-1 text-[12.5px] text-ink-700 active:scale-95"
           >
             当前页 +1
           </button>
         </div>
         <p className="mt-1.5 text-[11.5px] leading-snug text-ink-400">
-          在页 A 加几次 → 切到页 B → 再切回 A，数字不会归零。
+          在「首页」加几次 → 切到「我的」→ 再切回来，数字不会归零。
         </p>
       </div>
     </Frame>
@@ -255,20 +258,18 @@ export const demoMocks: Record<string, () => ReactNode> = {
   ),
 
   'outlined-button::成组出现的次要操作': () => (
+    // 与代码一一对应：Row(mainAxisAlignment: end) + OutlinedButton('取消') + FilledButton('保存')
     <Frame className="p-4">
       <div className="w-full max-w-[300px] rounded-xl bg-surface p-3 shadow-card ring-1 ring-ink-100">
         <p className="mb-2.5 text-[13px] text-ink-500">
-          成组时用描边区分层级，主操作仍然用实心
+          取消用描边降低层级，主操作仍然用实心
         </p>
-        <div className="flex flex-wrap justify-end gap-2">
+        <div className="flex justify-end gap-3">
           <span className="inline-flex h-9 items-center rounded-[18px] border border-ink-300 px-4 text-[14.5px] font-medium text-brand-600">
             取消
           </span>
-          <span className="inline-flex h-9 items-center rounded-[18px] border border-brand-500 px-4 text-[14.5px] font-medium text-brand-600">
-            查看详情
-          </span>
-          <span className="inline-flex h-9 items-center rounded-[18px] border border-danger px-4 text-[14.5px] font-medium text-danger">
-            删除
+          <span className="inline-flex h-9 items-center rounded-[18px] bg-solid px-4 text-[14.5px] font-medium text-white">
+            保存
           </span>
         </div>
       </div>
@@ -952,32 +953,54 @@ export const demoMocks: Record<string, () => ReactNode> = {
   ),
 
   'spacer::Row 两端对齐 / Column 底部顶住': () => (
-    <Frame className="w-full max-w-[290px] flex-col gap-2.5 p-4">
+    // 与代码一一对应：① 收货地址 + 修改 ② 图标+地址 + 复制（只让后两个靠右） ③ Column 里按钮吸底（保存）
+    <Frame className="w-full max-w-[300px] flex-col gap-2.5 p-4">
       <div>
         <span className="mb-1 block text-[11px] text-ink-400">Row + Spacer → 左右两端</span>
         <div className="flex w-full items-center rounded border border-dashed border-brand-200 bg-brand-50/40 px-2 py-1.5">
-          <span className="text-[13px] text-ink-700">标题</span>
+          <span className="text-[13px] text-ink-700">收货地址</span>
           <span className="mx-1 flex-1 border-t border-dotted border-brand-400" />
-          <span className="text-[13px] text-brand-600">更多</span>
+          <span className="text-[13px] text-brand-600">修改</span>
+        </div>
+      </div>
+      <div>
+        <span className="mb-1 block text-[11px] text-ink-400">
+          三个元素只让后两个靠右 —— spaceBetween 做不到
+        </span>
+        <div className="flex w-full items-center rounded border border-dashed border-brand-200 bg-brand-50/40 px-2 py-1.5">
+          <span className="text-[13px] text-ink-700">📍 广州市天河区</span>
+          <span className="mx-1 flex-1 border-t border-dotted border-brand-400" />
+          <span className="text-[13px] text-brand-600">复制</span>
         </div>
       </div>
       <div>
         <span className="mb-1 block text-[11px] text-ink-400">Column + Spacer → 按钮顶到底部</span>
         <div className="flex h-[65px] flex-col rounded border border-dashed border-ok/50 bg-ok/5 p-1.5">
-          <span className="text-[12.5px] text-ink-600">正文内容</span>
+          <span className="text-[12.5px] text-ink-600">AddressForm 表单内容</span>
           <span className="flex-1" />
-          <span className="rounded bg-solid py-1 text-center text-[12px] text-white">
-            底部按钮
-          </span>
+          <span className="rounded bg-solid py-1 text-center text-[12px] text-white">保存</span>
         </div>
       </div>
     </Frame>
   ),
 
   'flexible::Expanded 与 Flexible 的实际差别': () => (
+    // 与代码一一对应：① Flexible(fit: loose) 内容多短占多短 ② Expanded 撑满剩余 ③ flex 2:1
     <Frame className="w-full flex-col gap-2.5 p-4">
       <div>
-        <span className="mb-1 block font-mono text-[11px] text-ink-400">Expanded(flex: 1)</span>
+        <span className="mb-1 block font-mono text-[11px] text-ink-400">
+          Flexible(fit: loose) · 文字短，容器就短
+        </span>
+        <div className="flex w-full gap-1.5">
+          <Box className="h-7 w-10 shrink-0 bg-ink-100 !text-ink-500">固定</Box>
+          <Box className="h-7 w-[56px] bg-ok/25 !text-ok">只占内容</Box>
+          <Box className="h-7 flex-1 bg-ink-50 !text-ink-400">留白</Box>
+        </div>
+      </div>
+      <div>
+        <span className="mb-1 block font-mono text-[11px] text-ink-400">
+          Expanded · 永远撑满剩余宽度
+        </span>
         <div className="flex w-full gap-1.5">
           <Box className="h-7 w-10 shrink-0 bg-ink-100 !text-ink-500">固定</Box>
           <Box className="h-7 flex-1 bg-solid !text-white">撑满剩余</Box>
@@ -985,12 +1008,11 @@ export const demoMocks: Record<string, () => ReactNode> = {
       </div>
       <div>
         <span className="mb-1 block font-mono text-[11px] text-ink-400">
-          Flexible(fit: loose)
+          Expanded(flex: 2) + Expanded(flex: 1) · 按 2:1 分
         </span>
         <div className="flex w-full gap-1.5">
-          <Box className="h-7 w-10 shrink-0 bg-ink-100 !text-ink-500">固定</Box>
-          <Box className="h-7 w-[56px] bg-ok/25 !text-ok">只占内容</Box>
-          <Box className="h-7 flex-1 bg-ink-50 !text-ink-400">剩余</Box>
+          <Box className="h-7 flex-[2] bg-solid !text-white">2 份</Box>
+          <Box className="h-7 flex-1 bg-ok/25 !text-ok">1 份</Box>
         </div>
       </div>
     </Frame>
@@ -1148,6 +1170,15 @@ export const demoMocks: Record<string, () => ReactNode> = {
       <span className="mt-1.5 block text-center font-mono text-[11px] text-ink-400">
         取值范围 -1 ~ 1
       </span>
+      {/* 与代码一一对应：用法 1 —— 160 高的横幅里 Alignment.bottomLeft 放「限时 5 折」 */}
+      <div className="relative mt-1 h-[64px] w-full overflow-hidden rounded-lg bg-gradient-to-br from-ink-400 to-ink-600">
+        <span className="absolute bottom-2 left-3 text-[15px] font-medium text-white">
+          限时 5 折
+        </span>
+        <span className="absolute right-2 top-1.5 font-mono text-[10px] text-white/70">
+          Alignment.bottomLeft
+        </span>
+      </div>
     </Frame>
   ),
 
@@ -1177,7 +1208,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
           </svg>
         </span>
         <span className="absolute bottom-2 left-2 text-[11px] text-ink-400">
-          按钮别影响 Stack 尺寸
+          offset &gt; 400 才出现 · 隐藏时 IgnorePointer 不吞点击
         </span>
       </div>
     </Frame>
@@ -1390,31 +1421,27 @@ export const demoMocks: Record<string, () => ReactNode> = {
   ),
 
   'checkbox::带文字的复选框：用 CheckboxListTile': () => (
+    // 与代码一一对应：CheckboxListTile「我已阅读并同意《用户协议》」（框在左）+ 未勾选时禁用的「注册」
     <Frame className="w-full max-w-[270px]">
-      <div className="w-full overflow-hidden rounded-xl bg-surface shadow-card ring-1 ring-ink-100">
-        {[
-          ['包邮', true],
-          ['七天无理由', false],
-        ].map(([t, on], i) => (
-          <div key={String(t)}>
-            {i > 0 && <div className="ml-3 h-px bg-ink-100" />}
-            <div className="flex items-center gap-3 px-3 py-2.5">
-              <span
-                className={`flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-[4px] ${
-                  on ? 'bg-solid text-white' : 'border-2 border-ink-300'
-                }`}
-              >
-                {on ? (
-                  <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round">
-                    <path d="m5 12.5 4.5 4.5L19 7.5" />
-                  </svg>
-                ) : null}
-              </span>
-              <span className="text-[14px] text-ink-800">{t}</span>
-              <span className="ml-auto text-[11px] text-ink-400">整行可点</span>
-            </div>
-          </div>
-        ))}
+      <div className="w-full overflow-hidden rounded-xl bg-surface p-3 shadow-card ring-1 ring-ink-100">
+        <div className="flex items-center gap-3">
+          <span className="flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-[4px] bg-solid text-white">
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round">
+              <path d="m5 12.5 4.5 4.5L19 7.5" />
+            </svg>
+          </span>
+          <span className="text-[14px] text-ink-800">
+            我已阅读并同意<span className="text-brand-600">《用户协议》</span>
+          </span>
+        </div>
+        <div className="mt-3 flex items-center gap-2">
+          <span className="inline-flex h-9 flex-1 items-center justify-center rounded-[18px] bg-solid text-[14px] font-medium text-white">
+            注册
+          </span>
+        </div>
+        <span className="mt-1.5 block text-center text-[11px] text-ink-400">
+          不勾选时「注册」是灰的（onPressed: null）
+        </span>
       </div>
     </Frame>
   ),
@@ -1426,13 +1453,14 @@ export const demoMocks: Record<string, () => ReactNode> = {
             <span className="h-0.5 w-2.5 rounded bg-surface" />
           </span>
           <span className="text-[14px] font-medium text-ink-900">全选</span>
-          <span className="ml-auto text-[11.5px] text-ink-400">已选 2/3</span>
+          <span className="ml-auto text-[11.5px] text-ink-400">已选 2/4</span>
         </div>
         <div className="mt-2 space-y-2">
           {[
-            ['Apple', true],
-            ['Xiaomi', true],
-            ['Huawei', false],
+            ['手机', true],
+            ['电脑', true],
+            ['平板', false],
+            ['耳机', false],
           ].map(([t, on]) => (
             <div key={String(t)} className="flex items-center gap-2.5">
               <span
@@ -1613,12 +1641,14 @@ export const demoMocks: Record<string, () => ReactNode> = {
   /* ═══════════════ 选择 ═══════════════ */
 
   'radio::一组单选（用 RadioListTile，整行可点）': () => (
+    // 与代码一一对应：三个 RadioListTile（微信支付 / 支付宝 / 银行卡），_pay 默认 'wechat'
     <Frame className="w-full max-w-[280px]">
       <div className="w-full overflow-hidden rounded-xl bg-surface shadow-card ring-1 ring-ink-100">
         {[
-          ['标准配送（3-5 天）', true],
-          ['次日达（+¥12）', false],
-        ].map(([t, on], i) => (
+          ['微信支付', true, 'M4 8h16v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8Zm4-3 1.5-2h5L16 5'],
+          ['支付宝', false, 'M6 4h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Zm3 5h5m-5 3h8'],
+          ['银行卡', false, 'M3 7h18v10H3V7Zm0 4h18'],
+        ].map(([t, on, d], i) => (
           <div key={String(t)}>
             {i > 0 && <div className="ml-3 h-px bg-ink-100" />}
             <div className="flex items-center gap-3 px-3 py-2.5">
@@ -1630,7 +1660,19 @@ export const demoMocks: Record<string, () => ReactNode> = {
                 {on ? <span className="h-2 w-2 rounded-full bg-brand-500" /> : null}
               </span>
               <span className="text-[14px] text-ink-800">{t}</span>
-              <span className="ml-auto text-[11px] text-ink-400">整行可点</span>
+              <svg
+                viewBox="0 0 24 24"
+                width="16"
+                height="16"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="ml-auto text-ink-400"
+              >
+                <path d={String(d)} />
+              </svg>
             </div>
           </div>
         ))}
@@ -1638,55 +1680,87 @@ export const demoMocks: Record<string, () => ReactNode> = {
     </Frame>
   ),
   'radio::选项少的时候用 Chip 更省空间': () => (
-    <Frame className="flex-wrap gap-2.5">
-      <span className="rounded-full bg-solid px-4 py-1.5 text-[14px] font-medium text-white">
-        一个月
-      </span>
-      <span className="rounded-full bg-ink-50 px-4 py-1.5 text-[14px] text-ink-600 ring-1 ring-ink-200">
-        三个月
-      </span>
-      <span className="rounded-full bg-ink-50 px-4 py-1.5 text-[14px] text-ink-600 ring-1 ring-ink-200">
-        一年
-      </span>
+    // 与代码一一对应：Wrap + ChoiceChip('S'|'M'|'L'|'XL')，_size 默认 'M'
+    <Frame className="flex-wrap gap-2">
+      {['S', 'M', 'L', 'XL'].map((s) => {
+        const on = s === 'M';
+        return (
+          <span
+            key={s}
+            className={`inline-flex items-center gap-1 rounded-lg px-3.5 py-1.5 text-[14px] ${
+              on
+                ? 'bg-solid font-medium text-white'
+                : 'bg-ink-50 text-ink-600 ring-1 ring-ink-200'
+            }`}
+          >
+            {on ? (
+              <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
+                <path d="m5 12.5 4.5 4.5L19 7.5" />
+              </svg>
+            ) : null}
+            {s}
+          </span>
+        );
+      })}
     </Frame>
   ),
 
   'chip::四个变体对照': () => (
-    <Frame className="w-full max-w-[320px] flex-wrap gap-2 p-4">
-      {[
-        ['assist', 'bg-surface ring-1 ring-ink-300 text-ink-700', '→'],
-        ['filter', 'bg-brand-50 ring-1 ring-brand-300 text-brand-700', '✓'],
-        ['input', 'bg-ink-50 ring-1 ring-ink-200 text-ink-700', '×'],
-        ['suggestion', 'bg-surface ring-1 ring-ink-200 text-ink-600', '＋'],
-      ].map(([t, cls, ic]) => (
-        <span
-          key={t}
-          className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[13px] ${cls}`}
-        >
-          <span className="opacity-70">{ic}</span>
-          {t}
-        </span>
-      ))}
+    // 与代码一一对应：① Chip（数码 / 新品 / 已选条件+删除） ② FilterChip（包邮，选中）
+    // ③ ChoiceChip（M，选中） ④ ActionChip（下载）
+    <Frame className="w-full max-w-[340px] flex-wrap gap-2 p-4">
+      {/* ① 纯展示 */}
+      <span className="inline-flex items-center rounded-lg bg-surface px-3 py-1.5 text-[13px] text-ink-700 ring-1 ring-ink-300">
+        数码
+      </span>
+      <span className="inline-flex items-center gap-1.5 rounded-lg bg-surface px-3 py-1.5 text-[13px] text-ink-700 ring-1 ring-ink-300">
+        <span className="opacity-70">#</span>新品
+      </span>
+      <span className="inline-flex items-center gap-1.5 rounded-lg bg-surface px-3 py-1.5 text-[13px] text-ink-700 ring-1 ring-ink-300">
+        已选条件
+        <span className="opacity-60">×</span>
+      </span>
+      {/* ② 筛选（可多选，selected: true） */}
+      <span className="inline-flex items-center gap-1 rounded-lg bg-brand-50 px-3 py-1.5 text-[13px] text-brand-700 ring-1 ring-brand-300">
+        <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
+          <path d="m5 12.5 4.5 4.5L19 7.5" />
+        </svg>
+        包邮
+      </span>
+      {/* ③ 单选（selected: true） */}
+      <span className="inline-flex items-center gap-1 rounded-lg bg-brand-50 px-3 py-1.5 text-[13px] text-brand-700 ring-1 ring-brand-300">
+        <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
+          <path d="m5 12.5 4.5 4.5L19 7.5" />
+        </svg>
+        M
+      </span>
+      {/* ④ 触发动作 */}
+      <span className="inline-flex items-center gap-1.5 rounded-lg bg-surface px-3 py-1.5 text-[13px] text-ink-600 ring-1 ring-ink-200">
+        <span className="opacity-70">⬇</span>下载
+      </span>
     </Frame>
   ),
   'chip::状态标签（订单状态这类）': () => (
-    <Frame className="w-full max-w-[310px] flex-col gap-2 p-4">
-      {[
-        ['待付款', 'bg-warn/15 text-warn', '#20261016'],
-        ['已发货', 'bg-brand-50 text-brand-700', '#20261015'],
-        ['已完成', 'bg-ok/15 text-ok', '#20261014'],
-        ['已取消', 'bg-ink-100 text-ink-500', '#20261013'],
-      ].map(([t, cls, no]) => (
-        <div key={t} className="flex items-center gap-3">
-          <span className="font-mono text-[12px] text-ink-500">{no}</span>
-          <span className={`ml-auto rounded px-2 py-0.5 text-[12.5px] font-medium ${cls}`}>{t}</span>
-        </div>
-      ))}
+    // 与代码一一对应：statusChip('已完成')(绿) / statusChip('进行中')(蓝) / statusChip('已取消')(灰)
+    <Frame className="w-full max-w-[280px] flex-wrap gap-2 p-4">
+      <span className="rounded bg-[#e8f5e9] px-2.5 py-1 text-[12.5px] font-medium text-[#2e7d32]">
+        已完成
+      </span>
+      <span className="rounded bg-[#e3f2fd] px-2.5 py-1 text-[12.5px] font-medium text-[#1565c0]">
+        进行中
+      </span>
+      <span className="rounded bg-ink-100 px-2.5 py-1 text-[12.5px] font-medium text-ink-500">
+        已取消
+      </span>
+      <span className="w-full font-mono text-[10.5px] text-ink-400">
+        兜底分支 → 橙色（未知状态）
+      </span>
     </Frame>
   ),
 
   'filter-chip::多条件筛选（带「重置」）': () => (
-    <Frame className="w-full max-w-[290px] flex-col gap-2 p-4">
+    // 与代码一一对应：_options 前 4 项；_selected = {包邮, 现货}；提示「已选：包邮 · 现货」
+    <Frame className="w-full max-w-[300px] flex-col gap-2 p-4">
       <div className="flex flex-wrap gap-1.5">
         {['包邮', '现货'].map((t) => (
           <span key={t} className="flex items-center gap-1 rounded-lg bg-solid px-2.5 py-1 text-[13px] text-white">
@@ -1696,12 +1770,14 @@ export const demoMocks: Record<string, () => ReactNode> = {
             {t}
           </span>
         ))}
-        <span className="rounded-lg bg-ink-50 px-2.5 py-1 text-[13px] text-ink-600 ring-1 ring-ink-200">
-          七天无理由
-        </span>
+        {['7天退换', '品牌店', '分期免息'].map((t) => (
+          <span key={t} className="rounded-lg bg-ink-50 px-2.5 py-1 text-[13px] text-ink-600 ring-1 ring-ink-200">
+            {t}
+          </span>
+        ))}
       </div>
       <div className="flex items-center border-t border-ink-100 pt-2">
-        <span className="text-[12px] text-ink-400">已选 2 项</span>
+        <span className="text-[12px] text-ink-400">已选：包邮 · 现货</span>
         <span className="ml-auto rounded border border-ink-200 px-2 py-0.5 text-[12px] text-ink-600">
           重置
         </span>
@@ -1710,44 +1786,58 @@ export const demoMocks: Record<string, () => ReactNode> = {
   ),
 
   'segmented-button::视图切换（列表 / 网格）': () => (
+    // 与代码一一对应：_view = 'list' → 列表段选中；图标 view_list / grid_view；showSelectedIcon: false
     <Frame className="flex-col gap-3 p-4">
       <div className="flex overflow-hidden rounded-full border border-ink-300">
-        <span className="flex h-9 items-center gap-1.5 px-4 text-[14px] text-ink-600">
-          <MI d={P.menu} size={14} />
+        <span className="flex h-9 items-center gap-1.5 bg-brand-50 px-4 text-[14px] font-medium text-brand-600">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <path d="M4 6h16M4 12h16M4 18h10" />
+          </svg>
           列表
         </span>
-        <span className="flex h-9 items-center gap-1.5 border-l border-ink-300 bg-brand-50 px-4 text-[14px] font-medium text-brand-600">
-          <MI d={P.inbox} size={14} />
+        <span className="flex h-9 items-center gap-1.5 border-l border-ink-300 px-4 text-[14px] text-ink-600">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
+            <rect x="4" y="4" width="7" height="7" rx="1" />
+            <rect x="13" y="4" width="7" height="7" rx="1" />
+            <rect x="4" y="13" width="7" height="7" rx="1" />
+            <rect x="13" y="13" width="7" height="7" rx="1" />
+          </svg>
           网格
         </span>
       </div>
-      <span className="font-mono text-[11px] text-ink-400">selected: &#123;1&#125;</span>
+      <span className="font-mono text-[11px] text-ink-400">selected: &#123;list&#125;</span>
     </Frame>
   ),
   'segmented-button::时间范围（多选）': () => (
+    // 与代码一一对应：三段 周一/周三/周五；multiSelectionEnabled；默认勾选 周一 + 周五
     <Frame className="flex-col gap-3 p-4">
       <div className="flex overflow-hidden rounded-full border border-ink-300">
-        {['日', '周', '月'].map((t, i) => {
-          const on = i === 0 || i === 2;
-          return (
-            <span
-              key={t}
-              className={`flex h-9 items-center gap-1 px-4 text-[14px] ${
-                i > 0 ? 'border-l border-ink-300' : ''
-              } ${on ? 'bg-brand-50 font-medium text-brand-600' : 'text-ink-600'}`}
-            >
-              {on ? (
-                <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
-                  <path d="m5 12.5 4.5 4.5L19 7.5" />
-                </svg>
-              ) : null}
-              {t}
-            </span>
-          );
-        })}
+        {[
+          ['周一', 'mon', true],
+          ['周三', 'wed', false],
+          ['周五', 'fri', true],
+        ].map(([t, v, on], i) => (
+          <span
+            key={String(v)}
+            className={`flex h-9 items-center gap-1 px-4 text-[14px] ${
+              i > 0 ? 'border-l border-ink-300' : ''
+            } ${
+              on
+                ? 'bg-brand-50 font-medium text-brand-600'
+                : 'text-ink-600'
+            }`}
+          >
+            {on ? (
+              <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
+                <path d="m5 12.5 4.5 4.5L19 7.5" />
+              </svg>
+            ) : null}
+            {t}
+          </span>
+        ))}
       </div>
       <span className="font-mono text-[11px] text-ink-400">
-        multiSelectionEnabled · selected: &#123;0, 2&#125;
+        multiSelectionEnabled · selected: &#123;mon, fri&#125;
       </span>
     </Frame>
   ),
@@ -1781,16 +1871,20 @@ export const demoMocks: Record<string, () => ReactNode> = {
     </Frame>
   ),
   'list-view::带分隔线与自定义内边距': () => (
+    // 与代码一一对应：separatorBuilder 是 Divider(height: 1, indent: 72) —— 缩进 72 正好让过 leading 头像
     <Frame className="w-full max-w-[270px]">
-      <div className="w-full overflow-hidden rounded-xl bg-surface shadow-card ring-1 ring-ink-100">
+      <div className="w-full overflow-hidden rounded-xl bg-surface py-1 shadow-card ring-1 ring-ink-100">
         {[
           ['收货地址', '广东省深圳市'],
           ['支付方式', '微信支付'],
           ['发票信息', '电子发票'],
         ].map(([a, b], i) => (
           <div key={a}>
-            {i > 0 && <div className="ml-3 h-px bg-ink-100" />}
-            <div className="flex items-center px-3 py-2.5">
+            {i > 0 && <div className="ml-[72px] h-px bg-ink-200" />}
+            <div className="flex items-center gap-3 px-3 py-2.5">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-50 text-[12px] text-brand-700">
+                {a[0]}
+              </span>
               <span className="text-[14px] text-ink-800">{a}</span>
               <span className="ml-auto text-[13px] text-ink-500">{b}</span>
             </div>
@@ -1962,16 +2056,12 @@ export const demoMocks: Record<string, () => ReactNode> = {
     <Frame className="w-full max-w-[320px] p-4">
       <div className="w-full overflow-hidden rounded-lg bg-surface text-left text-[12px] shadow-card ring-1 ring-ink-100">
         <div className="flex bg-ink-50 text-ink-600">
-          <span className="flex flex-1 items-center gap-1 px-2 py-1.5 font-medium">
-            产品
-            <svg viewBox="0 0 24 24" width="9" height="9" fill="currentColor" className="text-brand-600">
-              <path d="M12 8.5 18.5 15h-13L12 8.5Z" />
-            </svg>
-          </span>
+          {/* 与代码一一对应：_sortIndex = 2（销售额）、_ascending = false → 箭头在销售额且向下 */}
+          <span className="flex flex-1 items-center px-2 py-1.5 font-medium">产品</span>
           <span className="w-14 px-2 py-1.5 font-medium">区域</span>
           <span className="flex w-20 items-center justify-end gap-1 px-2 py-1.5 font-medium">
             销售额
-            <svg viewBox="0 0 24 24" width="9" height="9" fill="currentColor" className="text-ink-400">
+            <svg viewBox="0 0 24 24" width="9" height="9" fill="currentColor" className="text-brand-600">
               <path d="M12 15.5 5.5 9h13L12 15.5Z" />
             </svg>
           </span>
@@ -2017,13 +2107,14 @@ export const demoMocks: Record<string, () => ReactNode> = {
 
   'stepper::下单流程 + 中文按钮 + 分步校验': () => (
     <Frame className="w-full max-w-[280px] flex-col gap-3 p-4">
-      <StepsRow steps={['收货人', '支付', '完成']} cur={1} />
+      {/* 与代码一一对应：steps 收货信息/配送方式/确认支付；末步按钮变「提交订单」 */}
+      <StepsRow steps={['收货信息', '配送方式', '确认支付']} cur={1} />
       <div className="flex gap-1.5">
         <span className="flex-1 rounded-full border border-ink-300 py-1 text-center text-[12px] text-ink-600">
           上一步
         </span>
-        <span className="flex-1 rounded-full bg-solid py-1 text-center text-[12px] text-white">
-          下一步
+        <span className="flex-[2] rounded-full bg-solid py-1 text-center text-[12px] text-white">
+          下一步（末步 → 提交订单）
         </span>
       </div>
       <span className="font-mono text-[10.5px] text-ink-400">
@@ -2050,22 +2141,20 @@ export const demoMocks: Record<string, () => ReactNode> = {
   ),
   'snack-bar::带「撤销」的操作（最典型的用法）': () => (
     <Frame className="w-full max-w-[300px] p-4">
-      <SnackBarI />
+      {/* 与代码一一对应：content「已删除」+ action「撤销」，点撤销后 5 秒内可恢复 */}
+      <SnackBarI label="已删除" />
     </Frame>
   ),
   'snack-bar::成功 / 失败用不同颜色': () => (
+    // 与代码一一对应：showToast(context, '保存成功') 深色底 / showToast(..., error: true) 用 scheme.error
     <Frame className="w-full max-w-[300px] flex-col gap-2 p-4">
-      <div className="flex w-full items-center gap-2 rounded-lg bg-ok px-3.5 py-2.5 shadow-pop">
-        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#fff" strokeWidth="2.6" strokeLinecap="round">
-          <path d="m5 12.5 4.5 4.5L19 7.5" />
-        </svg>
-        <span className="text-[13px] text-white">提交成功</span>
+      <div className="flex w-full items-center rounded-lg bg-[#2c3038] px-3.5 py-2.5 shadow-pop">
+        <span className="text-[13px] text-white">保存成功</span>
+        <span className="ml-auto font-mono text-[10px] text-white/50">Color(0xff2c3038)</span>
       </div>
-      <div className="flex w-full items-center gap-2 rounded-lg bg-danger px-3.5 py-2.5 shadow-pop">
-        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#fff" strokeWidth="2.6" strokeLinecap="round">
-          <path d="M6 6l12 12M18 6 6 18" />
-        </svg>
+      <div className="flex w-full items-center rounded-lg bg-danger px-3.5 py-2.5 shadow-pop">
         <span className="text-[13px] text-white">网络异常，请重试</span>
+        <span className="ml-auto font-mono text-[10px] text-white/60">scheme.error</span>
       </div>
     </Frame>
   ),
@@ -2088,26 +2177,38 @@ export const demoMocks: Record<string, () => ReactNode> = {
 
   'alert-dialog::确认对话框（标准写法）': () => (
     <Frame className="w-full max-w-[270px] p-4">
-      <DialogI title="删除这条记录？" body="删除后无法恢复，确定要继续吗？" okLabel="删除" okDanger />
+      {/* 与代码一一对应：title / content 原文 */}
+      <DialogI
+        title="删除这条记录？"
+        body="删除后无法恢复，该记录的所有附件也会一并删除。"
+        okLabel="删除"
+        okDanger
+      />
     </Frame>
   ),
   'alert-dialog::对话框里带输入框': () => (
     <Frame className="w-full max-w-[270px] p-4">
-      <DialogI title="添加备注" body="" okLabel="确定" withInput />
+      {/* 与代码一一对应：标题「新建文件夹」、hint「请输入名称」、按钮 取消 / 创建 */}
+      <DialogI title="新建文件夹" body="" okLabel="创建" withInput placeholder="请输入名称" />
     </Frame>
   ),
   'alert-dialog::用 SafeArea 包一下（小屏 / 横屏会溢出）': () => (
+    // 与代码一一对应：title「很长的一段说明」+ content 是 SingleChildScrollView（内容可滚）
     <Frame className="w-full max-w-[270px] p-4">
       <div className="relative w-full rounded-xl bg-ink-100 p-3">
         <span className="absolute -top-1.5 left-2 rounded bg-danger px-1 py-0.5 text-[10px] text-white">
           ⚠ 横屏高度不足
         </span>
         <div className="mt-1 rounded-lg bg-surface p-3 shadow-pop">
-          <p className="text-[14.5px] font-semibold text-ink-900">删除这条记录？</p>
-          <p className="mt-1 text-[12.5px] text-ink-600">删除后无法恢复。</p>
+          <p className="text-[14.5px] font-semibold text-ink-900">很长的一段说明</p>
+          <div className="mt-1 space-y-1">
+            <p className="text-[12.5px] text-ink-600">说明文字第 1 行…</p>
+            <p className="text-[12.5px] text-ink-600">说明文字第 2 行…</p>
+            <p className="text-[12.5px] text-ink-400">↓ 再往下就要滚动了（SingleChildScrollView）</p>
+          </div>
           <div className="mt-2.5 flex justify-end gap-1.5">
             <span className="px-2.5 py-1 text-[13px] text-brand-600">取消</span>
-            <span className="px-2.5 py-1 text-[13px] text-danger">删除</span>
+            <span className="px-2.5 py-1 text-[13px] text-brand-600">同意</span>
           </div>
         </div>
         <span className="mt-1.5 block text-center font-mono text-[10.5px] text-ok">
@@ -2148,24 +2249,25 @@ export const demoMocks: Record<string, () => ReactNode> = {
         <span className="text-[11.5px] text-ink-400">不确定（转圈）</span>
       </div>
       <div className="flex flex-col items-center gap-1.5">
-        <span className="relative flex h-9 w-9 items-center justify-center">
-          <svg viewBox="0 0 36 36" className="h-9 w-9 -rotate-90">
-            <circle cx="18" cy="18" r="15" fill="none" stroke="#dbeafe" strokeWidth="4" />
+        {/* 与代码一一对应：value: 0.65、strokeWidth: 6、backgroundColor: grey.shade200 */}
+        <span className="relative flex h-11 w-11 items-center justify-center">
+          <svg viewBox="0 0 36 36" className="h-11 w-11 -rotate-90">
+            <circle cx="18" cy="18" r="15" fill="none" className="stroke-ink-100" strokeWidth="6" />
             <circle
               cx="18"
               cy="18"
               r="15"
               fill="none"
-              stroke="#409eff"
-              strokeWidth="4"
+              className="stroke-solid"
+              strokeWidth="6"
               strokeDasharray="94.2"
-              strokeDashoffset="28"
+              strokeDashoffset="33"
               strokeLinecap="round"
             />
           </svg>
-          <span className="absolute text-[10.5px] font-medium text-ink-600">70%</span>
+          <span className="absolute text-[10.5px] font-medium text-ink-600">65%</span>
         </span>
-        <span className="text-[11.5px] text-ink-400">确定（value）</span>
+        <span className="text-[11.5px] text-ink-400">确定（value: 0.65）</span>
       </div>
     </Frame>
   ),
@@ -2183,7 +2285,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
       <div>
         <span className="mb-1 block text-[11px] text-ok">✅ 延迟 300ms 再显示</span>
         <div className="flex items-center gap-2 rounded-lg border border-ok/40 bg-ok/5 px-2.5 py-1.5">
-          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#3d7a4a" strokeWidth="2.6" strokeLinecap="round">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" className="stroke-ok" strokeWidth="2.6" strokeLinecap="round">
             <path d="m5 12.5 4.5 4.5L19 7.5" />
           </svg>
           <span className="text-[11.5px] text-ink-500">80ms 内返回 → 全程不显示</span>
@@ -2335,7 +2437,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
         <span className="ml-auto text-[12.5px] font-medium text-warn">详情</span>
       </div>
       <div className="flex items-center gap-2 rounded-lg bg-ok/10 px-3 py-2 ring-1 ring-ok/40">
-        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#3d7a4a" strokeWidth="2.6" strokeLinecap="round">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" className="stroke-ok" strokeWidth="2.6" strokeLinecap="round">
           <path d="m5 12.5 4.5 4.5L19 7.5" />
         </svg>
         <span className="text-[12.5px] text-ink-600">已恢复连接 → 自动关闭</span>
@@ -2533,42 +2635,55 @@ export const demoMocks: Record<string, () => ReactNode> = {
   /* ═══════════════ 其他 ═══════════════ */
 
   'scaffold::标准页面模板（照抄就能用）': () => (
+    // 与代码一一对应：AppBar('商品详情') + 分享按钮 / body / bottomNavigationBar 双按钮
     <Frame className="p-4">
-      <div className="w-[186px] overflow-hidden rounded-xl bg-surface shadow-card ring-1 ring-ink-100">
+      <div className="w-[200px] overflow-hidden rounded-xl bg-surface shadow-card ring-1 ring-ink-100">
         <div className="flex h-8 items-center bg-solid px-2.5 text-[12px] text-white">
-          appBar
+          <span className="flex-1 text-center">商品详情</span>
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 3v12M8 7l4-4 4 4M5 14v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5" />
+          </svg>
         </div>
-        <div className="flex h-[67px] items-center justify-center bg-ink-50 text-[12px] text-ink-400">
-          body
+        <div className="flex h-[72px] items-center justify-center bg-ink-50 text-[12px] text-ink-400">
+          body · 商品内容
         </div>
-        <div className="flex h-7 items-center justify-end px-2.5">
-          <span className="-mt-5 flex h-8 w-8 items-center justify-center rounded-full bg-solid text-[17px] text-white shadow-pop">
-            ＋
+        <div className="flex gap-2 border-t border-ink-100 p-2">
+          <span className="flex h-8 flex-1 items-center justify-center rounded-lg border border-brand-500 text-[12.5px] font-medium text-brand-600">
+            加入购物车
           </span>
-        </div>
-        <div className="flex h-6 items-center justify-around border-t border-ink-100 text-[10px] text-ink-400">
-          <span>首页</span>
-          <span>分类</span>
-          <span>我的</span>
+          <span className="flex h-8 flex-1 items-center justify-center rounded-lg bg-solid text-[12.5px] font-medium text-white">
+            立即购买
+          </span>
         </div>
       </div>
     </Frame>
   ),
   'scaffold::SnackBar 为什么有时"看不见"': () => (
-    <Frame className="w-full max-w-[290px] flex-col gap-2 p-4">
+    // 与代码一一对应：❌ push 之后立刻弹（被 B 页盖住） / ✅ await 回到 A 再弹
+    <Frame className="w-full max-w-[300px] flex-col gap-2 p-4">
       <div className="rounded-lg border border-danger/40 bg-danger/5 p-2.5">
         <span className="block text-[12px] font-medium text-danger">
-          ❌ 嵌套 Scaffold → 被外层遮住
+          ❌ push(B) 之后立刻弹 → 被 B 页盖住
         </span>
-        <span className="mt-0.5 block text-[11.5px] text-ink-500">
-          内层 Scaffold 的提示出现在它自己底部
-        </span>
+        <div className="mt-1.5 flex items-center gap-1.5">
+          <span className="rounded bg-ink-100 px-1.5 py-0.5 text-[11px] text-ink-500">A 页面</span>
+          <span className="text-[11px] text-ink-400">→</span>
+          <span className="rounded bg-solid px-1.5 py-0.5 text-[11px] text-white">B 页面</span>
+          <span className="ml-auto rounded bg-[#2c3038] px-1.5 py-0.5 text-[10.5px] text-white/50">
+            操作成功（被盖住）
+          </span>
+        </div>
       </div>
       <div className="rounded-lg border border-ok/40 bg-ok/5 p-2.5">
-        <span className="block text-[12px] font-medium text-ok">✅ 用根 Scaffold 的 context</span>
-        <span className="mt-0.5 block font-mono text-[11px] text-ink-500">
-          ScaffoldMessenger.of(context)
+        <span className="block text-[12px] font-medium text-ok">
+          ✅ await push 回到 A 之后再弹
         </span>
+        <div className="mt-1.5 flex items-center gap-1.5">
+          <span className="rounded bg-solid px-1.5 py-0.5 text-[11px] text-white">A 页面</span>
+          <span className="ml-auto rounded bg-[#2c3038] px-1.5 py-0.5 text-[10.5px] text-white">
+            保存成功
+          </span>
+        </div>
       </div>
     </Frame>
   ),
@@ -2612,35 +2727,17 @@ export const demoMocks: Record<string, () => ReactNode> = {
       </div>
     </Frame>
   ),
-  'theme::PulseShop': () => (
-    <Frame className="w-full max-w-[330px] flex-col gap-2 p-4">
-      {[
-        ['AppBar', '文字居中（AppBarTheme.centerTitle）'],
-        ['Card', '统一圆角 12 + 阴影（CardTheme）'],
-        ['FilledButton', '统一主色（FilledButtonTheme）'],
-      ].map(([name, desc]) => (
-        <div key={name} className="flex items-center gap-2 rounded-lg bg-surface p-2 shadow-card ring-1 ring-ink-100">
-          <span className="rounded bg-brand-50 px-1.5 py-0.5 font-mono text-[11px] text-brand-700">
-            {name}
-          </span>
-          <span className="flex-1 text-[12.5px] text-ink-600">{desc}</span>
-        </div>
-      ))}
-      <span className="mt-0.5 block font-mono text-[10.5px] text-ink-400">
-        三处组件主题一次定义 · 全站各处都不再写样式
-      </span>
-    </Frame>
-  ),
   'theme::业务代码里正确取颜色': () => (
+    // 与代码一一对应：✅ 从 colorScheme 取（随主题变） / ❌ 写死 Color(0xFF...)
     <Frame className="w-full max-w-[310px] flex-col gap-2 p-4">
       <div className="rounded-lg border border-ok/40 bg-ok/5 p-2.5">
         <span className="block font-mono text-[11px] text-ok">
-          ✅ Theme.of(context).colorScheme.primary
+          ✅ Theme.of(context).colorScheme.primary —— 跟着主题走
         </span>
         <div className="mt-1.5 flex gap-1.5">
-          {['#409eff', '#337ecc', '#dbeafe'].map((c) => (
-            <span key={c} className="h-6 flex-1 rounded" style={{ backgroundColor: c }} />
-          ))}
+          <span className="h-6 flex-1 rounded bg-solid" />
+          <span className="h-6 flex-1 rounded bg-brand-400" />
+          <span className="h-6 flex-1 rounded bg-brand-100" />
         </div>
       </div>
       <div className="rounded-lg border border-danger/40 bg-danger/5 p-2.5">

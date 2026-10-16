@@ -197,7 +197,7 @@ export default function HomePage() {
                 {[
                   'Dart 语言：基础 + 高级语法',
                   'Flutter 讲解：框架与组件封装',
-                  '67 个组件 · 135 个示例',
+                  '67 个组件 · 134 个示例',
                   '工程化搭建 · 14 阶段 39 步',
                 ].map((t) => (
                   <li key={t} className="flex items-center gap-1.5">

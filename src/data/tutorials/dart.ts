@@ -646,7 +646,7 @@ Future<void> loadTyped() async {
             filename: 'lib/scratch/qualifiers.dart',
             code: `// ── const：编译期常量。同一份字面量在整个 App 里只存在一份。
 const double kPagePadding = 16;
-const Color kBrandSeed = Color(0xFF409EFF);   // 构造函数是 const → 可以 const
+const Color kBrandSeed = Color(0xFF0E7490);   // 构造函数是 const → 可以 const
 
 // ── final：运行期只赋值一次。它是「实例字段」，每个实例一份。
 class DemoController {
