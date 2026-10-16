@@ -66,10 +66,10 @@ export default function Sidebar({
               >
                 <path d="M12 15.5 5.5 9h13L12 15.5Z" />
               </svg>
-              <span className="text-[12px] font-semibold tracking-wide text-ink-500 group-hover:text-ink-800">
+              <span className="text-[15px] font-semibold tracking-wide text-ink-500 group-hover:text-ink-800">
                 {g.cat.name}
               </span>
-              <span className="ml-auto text-[10.5px] text-ink-300">
+              <span className="ml-auto text-[13.5px] text-ink-300">
                 {g.items.length}
               </span>
             </button>
@@ -82,7 +82,7 @@ export default function Sidebar({
                     <li key={it.slug}>
                       <Link
                         href={`/components/${it.slug}`}
-                        className={`flex items-center gap-2 rounded-md px-2.5 py-[5px] text-[13px] transition ${
+                        className={`flex items-center gap-2 rounded-md px-2.5 py-[5px] text-[16px] transition ${
                           on
                             ? 'bg-brand-50 font-medium text-brand-600'
                             : 'text-ink-600 hover:bg-ink-50 hover:text-ink-900'
@@ -90,7 +90,7 @@ export default function Sidebar({
                       >
                         <span className="truncate font-mono">{it.name}</span>
                         <span
-                          className={`ml-auto truncate text-[11px] ${
+                          className={`ml-auto truncate text-[14px] ${
                             on ? 'text-brand-400' : 'text-ink-400'
                           }`}
                         >
@@ -106,7 +106,7 @@ export default function Sidebar({
         );
       })}
 
-      <p className="mt-6 border-t border-ink-100 px-2 pt-4 text-[11px] leading-relaxed text-ink-400">
+      <p className="mt-6 border-t border-ink-100 px-2 pt-4 text-[14px] leading-relaxed text-ink-400">
         共 {allComponents.length} 个组件
         <br />
         全部内容为手写精选，非 API 文档搬运

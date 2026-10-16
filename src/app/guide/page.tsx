@@ -33,17 +33,17 @@ export default function GuidePage() {
           className="pointer-events-none absolute -right-20 -top-20 h-[320px] w-[320px] rounded-full bg-brand-200/30 blur-3xl"
         />
         <div className="relative max-w-2xl">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1 text-[11.5px] font-medium text-brand-600 shadow-sm ring-1 ring-brand-100">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1 text-[14.5px] font-medium text-brand-600 shadow-sm ring-1 ring-brand-100">
             <svg viewBox="0 0 24 24" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="2.2">
               <path d="M12 3 2 20h20L12 3Zm0 7v4m0 3h.01" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
             开始之前 · 先读这一页
           </span>
-          <h1 className="mt-4 text-balance text-[30px] font-bold leading-tight tracking-tight text-ink-900 sm:text-[38px]">
+          <h1 className="mt-4 text-balance text-[33px] font-bold leading-tight tracking-tight text-ink-900 sm:text-[42px]">
             这份手册
             <span className="text-brand-500">怎么用</span>
           </h1>
-          <p className="mt-4 text-pretty text-[14.5px] leading-relaxed text-ink-600">
+          <p className="mt-4 text-pretty text-[17.5px] leading-relaxed text-ink-600">
             它和网上大多数 Flutter 中文资料不太一样：不搬运 API 文档，
             只回答三个问题 ——
             <strong className="font-semibold text-ink-800">组件长什么样</strong>、
@@ -78,10 +78,10 @@ export default function GuidePage() {
                   </svg>
                 </span>
                 <span>
-                  <span className="block text-[13.5px] font-semibold text-ink-900 group-hover:text-brand-600">
+                  <span className="block text-[16.5px] font-semibold text-ink-900 group-hover:text-brand-600">
                     {q.t}
                   </span>
-                  <span className="block text-[11.5px] text-ink-500">{q.d}</span>
+                  <span className="block text-[14.5px] text-ink-500">{q.d}</span>
                 </span>
               </Link>
             ))}
@@ -103,12 +103,12 @@ export default function GuidePage() {
             </span>
             <span>
               <span className="flex items-baseline gap-1">
-                <strong className="text-[24px] font-bold leading-none tracking-tight text-ink-900">
+                <strong className="text-[27px] font-bold leading-none tracking-tight text-ink-900">
                   {x.n}
                 </strong>
-                <span className="text-[12.5px] font-medium text-ink-700">{x.label}</span>
+                <span className="text-[15.5px] font-medium text-ink-700">{x.label}</span>
               </span>
-              <span className="mt-1 block text-[11.5px] text-ink-400">{x.note}</span>
+              <span className="mt-1 block text-[14.5px] text-ink-400">{x.note}</span>
             </span>
           </div>
         ))}
@@ -151,18 +151,18 @@ export default function GuidePage() {
               key={x.step}
               className="relative flex flex-col rounded-2xl border border-ink-100 bg-white p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-pop"
             >
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-500 text-[14px] font-bold text-white shadow-sm">
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-500 text-[17px] font-bold text-white shadow-sm">
                 {x.step}
               </span>
-              <h3 className="mt-3.5 text-[14.5px] font-semibold leading-snug text-ink-900">
+              <h3 className="mt-3.5 text-[17.5px] font-semibold leading-snug text-ink-900">
                 {x.t}
               </h3>
-              <p className="mt-1.5 flex-1 text-[12.5px] leading-relaxed text-ink-600">
+              <p className="mt-1.5 flex-1 text-[15.5px] leading-relaxed text-ink-600">
                 {x.d}
               </p>
               <Link
                 href={x.link.href}
-                className="mt-4 inline-flex items-center gap-1 text-[12.5px] font-medium text-brand-600 transition hover:gap-1.5 hover:underline"
+                className="mt-4 inline-flex items-center gap-1 text-[15.5px] font-medium text-brand-600 transition hover:gap-1.5 hover:underline"
               >
                 {x.link.label}
                 <svg viewBox="0 0 24 24" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -177,7 +177,7 @@ export default function GuidePage() {
       {/* ══════════ 是 / 不是 ══════════ */}
       <section className="mt-14 grid gap-4 lg:grid-cols-2">
         <div className="rounded-2xl border border-ok/25 bg-gradient-to-b from-ok/[.05] to-white p-5">
-          <h2 className="flex items-center gap-2 text-[15.5px] font-semibold text-ink-900">
+          <h2 className="flex items-center gap-2 text-[18.5px] font-semibold text-ink-900">
             <span className="flex h-7 w-7 items-center justify-center rounded-full bg-ok/15 text-ok">
               <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <path d="m5 12.5 4.5 4.5L19 7.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -194,8 +194,8 @@ export default function GuidePage() {
               <li key={t} className="flex gap-2.5">
                 <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-ok" />
                 <span>
-                  <span className="block text-[13px] font-medium text-ink-900">{t}</span>
-                  <span className="mt-0.5 block text-[12px] leading-relaxed text-ink-500">{d}</span>
+                  <span className="block text-[16px] font-medium text-ink-900">{t}</span>
+                  <span className="mt-0.5 block text-[15px] leading-relaxed text-ink-500">{d}</span>
                 </span>
               </li>
             ))}
@@ -203,7 +203,7 @@ export default function GuidePage() {
         </div>
 
         <div className="rounded-2xl border border-danger/25 bg-gradient-to-b from-danger/[.05] to-white p-5">
-          <h2 className="flex items-center gap-2 text-[15.5px] font-semibold text-ink-900">
+          <h2 className="flex items-center gap-2 text-[18.5px] font-semibold text-ink-900">
             <span className="flex h-7 w-7 items-center justify-center rounded-full bg-danger/15 text-danger">
               <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                 <path d="M6 6l12 12M18 6 6 18" />
@@ -221,8 +221,8 @@ export default function GuidePage() {
               <li key={t} className="flex gap-2.5">
                 <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-danger" />
                 <span>
-                  <span className="block text-[13px] font-medium text-ink-900">{t}</span>
-                  <span className="mt-0.5 block text-[12px] leading-relaxed text-ink-500">{d}</span>
+                  <span className="block text-[16px] font-medium text-ink-900">{t}</span>
+                  <span className="mt-0.5 block text-[15px] leading-relaxed text-ink-500">{d}</span>
                 </span>
               </li>
             ))}
@@ -234,10 +234,10 @@ export default function GuidePage() {
       <section className="mt-14 overflow-hidden rounded-2xl border border-ink-100 bg-white shadow-card">
         <div className="grid lg:grid-cols-[1fr_1.2fr]">
           <div className="border-b border-ink-100 bg-ink-50/50 p-6 lg:border-b-0 lg:border-r">
-            <h2 className="text-[17px] font-semibold tracking-tight text-ink-900">
+            <h2 className="text-[20px] font-semibold tracking-tight text-ink-900">
               每个组件页面的固定结构
             </h2>
-            <p className="mt-2 text-[13px] leading-relaxed text-ink-600">
+            <p className="mt-2 text-[16px] leading-relaxed text-ink-600">
               从上到下按「先判断、再看细节」排。右上角的「本页目录」可以随时跳转；
               看完第一段觉得不合适，直接返回换组件，不用浪费时间。
             </p>
@@ -246,7 +246,7 @@ export default function GuidePage() {
                 <circle cx="12" cy="12" r="9" />
                 <path d="M12 16v-5M12 8h.01" strokeLinecap="round" />
               </svg>
-              <p className="text-[12px] leading-relaxed text-ink-700">
+              <p className="text-[15px] leading-relaxed text-ink-700">
                 示例默认只显示效果，点每个示例<b>右下角的代码图标</b>展开源码 —— 和 Element Plus 一样。
               </p>
             </div>
@@ -268,12 +268,12 @@ export default function GuidePage() {
                     className="absolute left-[11px] top-6 h-full w-px bg-ink-100"
                   />
                 )}
-                <span className="z-10 flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full bg-brand-50 text-[10.5px] font-bold text-brand-600 ring-4 ring-white">
+                <span className="z-10 flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full bg-brand-50 text-[13.5px] font-bold text-brand-600 ring-4 ring-white">
                   {i + 1}
                 </span>
                 <span>
-                  <span className="block text-[13px] font-semibold text-ink-900">{t}</span>
-                  <span className="mt-0.5 block text-[12px] text-ink-500">{d}</span>
+                  <span className="block text-[16px] font-semibold text-ink-900">{t}</span>
+                  <span className="mt-0.5 block text-[15px] text-ink-500">{d}</span>
                 </span>
               </li>
             ))}
@@ -296,19 +296,19 @@ export default function GuidePage() {
                   i % 2 === 1 ? 'sm:bg-white' : ''
                 }`}
               >
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-brand-50 to-brand-100/60 font-mono text-[13px] font-bold text-brand-600">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-brand-50 to-brand-100/60 font-mono text-[16px] font-bold text-brand-600">
                   {String(i + 1).padStart(2, '0')}
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="flex items-center gap-2">
-                    <span className="text-[13.5px] font-semibold text-ink-900 group-hover:text-brand-600">
+                    <span className="text-[16.5px] font-semibold text-ink-900 group-hover:text-brand-600">
                       {g.c.name}
                     </span>
-                    <span className="rounded bg-ink-50 px-1.5 py-px text-[10.5px] font-medium text-ink-500">
+                    <span className="rounded bg-ink-50 px-1.5 py-px text-[13.5px] font-medium text-ink-500">
                       {g.items.length}
                     </span>
                   </span>
-                  <span className="mt-0.5 block truncate text-[11.5px] text-ink-500">
+                  <span className="mt-0.5 block truncate text-[14.5px] text-ink-500">
                     {g.items
                       .slice(0, 4)
                       .map((x) => x.name)
@@ -355,14 +355,14 @@ export default function GuidePage() {
               key={x.t}
               className="group relative overflow-hidden rounded-2xl border border-ink-100 bg-white p-5 shadow-card transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-pop"
             >
-              <span className="text-[11px] font-bold uppercase tracking-wider text-brand-500">
+              <span className="text-[14px] font-bold uppercase tracking-wider text-brand-500">
                 {x.day}
               </span>
-              <h3 className="mt-1.5 text-[15px] font-semibold text-ink-900">{x.t}</h3>
-              <p className="mt-1.5 text-[12.5px] leading-relaxed text-ink-600">{x.d}</p>
+              <h3 className="mt-1.5 text-[18px] font-semibold text-ink-900">{x.t}</h3>
+              <p className="mt-1.5 text-[15.5px] leading-relaxed text-ink-600">{x.d}</p>
               <Link
                 href={x.href}
-                className="mt-3.5 inline-flex items-center gap-1 text-[12.5px] font-medium text-brand-600 transition hover:gap-1.5 hover:underline"
+                className="mt-3.5 inline-flex items-center gap-1 text-[15.5px] font-medium text-brand-600 transition hover:gap-1.5 hover:underline"
               >
                 {x.cta}
                 <svg viewBox="0 0 24 24" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -380,11 +380,11 @@ export default function GuidePage() {
 function SectionHead({ title, sub }: { title: string; sub?: string }) {
   return (
     <div>
-      <h2 className="flex items-center gap-2.5 text-[20px] font-semibold tracking-tight text-ink-900">
+      <h2 className="flex items-center gap-2.5 text-[23px] font-semibold tracking-tight text-ink-900">
         <span className="h-5 w-1 rounded-full bg-brand-500" />
         {title}
       </h2>
-      {sub && <p className="mt-1.5 pl-3.5 text-[13px] text-ink-500">{sub}</p>}
+      {sub && <p className="mt-1.5 pl-3.5 text-[16px] text-ink-500">{sub}</p>}
     </div>
   );
 }

@@ -40,18 +40,18 @@ export default function FlutterPage() {
       <div className="mx-auto max-w-page px-4 pb-4 sm:px-6">
         <div className="flex flex-col gap-3 rounded-2xl border border-brand-100 bg-gradient-to-br from-brand-50 to-white p-5 sm:flex-row sm:items-center">
           <div className="min-w-0 flex-1">
-            <p className="text-[11px] font-medium text-brand-600">下一步</p>
-            <p className="mt-1 text-[15px] font-semibold text-ink-900">
+            <p className="text-[14px] font-medium text-brand-600">下一步</p>
+            <p className="mt-1 text-[18px] font-semibold text-ink-900">
               原理通了，开始逐个认识组件
             </p>
-            <p className="mt-1 text-[12.5px] leading-relaxed text-ink-600">
+            <p className="mt-1 text-[15.5px] leading-relaxed text-ink-600">
               67 个高频 Material 组件，每个都配图形示例、属性表和避坑说明。
               每个示例右下角点一下就能看源码。
             </p>
           </div>
           <Link
             href="/components"
-            className="flex h-10 shrink-0 items-center gap-1.5 rounded-lg bg-brand-500 px-4 text-[13.5px] font-medium text-white shadow-sm transition hover:bg-brand-600"
+            className="flex h-10 shrink-0 items-center gap-1.5 rounded-lg bg-brand-500 px-4 text-[16.5px] font-medium text-white shadow-sm transition hover:bg-brand-600"
           >
             浏览组件手册
             <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2">

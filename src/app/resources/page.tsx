@@ -106,13 +106,13 @@ export default function ResourcesPage() {
     <main id="main" className="mx-auto max-w-page px-4 py-10 sm:px-6">
       {/* ── 头部 ── */}
       <header className="max-w-3xl">
-        <span className="inline-block rounded-full bg-brand-50 px-2.5 py-1 text-[11px] font-medium text-brand-600">
+        <span className="inline-block rounded-full bg-brand-50 px-2.5 py-1 text-[14px] font-medium text-brand-600">
           学习路线
         </span>
-        <h1 className="mt-3 text-[27px] font-bold tracking-tight text-ink-900 sm:text-[33px]">
+        <h1 className="mt-3 text-[30px] font-bold tracking-tight text-ink-900 sm:text-[36px]">
           从入门到能独立交付
         </h1>
-        <p className="mt-3 text-[14.5px] leading-relaxed text-ink-600">
+        <p className="mt-3 text-[17.5px] leading-relaxed text-ink-600">
           按依赖关系排的五步。新手从上往下走；
           有经验的直接跳到需要的那一站 ——
           <strong className="font-semibold text-ink-800">
@@ -132,7 +132,7 @@ export default function ResourcesPage() {
                 }`}
               />
               <span
-                className={`truncate text-[11.5px] font-medium ${
+                className={`truncate text-[14.5px] font-medium ${
                   s.state === 'coming' ? 'text-ink-400' : 'text-ink-700'
                 }`}
               >
@@ -157,8 +157,8 @@ export default function ResourcesPage() {
 
       {/* ── 官方资料 ── */}
       <section className="mt-14">
-        <h2 className="text-[19px] font-semibold tracking-tight text-ink-900">官方资料</h2>
-        <p className="mt-1.5 text-[13px] text-ink-500">
+        <h2 className="text-[22px] font-semibold tracking-tight text-ink-900">官方资料</h2>
+        <p className="mt-1.5 text-[16px] text-ink-500">
           本站是「带你上手」的中文整理，遇到需要精确签名或权威说明时，回官方查。
         </p>
         <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -191,13 +191,13 @@ export default function ResourcesPage() {
               rel="noreferrer"
               className="group rounded-xl border border-ink-100 bg-white p-4 shadow-card transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-pop"
             >
-              <p className="flex items-center gap-1.5 text-[13.5px] font-semibold text-ink-900 group-hover:text-brand-600">
+              <p className="flex items-center gap-1.5 text-[16.5px] font-semibold text-ink-900 group-hover:text-brand-600">
                 {l.t}
                 <svg viewBox="0 0 24 24" className="h-3 w-3 shrink-0" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M7 17 17 7M17 7H8M17 7v9" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </p>
-              <p className="mt-1 text-[12px] leading-relaxed text-ink-500">{l.d}</p>
+              <p className="mt-1 text-[15px] leading-relaxed text-ink-500">{l.d}</p>
             </a>
           ))}
         </div>
@@ -224,14 +224,14 @@ function StepCard({ s }: { s: Step }) {
         {/* 编号 */}
         <div className="flex shrink-0 items-start gap-3 sm:w-[124px] sm:flex-col sm:gap-2">
           <span
-            className={`font-mono text-[30px] font-bold leading-none tracking-tight ${
+            className={`font-mono text-[33px] font-bold leading-none tracking-tight ${
               coming ? 'text-ink-300' : s.accent ? 'text-brand-500' : 'text-brand-300'
             }`}
           >
             {s.no}
           </span>
           <span
-            className={`rounded-full px-2.5 py-1 text-[11px] font-medium ${
+            className={`rounded-full px-2.5 py-1 text-[14px] font-medium ${
               coming ? 'bg-white text-ink-400' : 'bg-brand-50 text-brand-600'
             }`}
           >
@@ -242,23 +242,23 @@ function StepCard({ s }: { s: Step }) {
         {/* 主体 */}
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h2 className={`text-[17px] font-semibold ${coming ? 'text-ink-500' : 'text-ink-900'}`}>
+            <h2 className={`text-[20px] font-semibold ${coming ? 'text-ink-500' : 'text-ink-900'}`}>
               {s.title}
             </h2>
             {coming && (
-              <span className="rounded-full bg-warn/10 px-2 py-0.5 text-[10.5px] font-medium text-warn">
+              <span className="rounded-full bg-warn/10 px-2 py-0.5 text-[13.5px] font-medium text-warn">
                 整理中
               </span>
             )}
           </div>
 
-          <p className={`mt-2 text-[13px] leading-relaxed ${coming ? 'text-ink-500' : 'text-ink-600'}`}>
+          <p className={`mt-2 text-[16px] leading-relaxed ${coming ? 'text-ink-500' : 'text-ink-600'}`}>
             {s.desc}
           </p>
 
           <ul className="mt-3 space-y-1.5">
             {s.bullets.map((b) => (
-              <li key={b} className="flex gap-2 text-[12.5px] leading-relaxed text-ink-600">
+              <li key={b} className="flex gap-2 text-[15.5px] leading-relaxed text-ink-600">
                 <svg
                   viewBox="0 0 24 24"
                   className={`mt-[5px] h-3 w-3 shrink-0 ${coming ? 'text-ink-300' : 'text-brand-400'}`}
@@ -277,7 +277,7 @@ function StepCard({ s }: { s: Step }) {
             {s.tags.map((t) => (
               <span
                 key={t}
-                className="rounded border border-ink-100 bg-ink-50/60 px-1.5 py-0.5 text-[10.5px] text-ink-500"
+                className="rounded border border-ink-100 bg-ink-50/60 px-1.5 py-0.5 text-[13.5px] text-ink-500"
               >
                 {t}
               </span>
@@ -288,13 +288,13 @@ function StepCard({ s }: { s: Step }) {
         {/* CTA */}
         <div className="flex shrink-0 items-start sm:pt-1">
           {coming ? (
-            <span className="inline-flex h-9 items-center rounded-lg border border-dashed border-ink-200 px-3.5 text-[13px] text-ink-400">
+            <span className="inline-flex h-9 items-center rounded-lg border border-dashed border-ink-200 px-3.5 text-[16px] text-ink-400">
               敬请期待
             </span>
           ) : (
             <Link
               href={s.href!}
-              className={`inline-flex h-9 items-center gap-1.5 rounded-lg px-3.5 text-[13px] font-medium transition ${
+              className={`inline-flex h-9 items-center gap-1.5 rounded-lg px-3.5 text-[16px] font-medium transition ${
                 s.accent
                   ? 'bg-brand-500 text-white shadow-sm hover:bg-brand-600'
                   : 'border border-ink-200 bg-white text-ink-700 hover:border-brand-300 hover:text-brand-600'

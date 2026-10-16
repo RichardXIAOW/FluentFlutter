@@ -53,18 +53,18 @@ export default function DartPage() {
       <div className="mx-auto max-w-page px-4 pb-4 sm:px-6">
         <div className="flex flex-col gap-3 rounded-2xl border border-brand-100 bg-gradient-to-br from-brand-50 to-white p-5 sm:flex-row sm:items-center">
           <div className="min-w-0 flex-1">
-            <p className="text-[11px] font-medium text-brand-600">下一步</p>
-            <p className="mt-1 text-[15px] font-semibold text-ink-900">
+            <p className="text-[14px] font-medium text-brand-600">下一步</p>
+            <p className="mt-1 text-[18px] font-semibold text-ink-900">
               语言会了，接着看 Flutter 是怎么把界面「搭」出来的
             </p>
-            <p className="mt-1 text-[12.5px] leading-relaxed text-ink-600">
+            <p className="mt-1 text-[15.5px] leading-relaxed text-ink-600">
               Widget 树、StatefulWidget 的生命周期、BuildContext 到底指什么、
               怎么写一个能复用的组件 —— 这些是看懂组件文档的前提。
             </p>
           </div>
           <Link
             href="/resources/flutter"
-            className="flex h-10 shrink-0 items-center gap-1.5 rounded-lg bg-brand-500 px-4 text-[13.5px] font-medium text-white shadow-sm transition hover:bg-brand-600"
+            className="flex h-10 shrink-0 items-center gap-1.5 rounded-lg bg-brand-500 px-4 text-[16.5px] font-medium text-white shadow-sm transition hover:bg-brand-600"
           >
             Flutter 讲解
             <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2">

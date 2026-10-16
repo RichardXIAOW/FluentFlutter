@@ -56,8 +56,8 @@ export default function RootLayout({
 
         <div className="pt-[var(--hd-h)]">{children}</div>
 
-        <footer className="mt-16 border-t border-ink-100 bg-ink-50/60">
-          <div className="mx-auto flex max-w-page flex-col gap-3 px-4 py-8 text-[12.5px] text-ink-500 sm:px-6 md:flex-row md:items-center">
+        <footer className="mt-16 border-t border-ink-100 bg-ink-50">
+          <div className="mx-auto flex max-w-page flex-col gap-3 px-4 py-8 text-[15.5px] text-ink-500 sm:px-6 md:flex-row md:items-center">
             <p>
               <strong className="font-semibold text-ink-700">FluentFlutter</strong>
               <span className="mx-1.5 text-ink-300">·</span>

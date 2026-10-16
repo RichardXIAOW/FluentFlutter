@@ -66,18 +66,18 @@ export default function Header() {
 
           {/* Logo */}
           <Link href="/" className="flex shrink-0 items-center gap-2.5">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-500 text-white shadow-sm">
-              <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="currentColor">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-500 text-white shadow-sm">
+              <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor">
                 {/* Flutter 风格的简化双菱形 */}
                 <path d="M13.9 2 6.4 9.5l2.6 2.6L19 2h-5.1Z" opacity=".95" />
                 <path d="M9 12.1 6.4 14.7 12.6 21H18l-6.4-6.4 1.4-1.4L9 12.1Z" opacity=".7" />
               </svg>
             </span>
             <span className="hidden flex-col leading-none sm:flex">
-              <strong className="text-[15px] font-semibold tracking-tight text-ink-900">
+              <strong className="text-[18px] font-semibold tracking-tight text-ink-900">
                 FluentFlutter
               </strong>
-              <span className="mt-0.5 text-[10.5px] text-ink-400">
+              <span className="mt-0.5 text-[13.5px] text-ink-400">
                 Flutter · 从入门到工程化
               </span>
             </span>
@@ -89,7 +89,7 @@ export default function Header() {
               <Link
                 key={n.href}
                 href={n.href}
-                className={`rounded-lg px-3 py-2 text-[13.5px] font-medium transition ${
+                className={`rounded-lg px-3.5 py-2 text-[15.5px] font-medium transition ${
                   isActive(n.href)
                     ? 'bg-brand-50 text-brand-600'
                     : 'text-ink-600 hover:bg-ink-50 hover:text-ink-900'
@@ -106,7 +106,7 @@ export default function Header() {
               href="https://api.flutter.dev/flutter/material/material-library.html"
               target="_blank"
               rel="noreferrer"
-              className="hidden h-9 shrink-0 items-center gap-1.5 rounded-lg border border-ink-200 px-3 text-[12.5px] font-medium text-ink-600 transition hover:border-brand-300 hover:bg-brand-50 hover:text-brand-600 md:flex"
+              className="hidden h-10 shrink-0 items-center gap-1.5 rounded-lg border border-ink-200 px-3.5 text-[14px] font-medium text-ink-600 transition hover:border-brand-300 hover:bg-brand-50 hover:text-brand-600 md:flex"
             >
               官方 API
               <svg viewBox="0 0 24 24" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="2">
@@ -127,7 +127,7 @@ export default function Header() {
               <Link
                 key={n.href}
                 href={n.href}
-                className={`rounded-lg px-3 py-1.5 text-[13px] font-medium transition ${
+                className={`rounded-lg px-3 py-1.5 text-[16px] font-medium transition ${
                   isActive(n.href)
                     ? 'bg-brand-500 text-white'
                     : 'bg-ink-50 text-ink-600'
@@ -140,7 +140,7 @@ export default function Header() {
 
           {groups.map((g) => (
             <section key={g.cat.id} className="mb-4">
-              <h3 className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-ink-400">
+              <h3 className="mb-1.5 text-[14px] font-semibold uppercase tracking-wider text-ink-400">
                 {g.cat.name}
               </h3>
               <div className="flex flex-wrap gap-1">
@@ -148,7 +148,7 @@ export default function Header() {
                   <Link
                     key={it.slug}
                     href={`/components/${it.slug}`}
-                    className={`rounded-md px-2 py-1 font-mono text-[11.5px] transition ${
+                    className={`rounded-md px-2 py-1 font-mono text-[14.5px] transition ${
                       pathname === `/components/${it.slug}`
                         ? 'bg-brand-50 text-brand-600'
                         : 'text-ink-600 hover:bg-ink-50'

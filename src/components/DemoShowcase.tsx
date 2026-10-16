@@ -36,7 +36,7 @@ function M3Card({ children }: { children: React.ReactNode }) {
 
 function M3PrimaryButton({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-flex h-10 items-center justify-center rounded-[20px] bg-brand-500 px-6 text-[14px] font-medium tracking-[.01em] text-white">
+    <span className="inline-flex h-10 items-center justify-center rounded-[20px] bg-brand-500 px-6 text-[17px] font-medium tracking-[.01em] text-white">
       {children}
     </span>
   );
@@ -44,7 +44,7 @@ function M3PrimaryButton({ children }: { children: React.ReactNode }) {
 
 function M3OutlinedButton({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-flex h-10 items-center justify-center rounded-[20px] border border-ink-300 px-6 text-[14px] font-medium text-brand-600">
+    <span className="inline-flex h-10 items-center justify-center rounded-[20px] border border-ink-300 px-6 text-[17px] font-medium text-brand-600">
       {children}
     </span>
   );
@@ -87,15 +87,15 @@ const SAMPLES: Sample[] = [
               <path d="M12 21s7-5.5 7-11a7 7 0 1 0-14 0c0 5.5 7 11 7 11Z" />
               <circle cx="12" cy="10" r="2.5" />
             </svg>
-            <span className="ml-2 truncate text-[14px] text-ink-900">
+            <span className="ml-2 truncate text-[17px] text-ink-900">
               广州市天河区体育西路 1 号
             </span>
-            <span className="ml-auto shrink-0 pl-2 text-[13px] font-medium text-brand-600">
+            <span className="ml-auto shrink-0 pl-2 text-[16px] font-medium text-brand-600">
               复制
             </span>
           </div>
         </M3Card>
-        <p className="mt-2 text-center text-[10.5px] text-ink-400">
+        <p className="mt-2 text-center text-[13.5px] text-ink-400">
           ↑ 右侧「复制」被顶到最右边，靠的就是 Spacer
         </p>
       </div>
@@ -122,26 +122,26 @@ Column(
         <div className="flex-1">
           <div className="flex h-[168px] flex-col rounded-lg border border-dashed border-danger/40 bg-danger/5 p-2">
             <div className="flex flex-1 flex-col items-start justify-center">
-              <span className="text-[11px] text-ink-500">空状态</span>
+              <span className="text-[14px] text-ink-500">空状态</span>
               <svg viewBox="0 0 24 24" className="mt-1 h-6 w-6 text-ink-300" fill="none" stroke="currentColor" strokeWidth="1.6">
                 <path d="M3 12h4l2 3h6l2-3h4" />
                 <path d="M5 5h14l2 7v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5L5 5Z" />
               </svg>
             </div>
           </div>
-          <p className="mt-1.5 text-center text-[10.5px] font-medium text-danger">
+          <p className="mt-1.5 text-center text-[13.5px] font-medium text-danger">
             ❌ 内容挤在上面
           </p>
         </div>
         <div className="flex-1">
           <div className="flex h-[168px] flex-col items-center justify-center rounded-lg border border-dashed border-ok/40 bg-ok/5 p-2">
-            <span className="text-[11px] text-ink-500">空状态</span>
+            <span className="text-[14px] text-ink-500">空状态</span>
             <svg viewBox="0 0 24 24" className="mt-1 h-6 w-6 text-ink-300" fill="none" stroke="currentColor" strokeWidth="1.6">
               <path d="M3 12h4l2 3h6l2-3h4" />
               <path d="M5 5h14l2 7v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5L5 5Z" />
             </svg>
           </div>
-          <p className="mt-1.5 text-center text-[10.5px] font-medium text-ok">
+          <p className="mt-1.5 text-center text-[13.5px] font-medium text-ok">
             ✅ 真正垂直居中
           </p>
         </div>
@@ -177,8 +177,8 @@ Column(
     render: (
       <div className="w-full max-w-[380px]">
         <M3Card>
-          <p className="text-[16px] font-semibold text-ink-900">订单已提交</p>
-          <p className="mt-1.5 text-[13px] text-ink-600">预计 3 个工作日内发货</p>
+          <p className="text-[19px] font-semibold text-ink-900">订单已提交</p>
+          <p className="mt-1.5 text-[16px] text-ink-600">预计 3 个工作日内发货</p>
           <div className="mt-4 flex items-center gap-3">
             <M3PrimaryButton>查看订单</M3PrimaryButton>
             <M3OutlinedButton>联系客服</M3OutlinedButton>
@@ -204,7 +204,7 @@ export default function DemoShowcase() {
             key={sample.id}
             type="button"
             onClick={() => setActive(i)}
-            className={`relative shrink-0 px-3.5 py-3 text-[12.5px] font-medium transition ${
+            className={`relative shrink-0 px-3.5 py-3 text-[15.5px] font-medium transition ${
               i === active ? 'text-brand-600' : 'text-ink-500 hover:text-ink-800'
             }`}
           >
@@ -214,7 +214,7 @@ export default function DemoShowcase() {
             )}
           </button>
         ))}
-        <span className="ml-auto shrink-0 pr-2 text-[10.5px] text-ink-400">
+        <span className="ml-auto shrink-0 pr-2 text-[13.5px] text-ink-400">
           代码与渲染结果对照
         </span>
       </div>
@@ -228,7 +228,7 @@ export default function DemoShowcase() {
 
         {/* 右：渲染 */}
         <div className="flex flex-col justify-center gap-3 bg-ink-50/40 p-5">
-          <span className="text-[10.5px] font-semibold uppercase tracking-wider text-ink-400">
+          <span className="text-[13.5px] font-semibold uppercase tracking-wider text-ink-400">
             实际渲染效果
           </span>
           <div className="flex justify-center">{s.render}</div>
@@ -241,7 +241,7 @@ export default function DemoShowcase() {
           <circle cx="12" cy="12" r="9" />
           <path d="M12 16v-5M12 8h.01" strokeLinecap="round" />
         </svg>
-        <p className="text-[12.5px] leading-relaxed text-ink-700">
+        <p className="text-[15.5px] leading-relaxed text-ink-700">
           <strong className="font-semibold text-ink-900">这里要注意：</strong>
           {s.point}
         </p>

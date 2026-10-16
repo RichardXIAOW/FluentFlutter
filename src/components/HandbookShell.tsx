@@ -40,18 +40,18 @@ export default function HandbookShell() {
         <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center">
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="rounded-full bg-white px-2.5 py-1 text-[11px] font-medium text-brand-600 shadow-sm">
+              <span className="rounded-full bg-white px-2.5 py-1 text-[14px] font-medium text-brand-600 shadow-sm">
                 引申阅读
               </span>
-              <span className="text-[11.5px] text-ink-500">
+              <span className="text-[14.5px] text-ink-500">
                 14 阶段 · 39 步 · 约 5 小时
               </span>
             </div>
 
-            <h1 className="mt-2.5 text-[20px] font-semibold tracking-tight text-ink-900 sm:text-[23px]">
+            <h1 className="mt-2.5 text-[23px] font-semibold tracking-tight text-ink-900 sm:text-[26px]">
               从零搭建一个工程化的 Flutter 项目
             </h1>
-            <p className="mt-1.5 max-w-2xl text-[12.5px] leading-relaxed text-ink-600">
+            <p className="mt-1.5 max-w-2xl text-[15.5px] leading-relaxed text-ink-600">
               组件会用了，项目怎么搭？这份指南带你走完整流程 ——
               目录结构、环境分档与密钥管理、Dio 网络层、统一错误模型、Riverpod 状态管理、
               go_router 声明式路由、构建脚本与发布签名。
@@ -67,7 +67,7 @@ export default function HandbookShell() {
               href="/handbook/index.html"
               target="_blank"
               rel="noreferrer"
-              className="flex h-9 items-center gap-1.5 rounded-lg bg-brand-500 px-3.5 text-[13px] font-medium text-white shadow-sm transition hover:bg-brand-600"
+              className="flex h-9 items-center gap-1.5 rounded-lg bg-brand-500 px-3.5 text-[16px] font-medium text-white shadow-sm transition hover:bg-brand-600"
             >
               全屏阅读
               <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2">
@@ -76,7 +76,7 @@ export default function HandbookShell() {
             </a>
             <Link
               href="/components"
-              className="flex h-9 items-center gap-1.5 rounded-lg border border-ink-200 bg-white px-3.5 text-[13px] font-medium text-ink-700 transition hover:border-brand-300 hover:text-brand-600"
+              className="flex h-9 items-center gap-1.5 rounded-lg border border-ink-200 bg-white px-3.5 text-[16px] font-medium text-ink-700 transition hover:border-brand-300 hover:text-brand-600"
             >
               回到组件手册
             </Link>
@@ -97,8 +97,8 @@ export default function HandbookShell() {
         {!loaded && (
           <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-white">
             <span className="h-6 w-6 animate-spin rounded-full border-2 border-ink-200 border-t-brand-500" />
-            <p className="text-[13px] text-ink-500">正在载入指南…</p>
-            <p className="text-[11.5px] text-ink-400">
+            <p className="text-[16px] text-ink-500">正在载入指南…</p>
+            <p className="text-[14.5px] text-ink-400">
               约 180KB，含 72 个代码块
             </p>
           </div>
@@ -116,7 +116,7 @@ export default function HandbookShell() {
         />
       </div>
 
-      <p className="mt-3 text-center text-[11.5px] text-ink-400">
+      <p className="mt-3 text-center text-[14.5px] text-ink-400">
         如果上面的内容显示不完整，请点「全屏阅读」在新标签页打开
       </p>
     </main>

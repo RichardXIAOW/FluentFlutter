@@ -114,24 +114,24 @@ export default function TutorialShell({
         <div className="relative grid gap-6 p-6 sm:p-8 lg:grid-cols-[1fr_260px]">
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-brand-200 bg-brand-50 px-2.5 py-1 text-[11px] font-medium text-brand-700">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-brand-200 bg-brand-50 px-2.5 py-1 text-[14px] font-medium text-brand-700">
                 {eyebrow}
               </span>
-              <span className="text-[11.5px] text-ink-400">
+              <span className="text-[14.5px] text-ink-400">
                 {chapters.length} 章 · {flat.length} 节 · {codeCount} 个代码块
               </span>
             </div>
 
-            <h1 className="mt-3.5 text-[30px] font-bold leading-tight tracking-tight text-ink-900 sm:text-[38px]">
+            <h1 className="mt-3.5 text-[33px] font-bold leading-tight tracking-tight text-ink-900 sm:text-[42px]">
               {title}
             </h1>
-            <div className="mt-3.5 max-w-2xl text-[14px] leading-[1.9] text-ink-600">{intro}</div>
+            <div className="mt-3.5 max-w-2xl text-[17px] leading-[1.9] text-ink-600">{intro}</div>
 
             <div className="mt-6 flex flex-wrap items-center gap-2.5">
               <button
                 type="button"
                 onClick={() => jump(flat[0]?.id ?? '')}
-                className="flex h-10 items-center gap-1.5 rounded-xl bg-brand-500 px-4 text-[13.5px] font-medium text-white shadow-sm transition hover:bg-brand-600"
+                className="flex h-10 items-center gap-1.5 rounded-xl bg-brand-500 px-4 text-[16.5px] font-medium text-white shadow-sm transition hover:bg-brand-600"
               >
                 从第一节开始
                 <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2">
@@ -141,7 +141,7 @@ export default function TutorialShell({
               {siblings?.next && (
                 <Link
                   href={siblings.next.href}
-                  className="flex h-10 items-center gap-1.5 rounded-xl border border-ink-200 bg-white px-4 text-[13.5px] font-medium text-ink-700 transition hover:border-brand-300 hover:text-brand-600"
+                  className="flex h-10 items-center gap-1.5 rounded-xl border border-ink-200 bg-white px-4 text-[16.5px] font-medium text-ink-700 transition hover:border-brand-300 hover:text-brand-600"
                 >
                   直接看 {siblings.next.label}
                 </Link>
@@ -152,7 +152,7 @@ export default function TutorialShell({
           {/* 右侧：章节目录卡 */}
           <div className="min-w-0">
             <div className="rounded-2xl border border-ink-100 bg-ink-50/60 p-4">
-              <p className="text-[10.5px] font-semibold uppercase tracking-wider text-ink-400">
+              <p className="text-[13.5px] font-semibold uppercase tracking-wider text-ink-400">
                 本页章节
               </p>
               <ol className="mt-2.5 space-y-1.5">
@@ -169,7 +169,7 @@ export default function TutorialShell({
                         }`}
                       >
                         <span
-                          className={`mt-px flex h-5 w-5 shrink-0 items-center justify-center rounded-md text-[10.5px] font-bold ${
+                          className={`mt-px flex h-5 w-5 shrink-0 items-center justify-center rounded-md text-[13.5px] font-bold ${
                             isCur
                               ? 'bg-brand-500 text-white'
                               : done
@@ -181,13 +181,13 @@ export default function TutorialShell({
                         </span>
                         <span className="min-w-0">
                           <span
-                            className={`block text-[12.5px] font-medium leading-snug ${
+                            className={`block text-[15.5px] font-medium leading-snug ${
                               isCur ? 'text-brand-700' : 'text-ink-700'
                             }`}
                           >
                             {c.title}
                           </span>
-                          <span className="mt-0.5 block text-[10.5px] text-ink-400">
+                          <span className="mt-0.5 block text-[13.5px] text-ink-400">
                             {c.sections.length} 节
                           </span>
                         </span>
@@ -196,7 +196,7 @@ export default function TutorialShell({
                   );
                 })}
               </ol>
-              <p className="mt-3 border-t border-ink-100 pt-2.5 text-[10.5px] text-ink-400">
+              <p className="mt-3 border-t border-ink-100 pt-2.5 text-[13.5px] text-ink-400">
                 预计阅读 <span className="font-mono text-ink-600">{minutes}</span> 分钟 · 建议边读边敲
               </p>
             </div>
@@ -207,14 +207,14 @@ export default function TutorialShell({
       {/* ══ 主体三栏 ══ */}
       <div className="mt-6 flex gap-8 pb-10">
         {/* ── 左：章节导航 ── */}
-        <aside className="hidden w-[212px] shrink-0 lg:block">
+        <aside className="hidden w-[248px] shrink-0 lg:block">
           <nav className="sticky top-[calc(var(--hd-h)+24px)] max-h-[calc(100vh-var(--hd-h)-48px)] overflow-y-auto pr-1 thin-scroll">
-            <p className="mb-2.5 px-2 text-[10.5px] font-semibold uppercase tracking-wider text-ink-400">
+            <p className="mb-2.5 px-2 text-[13.5px] font-semibold uppercase tracking-wider text-ink-400">
               目录
             </p>
             {chapters.map((c) => (
               <div key={c.id} className="mb-4">
-                <p className="mb-1 flex items-center gap-1.5 px-2 text-[11.5px] font-semibold text-ink-800">
+                <p className="mb-1 flex items-center gap-1.5 px-2 text-[14.5px] font-semibold text-ink-800">
                   <span className="h-1 w-1 rounded-full bg-brand-400" />
                   {c.no} · {c.title}
                 </p>
@@ -229,14 +229,14 @@ export default function TutorialShell({
                             e.preventDefault();
                             jump(s.id);
                           }}
-                          className={`flex gap-2 rounded-lg py-1.5 pl-3 pr-2 text-[12px] leading-snug transition ${
+                          className={`flex gap-2 rounded-lg py-1.5 pl-3 pr-2 text-[15px] leading-snug transition ${
                             on
                               ? 'bg-brand-50 font-medium text-brand-700'
                               : 'text-ink-500 hover:bg-ink-50 hover:text-ink-900'
                           }`}
                         >
                           <span
-                            className={`shrink-0 font-mono text-[10.5px] leading-[1.7] ${
+                            className={`shrink-0 font-mono text-[13.5px] leading-[1.7] ${
                               on ? 'text-brand-500' : 'text-ink-300'
                             }`}
                           >
@@ -257,7 +257,7 @@ export default function TutorialShell({
         <main id="main" className="min-w-0 flex-1">
           {/* 移动端目录 */}
           <details className="mb-6 overflow-hidden rounded-2xl border border-ink-100 bg-white lg:hidden">
-            <summary className="flex cursor-pointer items-center gap-2 px-4 py-3 text-[13px] font-medium text-ink-800">
+            <summary className="flex cursor-pointer items-center gap-2 px-4 py-3 text-[16px] font-medium text-ink-800">
               <svg viewBox="0 0 24 24" className="h-4 w-4 text-ink-400" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M4 6h16M4 12h16M4 18h10" strokeLinecap="round" />
               </svg>
@@ -266,7 +266,7 @@ export default function TutorialShell({
             <div className="border-t border-ink-100 px-3 py-2">
               {chapters.map((c) => (
                 <div key={c.id} className="py-1.5">
-                  <p className="px-1 text-[11px] font-semibold text-ink-500">
+                  <p className="px-1 text-[14px] font-semibold text-ink-500">
                     {c.no} · {c.title}
                   </p>
                   <ul className="mt-1">
@@ -278,7 +278,7 @@ export default function TutorialShell({
                             e.preventDefault();
                             jump(s.id);
                           }}
-                          className="block rounded px-2 py-1 text-[12.5px] text-ink-600 hover:bg-ink-50"
+                          className="block rounded px-2 py-1 text-[15.5px] text-ink-600 hover:bg-ink-50"
                         >
                           {s.title}
                         </a>
@@ -295,18 +295,18 @@ export default function TutorialShell({
               <section key={c.id} className={ci > 0 ? 'mt-14' : ''}>
                 {/* 章节头 */}
                 <div className="flex items-center gap-3">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-600 font-mono text-[15px] font-bold text-white shadow-sm">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-600 font-mono text-[18px] font-bold text-white shadow-sm">
                     {ci}
                   </span>
                   <div className="min-w-0">
-                    <p className="text-[10.5px] font-semibold uppercase tracking-wider text-brand-500">
+                    <p className="text-[13.5px] font-semibold uppercase tracking-wider text-brand-500">
                       {c.no}
                     </p>
-                    <h2 className="text-[21px] font-bold tracking-tight text-ink-900">{c.title}</h2>
+                    <h2 className="text-[24px] font-bold tracking-tight text-ink-900">{c.title}</h2>
                   </div>
                 </div>
                 {c.lead && (
-                  <p className="mt-3 rounded-xl border-l-[3px] border-brand-200 bg-brand-50/40 px-4 py-2.5 text-[13.5px] leading-relaxed text-ink-600">
+                  <p className="mt-3 rounded-xl border-l-[3px] border-brand-200 bg-brand-50/40 px-4 py-2.5 text-[16.5px] leading-relaxed text-ink-600">
                     {c.lead}
                   </p>
                 )}
@@ -332,8 +332,8 @@ export default function TutorialShell({
                     </svg>
                   </span>
                   <span className="min-w-0">
-                    <span className="block text-[10.5px] uppercase tracking-wide text-ink-400">上一站</span>
-                    <span className="block truncate text-[13.5px] font-medium text-ink-800 group-hover:text-brand-600">
+                    <span className="block text-[13.5px] uppercase tracking-wide text-ink-400">上一站</span>
+                    <span className="block truncate text-[16.5px] font-medium text-ink-800 group-hover:text-brand-600">
                       {siblings.prev.label}
                     </span>
                   </span>
@@ -347,8 +347,8 @@ export default function TutorialShell({
                   className="group flex items-center justify-end gap-3 rounded-2xl border border-ink-100 bg-white p-4 text-right transition hover:border-brand-200 hover:shadow-card"
                 >
                   <span className="min-w-0">
-                    <span className="block text-[10.5px] uppercase tracking-wide text-ink-400">下一站</span>
-                    <span className="block truncate text-[13.5px] font-medium text-ink-800 group-hover:text-brand-600">
+                    <span className="block text-[13.5px] uppercase tracking-wide text-ink-400">下一站</span>
+                    <span className="block truncate text-[16.5px] font-medium text-ink-800 group-hover:text-brand-600">
                       {siblings.next.label}
                     </span>
                   </span>
@@ -364,13 +364,13 @@ export default function TutorialShell({
         </main>
 
         {/* ── 右：本页小节 ── */}
-        <aside className="hidden w-[168px] shrink-0 xl:block">
+        <aside className="hidden w-[204px] shrink-0 xl:block">
           <nav className="sticky top-[calc(var(--hd-h)+24px)] max-h-[calc(100vh-var(--hd-h)-48px)] overflow-y-auto thin-scroll">
             <div className="mb-2 flex items-center justify-between">
-              <p className="text-[10.5px] font-semibold uppercase tracking-wider text-ink-400">
+              <p className="text-[13.5px] font-semibold uppercase tracking-wider text-ink-400">
                 本页小节
               </p>
-              <span className="font-mono text-[10px] text-ink-400">
+              <span className="font-mono text-[13px] text-ink-400">
                 {Math.max(1, flat.findIndex((s) => s.id === active) + 1)}/{flat.length}
               </span>
             </div>
@@ -392,7 +392,7 @@ export default function TutorialShell({
                         e.preventDefault();
                         jump(s.id);
                       }}
-                      className={`-ml-px block border-l-2 py-1.5 pl-3 pr-1 text-[11.5px] leading-snug transition ${
+                      className={`-ml-px block border-l-2 py-1.5 pl-3 pr-1 text-[14.5px] leading-snug transition ${
                         on
                           ? 'border-brand-500 font-medium text-brand-600'
                           : 'border-transparent text-ink-400 hover:border-ink-200 hover:text-ink-700'
@@ -421,14 +421,14 @@ function SectionView({ s }: { s: Section }) {
 
   return (
     <article id={s.id} className="scroll-mt-24 pt-9">
-      <h3 className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1 text-[17px] font-bold leading-snug text-ink-900">
+      <h3 className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1 text-[20px] font-bold leading-snug text-ink-900">
         {num && (
-          <span className="shrink-0 font-mono text-[13px] font-semibold text-brand-500">{num}</span>
+          <span className="shrink-0 font-mono text-[16px] font-semibold text-brand-500">{num}</span>
         )}
         <span className="min-w-0">{text}</span>
         {s.level && (
           <span
-            className={`shrink-0 rounded-full px-2 py-0.5 text-[10.5px] font-medium ${
+            className={`shrink-0 rounded-full px-2 py-0.5 text-[13.5px] font-medium ${
               s.level === '基础'
                 ? 'bg-ok/10 text-ok'
                 : s.level === '进阶'
@@ -441,7 +441,7 @@ function SectionView({ s }: { s: Section }) {
         )}
       </h3>
       {s.summary && (
-        <p className="mt-1.5 text-[13.5px] leading-relaxed text-ink-500">{s.summary}</p>
+        <p className="mt-1.5 text-[16.5px] leading-relaxed text-ink-500">{s.summary}</p>
       )}
       <div className="mt-4 space-y-3.5">
         {s.blocks.map((b, i) => (
@@ -471,7 +471,7 @@ function BlockView({ b }: { b: Block }) {
     case 'p':
       return (
         <p
-          className={`max-w-[70ch] text-[14px] leading-[1.95] text-ink-600 ${INLINE}`}
+          className={`max-w-[76ch] text-[17px] leading-[1.95] text-ink-600 ${INLINE}`}
           dangerouslySetInnerHTML={{ __html: b.html }}
         />
       );
@@ -490,11 +490,11 @@ function BlockView({ b }: { b: Block }) {
       const tone = NOTE_TONE[(b.tone ?? 'info') as keyof typeof NOTE_TONE];
       return (
         <div
-          className={`relative max-w-[72ch] overflow-hidden rounded-xl border border-ink-100 ${tone.bg} p-4 pl-5`}
+          className={`relative max-w-[76ch] overflow-hidden rounded-xl border border-ink-100 ${tone.bg} p-4 pl-5`}
         >
           <span className={`absolute inset-y-0 left-0 w-[3px] ${tone.bar.replace('border-', 'bg-')}`} />
           <div
-            className={`text-[13.5px] leading-[1.85] text-ink-700 ${INLINE}`}
+            className={`text-[16.5px] leading-[1.85] text-ink-700 ${INLINE}`}
             dangerouslySetInnerHTML={{ __html: b.html }}
           />
         </div>
@@ -503,9 +503,9 @@ function BlockView({ b }: { b: Block }) {
 
     case 'list':
       return (
-        <ul className="max-w-[70ch] space-y-2">
+        <ul className="max-w-[76ch] space-y-2">
           {b.items.map((it, i) => (
-            <li key={i} className="flex gap-2.5 text-[13.8px] leading-[1.85] text-ink-600">
+            <li key={i} className="flex gap-2.5 text-[16.8px] leading-[1.85] text-ink-600">
               <span className="mt-[8px] h-1.5 w-1.5 shrink-0 rounded-full bg-brand-300" />
               <span className={INLINE} dangerouslySetInnerHTML={{ __html: it }} />
             </li>
@@ -515,15 +515,15 @@ function BlockView({ b }: { b: Block }) {
 
     case 'table':
       return (
-        <div className="max-w-[76ch] overflow-hidden rounded-xl border border-ink-100">
+        <div className="max-w-[84ch] overflow-hidden rounded-xl border border-ink-100">
           <div className="overflow-x-auto">
-            <table className="w-full border-collapse text-[13px]">
+            <table className="w-full border-collapse text-[16px]">
               <thead>
                 <tr className="bg-ink-50/80">
                   {b.head.map((h, i) => (
                     <th
                       key={i}
-                      className="border-b border-ink-100 px-3.5 py-2.5 text-left text-[12px] font-semibold text-ink-700"
+                      className="border-b border-ink-100 px-3.5 py-2.5 text-left text-[15px] font-semibold text-ink-700"
                     >
                       {h}
                     </th>
@@ -550,19 +550,19 @@ function BlockView({ b }: { b: Block }) {
 
     case 'term':
       return (
-        <dl className="grid max-w-[76ch] gap-2.5 sm:grid-cols-2">
+        <dl className="grid max-w-[84ch] gap-2.5 sm:grid-cols-2">
           {b.items.map((it, i) => (
             <div
               key={i}
               className="rounded-xl border border-ink-100 bg-white p-3.5 transition hover:border-brand-200"
             >
-              <dt className="flex items-center gap-1.5 font-mono text-[12.5px] font-semibold text-brand-700">
+              <dt className="flex items-center gap-1.5 font-mono text-[15.5px] font-semibold text-brand-700">
                 <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 shrink-0 text-brand-300" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M5 12h14" strokeLinecap="round" />
                 </svg>
                 {it.term}
               </dt>
-              <dd className={`mt-1.5 text-[13px] leading-[1.8] text-ink-600 ${INLINE}`} dangerouslySetInnerHTML={{ __html: it.desc }} />
+              <dd className={`mt-1.5 text-[16px] leading-[1.8] text-ink-600 ${INLINE}`} dangerouslySetInnerHTML={{ __html: it.desc }} />
             </div>
           ))}
         </dl>
@@ -570,7 +570,7 @@ function BlockView({ b }: { b: Block }) {
 
     case 'compare':
       return (
-        <div className="max-w-[80ch]">
+        <div className="max-w-[88ch]">
           <div className="grid gap-2.5 sm:grid-cols-2">
             {[
               { d: b.bad, ok: false },
@@ -583,7 +583,7 @@ function BlockView({ b }: { b: Block }) {
                 }`}
               >
                 <div
-                  className={`flex items-center gap-1.5 border-b px-3 py-1.5 text-[11px] font-semibold ${
+                  className={`flex items-center gap-1.5 border-b px-3 py-1.5 text-[14px] font-semibold ${
                     ok ? 'border-ok/20 text-ok' : 'border-danger/20 text-danger'
                   }`}
                 >
@@ -596,7 +596,7 @@ function BlockView({ b }: { b: Block }) {
                   </svg>
                   {d.title ?? (ok ? '推荐写法' : '问题写法')}
                 </div>
-                <pre className="overflow-x-auto px-3.5 py-3 font-mono text-[12px] leading-[1.7] text-ink-700">
+                <pre className="overflow-x-auto px-3.5 py-3 font-mono text-[15px] leading-[1.7] text-ink-700">
                   <code>{d.code}</code>
                 </pre>
               </div>
@@ -604,7 +604,7 @@ function BlockView({ b }: { b: Block }) {
           </div>
           {b.note && (
             <p
-              className={`mt-2.5 text-[12.5px] leading-relaxed text-ink-500 ${INLINE}`}
+              className={`mt-2.5 text-[15.5px] leading-relaxed text-ink-500 ${INLINE}`}
               dangerouslySetInnerHTML={{ __html: b.note }}
             />
           )}
@@ -613,8 +613,8 @@ function BlockView({ b }: { b: Block }) {
 
     case 'keypoints':
       return (
-        <div className="max-w-[74ch] rounded-2xl border border-brand-100 bg-gradient-to-br from-brand-50/70 to-white p-4">
-          <p className="flex items-center gap-1.5 text-[12px] font-semibold text-brand-700">
+        <div className="max-w-[80ch] rounded-2xl border border-brand-100 bg-gradient-to-br from-brand-50/70 to-white p-4">
+          <p className="flex items-center gap-1.5 text-[15px] font-semibold text-brand-700">
             <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1" strokeLinecap="round" />
             </svg>
@@ -622,8 +622,8 @@ function BlockView({ b }: { b: Block }) {
           </p>
           <ul className="mt-2.5 space-y-2">
             {b.items.map((it, i) => (
-              <li key={i} className="flex gap-2.5 text-[13.5px] leading-[1.8] text-ink-700">
-                <span className="mt-px flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full bg-brand-500/10 font-mono text-[9.5px] font-bold text-brand-600">
+              <li key={i} className="flex gap-2.5 text-[16.5px] leading-[1.8] text-ink-700">
+                <span className="mt-px flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full bg-brand-500/10 font-mono text-[12.5px] font-bold text-brand-600">
                   {i + 1}
                 </span>
                 <span className={INLINE} dangerouslySetInnerHTML={{ __html: it }} />

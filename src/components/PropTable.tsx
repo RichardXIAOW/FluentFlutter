@@ -17,7 +17,7 @@ export default function PropTable({ rows }: { rows: PropRow[] }) {
 
   if (!rows.length) {
     return (
-      <p className="rounded-lg border border-dashed border-ink-200 px-4 py-6 text-center text-[13px] text-ink-400">
+      <p className="rounded-lg border border-dashed border-ink-200 px-4 py-6 text-center text-[16px] text-ink-400">
         这个组件没有需要特别说明的属性
       </p>
     );
@@ -32,7 +32,7 @@ export default function PropTable({ rows }: { rows: PropRow[] }) {
         <button
           type="button"
           onClick={() => setCompact((v) => !v)}
-          className="rounded-md border border-ink-200 px-2.5 py-1 text-[11.5px] text-ink-500 transition hover:border-brand-300 hover:text-brand-600 lg:hidden"
+          className="rounded-md border border-ink-200 px-2.5 py-1 text-[14.5px] text-ink-500 transition hover:border-brand-300 hover:text-brand-600 lg:hidden"
         >
           {compact ? '切换到表格' : '切换到卡片'}
         </button>
@@ -44,21 +44,21 @@ export default function PropTable({ rows }: { rows: PropRow[] }) {
           {rows.map((r) => (
             <div key={r.name} className="rounded-xl border border-ink-100 bg-white p-3.5">
               <div className="flex items-center gap-2">
-                <code className="font-mono text-[13px] font-semibold text-ink-900">
+                <code className="font-mono text-[16px] font-semibold text-ink-900">
                   {r.name}
                 </code>
                 {r.required && (
-                  <span className="rounded bg-danger/10 px-1.5 py-px text-[10.5px] font-medium text-danger">
+                  <span className="rounded bg-danger/10 px-1.5 py-px text-[13.5px] font-medium text-danger">
                     必填
                   </span>
                 )}
-                <code className="ml-auto font-mono text-[11px] text-brand-600">
+                <code className="ml-auto font-mono text-[14px] text-brand-600">
                   {r.type}
                 </code>
               </div>
-              <p className="mt-2 text-[12.5px] leading-relaxed text-ink-600">{r.desc}</p>
+              <p className="mt-2 text-[15.5px] leading-relaxed text-ink-600">{r.desc}</p>
               {r.def && (
-                <p className="mt-1.5 text-[11.5px] text-ink-400">
+                <p className="mt-1.5 text-[14.5px] text-ink-400">
                   默认值 <code className="font-mono text-ink-600">{r.def}</code>
                 </p>
               )}
@@ -68,9 +68,9 @@ export default function PropTable({ rows }: { rows: PropRow[] }) {
       ) : (
         <div className="overflow-hidden rounded-xl border border-ink-100">
           <div className="overflow-x-auto thin-scroll">
-            <table className="w-full min-w-[560px] border-collapse text-left text-[13px]">
+            <table className="w-full min-w-[560px] border-collapse text-left text-[16px]">
               <thead>
-                <tr className="bg-ink-50 text-[11.5px] uppercase tracking-wide text-ink-500">
+                <tr className="bg-ink-50 text-[14.5px] uppercase tracking-wide text-ink-500">
                   <th className="px-4 py-2.5 font-semibold">属性</th>
                   {hasType && <th className="px-4 py-2.5 font-semibold">类型</th>}
                   <th className="px-4 py-2.5 font-semibold">默认值</th>
@@ -101,14 +101,14 @@ export default function PropTable({ rows }: { rows: PropRow[] }) {
                     </td>
                     {hasType && (
                       <td className="px-4 py-3">
-                        <code className="font-mono text-[12px] text-brand-600">
+                        <code className="font-mono text-[15px] text-brand-600">
                           {r.type}
                         </code>
                       </td>
                     )}
                     <td className="whitespace-nowrap px-4 py-3">
                       {r.def ? (
-                        <code className="rounded bg-ink-100 px-1.5 py-0.5 font-mono text-[11.5px] text-ink-600">
+                        <code className="rounded bg-ink-100 px-1.5 py-0.5 font-mono text-[14.5px] text-ink-600">
                           {r.def}
                         </code>
                       ) : (
@@ -124,7 +124,7 @@ export default function PropTable({ rows }: { rows: PropRow[] }) {
         </div>
       )}
 
-      <p className="mt-2 text-[11.5px] text-ink-400">
+      <p className="mt-2 text-[14.5px] text-ink-400">
         仅列出高频使用的参数。完整签名见官方 API 文档；带
         <span className="mx-1 inline-block h-1.5 w-1.5 rounded-full bg-danger align-middle" />
         标记的为必填。

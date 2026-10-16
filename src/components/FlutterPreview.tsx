@@ -48,7 +48,7 @@ export default function FlutterPreview({
     return (
       <div className="overflow-hidden rounded-xl border border-ink-100 bg-ink-50">
         <div className="flex items-center justify-between border-b border-ink-100 bg-white px-3 py-1.5">
-          <span className="text-[11.5px] text-ink-400">渲染效果（静态截图）</span>
+          <span className="text-[14.5px] text-ink-400">渲染效果（静态截图）</span>
         </div>
         <div className="preview-grid flex items-center justify-center p-6">
           {/* 用原生 img：这些是本地静态资源，不需要 next/image 优化 */}
@@ -75,14 +75,14 @@ export default function FlutterPreview({
               loaded ? 'bg-ok' : 'animate-pulse bg-warn'
             }`}
           />
-          <span className="text-[11.5px] text-ink-500">
+          <span className="text-[14.5px] text-ink-500">
             {loaded ? 'Flutter Web 实时渲染' : '正在加载 Flutter 运行时…'}
           </span>
           <a
             href={url}
             target="_blank"
             rel="noreferrer"
-            className="ml-auto text-[11.5px] text-brand-600 hover:underline"
+            className="ml-auto text-[14.5px] text-brand-600 hover:underline"
           >
             新标签页打开
           </a>
@@ -90,8 +90,8 @@ export default function FlutterPreview({
 
         {failed ? (
           <div className="px-4 py-12 text-center">
-            <p className="text-[13px] text-ink-500">预览加载失败</p>
-            <p className="mt-1 text-[11.5px] text-ink-400">
+            <p className="text-[16px] text-ink-500">预览加载失败</p>
+            <p className="mt-1 text-[14.5px] text-ink-400">
               可能是网络问题，或该示例的 Web 构建未包含在本次部署中。
               可以先看「代码」tab。
             </p>
@@ -102,7 +102,7 @@ export default function FlutterPreview({
               <div className="absolute inset-0 z-10 flex items-center justify-center bg-ink-50">
                 <div className="flex flex-col items-center gap-2">
                   <span className="h-5 w-5 animate-spin rounded-full border-2 border-ink-200 border-t-brand-500" />
-                  <span className="text-[11.5px] text-ink-400">
+                  <span className="text-[14.5px] text-ink-400">
                     首次加载约需 3~10 秒
                   </span>
                 </div>
@@ -141,7 +141,7 @@ export default function FlutterPreview({
               <button
                 type="button"
                 onClick={() => setLive(true)}
-                className="absolute bottom-3 right-3 flex items-center gap-1.5 rounded-lg bg-ink-900/85 px-3 py-1.5 text-[12px] font-medium text-white backdrop-blur transition hover:bg-ink-900"
+                className="absolute bottom-3 right-3 flex items-center gap-1.5 rounded-lg bg-ink-900/85 px-3 py-1.5 text-[15px] font-medium text-white backdrop-blur transition hover:bg-ink-900"
               >
                 <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="currentColor">
                   <path d="M8 5v14l11-7L8 5Z" />
@@ -158,12 +158,12 @@ export default function FlutterPreview({
                 <path d="M8 21h8M12 18v3" strokeLinecap="round" />
               </svg>
             </span>
-            <p className="text-[12.5px] text-ink-500">正在准备预览…</p>
+            <p className="text-[15.5px] text-ink-500">正在准备预览…</p>
             {url && (
               <button
                 type="button"
                 onClick={() => setLive(true)}
-                className="mt-1 flex items-center gap-1.5 rounded-lg bg-brand-500 px-3.5 py-2 text-[12.5px] font-medium text-white shadow-sm transition hover:bg-brand-600"
+                className="mt-1 flex items-center gap-1.5 rounded-lg bg-brand-500 px-3.5 py-2 text-[15.5px] font-medium text-white shadow-sm transition hover:bg-brand-600"
               >
                 <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="currentColor">
                   <path d="M8 5v14l11-7L8 5Z" />

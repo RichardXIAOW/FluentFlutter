@@ -44,8 +44,8 @@ export default function TocRail({
   if (!anchors.length) return null;
 
   return (
-    <aside className="sticky top-[var(--hd-h)] hidden h-[calc(100vh-var(--hd-h))] w-[190px] shrink-0 overflow-y-auto py-10 pl-2 pr-3 thin-scroll xl:block">
-      <p className="px-3 text-[11px] font-semibold uppercase tracking-wider text-ink-400">
+    <aside className="sticky top-[var(--hd-h)] hidden h-[calc(100vh-var(--hd-h))] w-[216px] shrink-0 overflow-y-auto py-10 pl-2 pr-3 thin-scroll xl:block">
+      <p className="px-3 text-[14px] font-semibold uppercase tracking-wider text-ink-400">
         本页目录
       </p>
       <ul className="mt-2 border-l border-ink-100">
@@ -64,7 +64,7 @@ export default function TocRail({
                   history.replaceState(null, '', `#${a.id}`);
                   setActiveId(a.id);
                 }}
-                className={`-ml-px block border-l-2 py-1.5 pl-3 text-[12px] leading-snug transition ${
+                className={`-ml-px block border-l-2 py-1.5 pl-3 text-[15px] leading-snug transition ${
                   on
                     ? 'border-brand-500 font-medium text-brand-600'
                     : 'border-transparent text-ink-500 hover:border-ink-200 hover:text-ink-800'

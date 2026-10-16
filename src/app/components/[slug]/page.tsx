@@ -60,7 +60,7 @@ export default function ComponentPage({
 
       <main id="main" className="min-w-0 flex-1 px-4 py-8 sm:px-8 lg:px-10">
         {/* 面包屑 */}
-        <nav className="flex items-center gap-1.5 text-[12px] text-ink-400">
+        <nav className="flex items-center gap-1.5 text-[15px] text-ink-400">
           <Link href="/" className="transition hover:text-brand-600">
             首页
           </Link>
@@ -80,27 +80,27 @@ export default function ComponentPage({
         {/* ── 标题区 ── */}
         <header id="intro" className="mt-3 scroll-mt-24">
           <div className="flex flex-wrap items-center gap-3">
-            <h1 className="font-mono text-[26px] font-bold tracking-tight text-ink-900 sm:text-[30px]">
+            <h1 className="font-mono text-[29px] font-bold tracking-tight text-ink-900 sm:text-[33px]">
               {c.name}
             </h1>
-            <span className="rounded-md bg-brand-50 px-2 py-0.5 text-[12px] font-medium text-brand-600">
+            <span className="rounded-md bg-brand-50 px-2 py-0.5 text-[15px] font-medium text-brand-600">
               {c.title}
             </span>
             {cat && (
-              <span className="rounded-md border border-ink-200 px-2 py-0.5 text-[11.5px] text-ink-500">
+              <span className="rounded-md border border-ink-200 px-2 py-0.5 text-[14.5px] text-ink-500">
                 {cat.name}
               </span>
             )}
           </div>
 
-          <p className="mt-3 max-w-3xl text-[14px] leading-relaxed text-ink-700">
+          <p className="mt-3 max-w-3xl text-[17px] leading-relaxed text-ink-700">
             {c.summary}
           </p>
 
           {c.import && (
-            <p className="mt-3 text-[12.5px] text-ink-500">
+            <p className="mt-3 text-[15.5px] text-ink-500">
               引入：
-              <code className="ml-1 rounded bg-ink-50 px-1.5 py-0.5 font-mono text-[12px] text-ink-700">
+              <code className="ml-1 rounded bg-ink-50 px-1.5 py-0.5 font-mono text-[15px] text-ink-700">
                 import '{c.import}';
               </code>
             </p>
@@ -112,7 +112,7 @@ export default function ComponentPage({
               {c.highlights.map((h) => (
                 <li
                   key={h}
-                  className="flex items-start gap-2 rounded-xl border border-ink-100 bg-white p-3 text-[12.5px] leading-relaxed text-ink-600 shadow-card"
+                  className="flex items-start gap-2 rounded-xl border border-ink-100 bg-white p-3 text-[15.5px] leading-relaxed text-ink-600 shadow-card"
                 >
                   <svg viewBox="0 0 24 24" className="mt-0.5 h-4 w-4 shrink-0 text-brand-500" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="m5 12.5 4.5 4.5L19 7.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -127,8 +127,8 @@ export default function ComponentPage({
         {/* ── 图形示例：一眼看到这个组件长什么样 ── */}
         <section className="mt-6 overflow-hidden rounded-2xl border border-ink-100 bg-white shadow-card">
           <div className="flex items-center gap-2 border-b border-ink-100 bg-ink-50/70 px-4 py-2">
-            <span className="text-[11.5px] font-medium text-ink-500">组件效果</span>
-            <span className="text-[10.5px] text-ink-400">
+            <span className="text-[14.5px] font-medium text-ink-500">组件效果</span>
+            <span className="text-[13.5px] text-ink-400">
               HTML 复刻的典型外观，细节以真实 Flutter 渲染为准
             </span>
           </div>
@@ -139,7 +139,7 @@ export default function ComponentPage({
         {c.whenToUse ? (
           <section className="mt-8 grid gap-4 md:grid-cols-2">
             <div className="rounded-2xl border border-ok/25 bg-ok/[.04] p-4">
-              <h2 className="flex items-center gap-1.5 text-[13.5px] font-semibold text-ink-900">
+              <h2 className="flex items-center gap-1.5 text-[16.5px] font-semibold text-ink-900">
                 <svg viewBox="0 0 24 24" className="h-4 w-4 text-ok" fill="none" stroke="currentColor" strokeWidth="2.2">
                   <path d="m5 12.5 4.5 4.5L19 7.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
@@ -147,7 +147,7 @@ export default function ComponentPage({
               </h2>
               <ul className="mt-2.5 space-y-1.5">
                 {c.whenToUse.do.map((t) => (
-                  <li key={t} className="flex items-start gap-2 text-[12.5px] leading-relaxed text-ink-700">
+                  <li key={t} className="flex items-start gap-2 text-[15.5px] leading-relaxed text-ink-700">
                     <span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-ok" />
                     {t}
                   </li>
@@ -157,7 +157,7 @@ export default function ComponentPage({
 
             {c.whenToUse.dont?.length ? (
               <div className="rounded-2xl border border-danger/25 bg-danger/[.04] p-4">
-                <h2 className="flex items-center gap-1.5 text-[13.5px] font-semibold text-ink-900">
+                <h2 className="flex items-center gap-1.5 text-[16.5px] font-semibold text-ink-900">
                   <svg viewBox="0 0 24 24" className="h-4 w-4 text-danger" fill="none" stroke="currentColor" strokeWidth="2.2">
                     <path d="M6 6l12 12M18 6 6 18" strokeLinecap="round" />
                   </svg>
@@ -165,7 +165,7 @@ export default function ComponentPage({
                 </h2>
                 <ul className="mt-2.5 space-y-1.5">
                   {c.whenToUse.dont.map((t) => (
-                    <li key={t} className="flex items-start gap-2 text-[12.5px] leading-relaxed text-ink-700">
+                    <li key={t} className="flex items-start gap-2 text-[15.5px] leading-relaxed text-ink-700">
                       <span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-danger" />
                       {t}
                     </li>
@@ -183,7 +183,7 @@ export default function ComponentPage({
               <circle cx="12" cy="12" r="9" />
               <path d="M12 16v-5M12 8h.01" strokeLinecap="round" />
             </svg>
-            <p className="text-[12.5px] leading-relaxed text-ink-700">{c.notes}</p>
+            <p className="text-[15.5px] leading-relaxed text-ink-700">{c.notes}</p>
           </div>
         ) : null}
 
@@ -230,10 +230,10 @@ export default function ComponentPage({
                     href={`/components/${slug}`}
                     className="group flex items-center gap-2 rounded-xl border border-ink-100 bg-white px-3.5 py-2.5 shadow-card transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-pop"
                   >
-                    <code className="font-mono text-[13px] font-medium text-ink-900 group-hover:text-brand-600">
+                    <code className="font-mono text-[16px] font-medium text-ink-900 group-hover:text-brand-600">
                       {r.name}
                     </code>
-                    <span className="text-[11.5px] text-ink-400">{r.title}</span>
+                    <span className="text-[14.5px] text-ink-400">{r.title}</span>
                   </Link>
                 );
               })}
@@ -244,7 +244,7 @@ export default function ComponentPage({
         {/* ── 同组其他组件 ── */}
         {siblings.length ? (
           <section className="mt-12 border-t border-ink-100 pt-8">
-            <h2 className="text-[13px] font-semibold text-ink-500">
+            <h2 className="text-[16px] font-semibold text-ink-500">
               {cat?.name} 里的其他组件
             </h2>
             <div className="mt-3 flex flex-wrap gap-1.5">
@@ -252,7 +252,7 @@ export default function ComponentPage({
                 <Link
                   key={s.slug}
                   href={`/components/${s.slug}`}
-                  className="rounded-lg border border-ink-100 bg-white px-2.5 py-1.5 font-mono text-[12px] text-ink-600 transition hover:border-brand-200 hover:text-brand-600"
+                  className="rounded-lg border border-ink-100 bg-white px-2.5 py-1.5 font-mono text-[15px] text-ink-600 transition hover:border-brand-200 hover:text-brand-600"
                 >
                   {s.name}
                 </Link>
@@ -263,16 +263,16 @@ export default function ComponentPage({
 
         {/* ── 引申阅读 ── */}
         <section className="mt-12 overflow-hidden rounded-2xl border border-brand-100 bg-gradient-to-br from-brand-50 to-white p-5">
-          <h2 className="text-[15px] font-semibold text-ink-900">
+          <h2 className="text-[18px] font-semibold text-ink-900">
             想在真实项目里用起来？
           </h2>
-          <p className="mt-1.5 text-[12.5px] leading-relaxed text-ink-600">
+          <p className="mt-1.5 text-[15.5px] leading-relaxed text-ink-600">
             组件知道怎么用了，但项目该怎么搭？这份指南从目录结构、环境分档、网络层到发布构建，
             带你做一遍完整的工程化搭建。
           </p>
           <Link
             href="/handbook"
-            className="mt-3 inline-flex h-9 items-center gap-1.5 rounded-lg bg-brand-500 px-3.5 text-[13px] font-medium text-white transition hover:bg-brand-600"
+            className="mt-3 inline-flex h-9 items-center gap-1.5 rounded-lg bg-brand-500 px-3.5 text-[16px] font-medium text-white transition hover:bg-brand-600"
           >
             查看工程化搭建指南
             <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2">
@@ -291,11 +291,11 @@ export default function ComponentPage({
 function SectionTitle({ title, sub }: { title: string; sub?: string }) {
   return (
     <div className="mb-4">
-      <h2 className="flex items-center gap-2 text-[18px] font-semibold tracking-tight text-ink-900">
+      <h2 className="flex items-center gap-2 text-[21px] font-semibold tracking-tight text-ink-900">
         <span className="h-4 w-1 rounded-full bg-brand-500" />
         {title}
       </h2>
-      {sub && <p className="ml-3 mt-1 text-[12.5px] text-ink-500">{sub}</p>}
+      {sub && <p className="ml-3 mt-1 text-[15.5px] text-ink-500">{sub}</p>}
     </div>
   );
 }

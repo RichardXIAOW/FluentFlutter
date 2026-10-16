@@ -3,8 +3,10 @@
 @tailwind utilities;
 
 :root {
-  --hd-h: 60px;
-  --side-w: 268px;
+  --hd-h: 64px;
+  --side-w: 292px;
+  /* 画布底色：比纯白深半档，让白卡片自然浮起（Stripe/MDN 同款做法） */
+  --canvas: #fafbfc;
 }
 
 html {
@@ -13,7 +15,11 @@ html {
 }
 
 body {
-  @apply bg-white text-ink-700 font-sans antialiased;
+  @apply font-sans text-ink-700 antialiased;
+  background: var(--canvas);
+  /* 中文正文行高：1.75 起步才不挤 */
+  line-height: 1.75;
+  text-rendering: optimizeLegibility;
 }
 
 /* ── 代码高亮（自研轻量配色，不引第三方高亮库） ── */
@@ -28,11 +34,11 @@ body {
 .tok-prop { color: #0550ae; }
 
 /* ── 滚动条 ── */
-.thin-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+.thin-scroll::-webkit-scrollbar { width: 8px; height: 8px; }
 .thin-scroll::-webkit-scrollbar-thumb {
-  background: #dcdfe6; border-radius: 3px;
+  background: #d4d8de; border-radius: 4px;
 }
-.thin-scroll::-webkit-scrollbar-thumb:hover { background: #c0c4cc; }
+.thin-scroll::-webkit-scrollbar-thumb:hover { background: #b8bdc4; }
 .thin-scroll::-webkit-scrollbar-track { background: transparent; }
 
 /* ── 动画 ── */

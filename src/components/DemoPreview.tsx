@@ -95,9 +95,9 @@ export default function DemoPreview({
     >
       {/* 标题 */}
       <header className="flex flex-wrap items-baseline gap-x-3 gap-y-1 px-4 pt-4 sm:px-5">
-        <h3 className="text-[15px] font-semibold text-ink-900">{demo.title}</h3>
+        <h3 className="text-[18px] font-semibold text-ink-900">{demo.title}</h3>
         {demo.note && (
-          <p className="w-full text-[12.5px] leading-relaxed text-ink-500 sm:w-auto sm:flex-1">
+          <p className="w-full text-[15.5px] leading-relaxed text-ink-500 sm:w-auto sm:flex-1">
             {demo.note}
           </p>
         )}

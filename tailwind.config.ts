@@ -58,11 +58,12 @@ const config: Config = {
         ],
       },
       boxShadow: {
-        card: '0 1px 2px rgba(0,0,0,.04), 0 4px 12px rgba(0,0,0,.04)',
-        pop: '0 6px 24px rgba(0,0,0,.10)',
+        card: '0 1px 2px rgba(16,24,40,.04), 0 2px 8px rgba(16,24,40,.04)',
+        pop: '0 4px 12px rgba(16,24,40,.06), 0 12px 32px rgba(16,24,40,.08)',
       },
       maxWidth: {
-        page: '1440px',
+        // 1440 在 2K/宽屏上两侧留白过大；1620 兼顾 1080p（内容区仍充足）与宽屏利用率
+        page: '1620px',
       },
     },
   },

@@ -61,7 +61,7 @@ export function MockFrame({
 }) {
   return (
     <div
-      className={`flex min-h-[92px] select-none items-center justify-center overflow-hidden p-4 ${className}`}
+      className={`flex min-h-[107px] select-none items-center justify-center overflow-hidden p-4 ${className}`}
     >
       {children}
     </div>
@@ -101,7 +101,7 @@ export function Btn({
 }) {
   const { add, node } = useRipple();
   const base =
-    'relative inline-flex h-9 select-none items-center justify-center gap-1.5 overflow-hidden rounded-[18px] px-4 text-[13px] font-medium transition active:scale-95';
+    'relative inline-flex h-9 select-none items-center justify-center gap-1.5 overflow-hidden rounded-[18px] px-4 text-[15px] font-medium transition active:scale-95';
   const styles = {
     filled: danger ? 'bg-danger text-white' : 'bg-brand-500 text-white',
     elevated: 'bg-[#e8f1fd] text-brand-600 shadow-sm',
@@ -119,7 +119,7 @@ export function Btn({
       className={`${base} ${styles[kind]}`}
     >
       {node}
-      {icon && <span className="text-[14px] leading-none">{icon}</span>}
+      {icon && <span className="text-[16px] leading-none">{icon}</span>}
       {children}
     </button>
   );
@@ -152,7 +152,7 @@ export function SwitchI({ init = false, label }: { init?: boolean; label?: strin
     <button
       type="button"
       onClick={() => setOn(!on)}
-      className="flex items-center gap-2 text-[12.5px] text-ink-700"
+      className="flex items-center gap-2 text-[14.5px] text-ink-700"
     >
       <span
         className={`relative flex h-[22px] w-[40px] items-center rounded-full px-0.5 transition-colors ${
@@ -177,7 +177,7 @@ export function CheckI({ init = false, label }: { init?: boolean; label?: string
     <button
       type="button"
       onClick={() => setOn(!on)}
-      className="flex items-center gap-2 text-[12.5px]"
+      className="flex items-center gap-2 text-[14.5px]"
     >
       <span
         className={`flex h-[18px] w-[18px] items-center justify-center rounded-[4px] transition ${
@@ -205,7 +205,7 @@ export function RadioG({ options, init = 0 }: { options: string[]; init?: number
           key={o}
           type="button"
           onClick={() => setSel(i)}
-          className="flex items-center gap-2 text-[12.5px]"
+          className="flex items-center gap-2 text-[14.5px]"
         >
           <span
             className={`flex h-[18px] w-[18px] items-center justify-center rounded-full border-2 transition ${
@@ -244,7 +244,7 @@ export function SliderI({ init = 60 }: { init?: number }) {
           className="absolute inset-x-0 -top-2 h-6 w-full cursor-pointer opacity-0"
         />
       </div>
-      <span className="text-right font-mono text-[10.5px] text-ink-400">value: {v}</span>
+      <span className="text-right font-mono text-[12.5px] text-ink-400">value: {v}</span>
     </div>
   );
 }
@@ -259,7 +259,7 @@ export function WrapChips({ items }: { items: string[] }) {
           key={t}
           type="button"
           onClick={() => setSel(i)}
-          className={`rounded-full px-2.5 py-1 text-[11.5px] transition active:scale-95 ${
+          className={`rounded-full px-2.5 py-1 text-[13.5px] transition active:scale-95 ${
             sel === i
               ? 'bg-brand-500 text-white'
               : 'bg-ink-50 text-ink-600 ring-1 ring-ink-200 hover:bg-brand-50'
@@ -282,7 +282,7 @@ export function ChipToggle({ items }: { items: string[] }) {
           key={t}
           type="button"
           onClick={() => setSel((s) => s.map((v, j) => (j === i ? !v : v)))}
-          className={`rounded-lg px-3 py-1.5 text-[12.5px] transition active:scale-95 ${
+          className={`rounded-lg px-3 py-1.5 text-[14.5px] transition active:scale-95 ${
             sel[i]
               ? 'bg-brand-50 text-brand-700 ring-1 ring-brand-300'
               : 'bg-ink-50 text-ink-600 ring-1 ring-ink-200'
@@ -306,7 +306,7 @@ export function FilterChips({ items }: { items: string[] }) {
           key={t}
           type="button"
           onClick={() => setSel((s) => s.map((v, j) => (j === i ? !v : v)))}
-          className={`flex items-center gap-1 rounded-lg px-3 py-1.5 text-[12.5px] transition active:scale-95 ${
+          className={`flex items-center gap-1 rounded-lg px-3 py-1.5 text-[14.5px] transition active:scale-95 ${
             sel[i] ? 'bg-brand-500 text-white' : 'bg-ink-50 text-ink-600 ring-1 ring-ink-200'
           }`}
         >
@@ -332,7 +332,7 @@ export function SegmentedG({ items, init = 0 }: { items: string[]; init?: number
           key={t}
           type="button"
           onClick={() => setSel(i)}
-          className={`flex h-9 items-center gap-1 px-4 text-[12.5px] transition ${
+          className={`flex h-9 items-center gap-1 px-4 text-[14.5px] transition ${
             i > 0 ? 'border-l border-ink-300' : ''
           } ${sel === i ? 'bg-brand-50 font-medium text-brand-600' : 'text-ink-600 hover:bg-ink-50'}`}
         >
@@ -359,7 +359,7 @@ export function TabsG({ items }: { items: string[] }) {
             key={t}
             type="button"
             onClick={() => setSel(i)}
-            className={`relative flex-1 pb-2 pt-1 text-center text-[13px] transition ${
+            className={`relative flex-1 pb-2 pt-1 text-center text-[15px] transition ${
               sel === i ? 'font-medium text-brand-600' : 'text-ink-500 hover:text-ink-800'
             }`}
           >
@@ -396,7 +396,7 @@ export function NavBarG({
             }`}
           >
             <MI d={it.d} size={19} />
-            <span className="text-[10px]">{it.t}</span>
+            <span className="text-[12px]">{it.t}</span>
           </button>
         ))}
       </div>
@@ -421,7 +421,7 @@ export function NavBarG({
               <span className="absolute right-3 top-0 h-1.5 w-1.5 rounded-full bg-danger" />
             )}
           </span>
-          <span className={`text-[10px] ${sel === i ? 'font-medium text-brand-700' : 'text-ink-500'}`}>
+          <span className={`text-[12px] ${sel === i ? 'font-medium text-brand-700' : 'text-ink-500'}`}>
             {it.t}
           </span>
         </button>
@@ -438,7 +438,7 @@ export function ExpansionI({ q, a, init = false }: { q: string; a: string; init?
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="flex w-full items-center justify-between text-left text-[12.5px] text-ink-800"
+        className="flex w-full items-center justify-between text-left text-[14.5px] text-ink-800"
       >
         {q}
         <svg
@@ -451,7 +451,7 @@ export function ExpansionI({ q, a, init = false }: { q: string; a: string; init?
           <path d="M12 15.5 5.5 9h13L12 15.5Z" />
         </svg>
       </button>
-      {open && a && <p className="mt-1.5 text-[11.5px] leading-relaxed text-ink-500">{a}</p>}
+      {open && a && <p className="mt-1.5 text-[13.5px] leading-relaxed text-ink-500">{a}</p>}
     </div>
   );
 }
@@ -465,7 +465,7 @@ export function DropdownI({ items, init = 0 }: { items: string[]; init?: number 
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="flex h-10 w-full items-center justify-between rounded-lg border border-ink-300 px-3 text-[13px] text-ink-900"
+        className="flex h-10 w-full items-center justify-between rounded-lg border border-ink-300 px-3 text-[15px] text-ink-900"
       >
         {items[sel]}
         <svg
@@ -488,7 +488,7 @@ export function DropdownI({ items, init = 0 }: { items: string[]; init?: number 
                 setSel(i);
                 setOpen(false);
               }}
-              className={`block w-full px-3 py-1.5 text-left text-[12.5px] ${
+              className={`block w-full px-3 py-1.5 text-left text-[14.5px] ${
                 i === sel ? 'bg-brand-50 text-brand-600' : 'text-ink-700 hover:bg-ink-50'
               }`}
             >
@@ -523,7 +523,7 @@ export function StepperI({ steps }: { steps: string[] }) {
                 }`}
               />
               <span
-                className={`flex h-6 w-6 items-center justify-center rounded-full text-[10px] transition ${
+                className={`flex h-6 w-6 items-center justify-center rounded-full text-[12px] transition ${
                   done
                     ? 'bg-brand-500 text-white'
                     : active
@@ -539,7 +539,7 @@ export function StepperI({ steps }: { steps: string[] }) {
                 }`}
               />
             </div>
-            <span className={`mt-1 text-[10.5px] ${active ? 'font-medium text-brand-600' : 'text-ink-600'}`}>
+            <span className={`mt-1 text-[12.5px] ${active ? 'font-medium text-brand-600' : 'text-ink-600'}`}>
               {t}
             </span>
           </button>
@@ -557,7 +557,7 @@ export function SnackBarI() {
       <button
         type="button"
         onClick={() => setGone(false)}
-        className="rounded-lg border border-ink-200 bg-white px-3.5 py-2 text-[12px] text-brand-600 shadow-card transition hover:border-brand-300"
+        className="rounded-lg border border-ink-200 bg-white px-3.5 py-2 text-[14px] text-brand-600 shadow-card transition hover:border-brand-300"
       >
         ↻ 再看一次 SnackBar
       </button>
@@ -565,11 +565,11 @@ export function SnackBarI() {
   }
   return (
     <div className="flex w-full items-center gap-3 rounded-lg bg-[#2c3038] px-4 py-3 shadow-pop anim-in">
-      <span className="text-[12.5px] text-white">已加入购物车</span>
+      <span className="text-[14.5px] text-white">已加入购物车</span>
       <button
         type="button"
         onClick={() => setGone(true)}
-        className="ml-auto text-[12.5px] font-medium text-[#7fb8f7] transition hover:text-white"
+        className="ml-auto text-[14.5px] font-medium text-[#7fb8f7] transition hover:text-white"
       >
         撤销
       </button>
@@ -601,7 +601,7 @@ export function DialogI({
       <button
         type="button"
         onClick={() => setGone(false)}
-        className="rounded-lg border border-ink-200 bg-white px-3.5 py-2 text-[12px] text-brand-600 shadow-card transition hover:border-brand-300"
+        className="rounded-lg border border-ink-200 bg-white px-3.5 py-2 text-[14px] text-brand-600 shadow-card transition hover:border-brand-300"
       >
         ↻ 再打开对话框
       </button>
@@ -609,16 +609,16 @@ export function DialogI({
   }
   return (
     <div className="w-full rounded-2xl bg-white p-5 shadow-pop anim-in">
-      <p className="text-[15px] font-semibold text-ink-900">{title}</p>
+      <p className="text-[17px] font-semibold text-ink-900">{title}</p>
       {withInput ? (
         <div className="mt-3 rounded-lg border border-ink-200 px-3 py-2">
           <input
             placeholder="请输入备注内容…"
-            className="w-full bg-transparent text-[12.5px] text-ink-900 outline-none placeholder:text-ink-400"
+            className="w-full bg-transparent text-[14.5px] text-ink-900 outline-none placeholder:text-ink-400"
           />
         </div>
       ) : (
-        <p className="mt-1.5 text-[12.5px] leading-relaxed text-ink-600">{body}</p>
+        <p className="mt-1.5 text-[14.5px] leading-relaxed text-ink-600">{body}</p>
       )}
       <div className="mt-4 flex justify-end gap-2">
         {!onlyOk && (
@@ -642,7 +642,7 @@ export function SheetI({ items }: { items: string[] }) {
       <button
         type="button"
         onClick={() => setGone(false)}
-        className="rounded-lg border border-ink-200 bg-white px-3.5 py-2 text-[12px] text-brand-600 shadow-card transition hover:border-brand-300"
+        className="rounded-lg border border-ink-200 bg-white px-3.5 py-2 text-[14px] text-brand-600 shadow-card transition hover:border-brand-300"
       >
         ↻ 再打开 BottomSheet
       </button>
@@ -657,7 +657,7 @@ export function SheetI({ items }: { items: string[] }) {
             key={t}
             type="button"
             onClick={() => setGone(true)}
-            className={`block w-full py-2 text-center text-[13px] transition active:bg-ink-50 ${
+            className={`block w-full py-2 text-center text-[15px] transition active:bg-ink-50 ${
               t === '取消' ? 'text-ink-500' : 'text-ink-800'
             }`}
           >
@@ -677,7 +677,7 @@ export function BannerI({ text }: { text: string }) {
       <button
         type="button"
         onClick={() => setGone(false)}
-        className="rounded-lg border border-ink-200 bg-white px-3.5 py-2 text-[12px] text-brand-600 shadow-card transition hover:border-brand-300"
+        className="rounded-lg border border-ink-200 bg-white px-3.5 py-2 text-[14px] text-brand-600 shadow-card transition hover:border-brand-300"
       >
         ↻ 再看一次 Banner
       </button>
@@ -686,11 +686,11 @@ export function BannerI({ text }: { text: string }) {
   return (
     <div className="flex w-full items-center gap-2.5 rounded-lg bg-brand-50 px-3.5 py-2.5 ring-1 ring-brand-200 anim-in">
       <MI d={P.notif} size={17} className="shrink-0 text-brand-600" />
-      <span className="text-[12px] text-ink-700">{text}</span>
+      <span className="text-[14px] text-ink-700">{text}</span>
       <button
         type="button"
         onClick={() => setGone(true)}
-        className="ml-auto shrink-0 text-[12px] font-medium text-brand-600 transition hover:text-brand-700"
+        className="ml-auto shrink-0 text-[14px] font-medium text-brand-600 transition hover:text-brand-700"
       >
         重试
       </button>
@@ -713,7 +713,7 @@ export function InkWellI() {
       className="relative flex w-full select-none items-center gap-3 overflow-hidden rounded-xl bg-white px-4 py-3 shadow-card ring-1 ring-ink-100 transition active:bg-ink-50"
     >
       {node}
-      <span className="relative text-[13.5px] text-ink-900">
+      <span className="relative text-[15.5px] text-ink-900">
         {clicked ? '→ 涟漪已触发！' : '可点击的卡片（涟漪效果）'}
       </span>
       <MI d={P.chevR} size={18} className="relative ml-auto text-ink-400" />

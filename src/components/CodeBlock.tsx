@@ -66,11 +66,11 @@ export default function CodeBlock({
         </span>
 
         {filename ? (
-          <span className="ml-1.5 truncate font-mono text-[11.5px] text-ink-500">
+          <span className="ml-1.5 truncate font-mono text-[14.5px] text-ink-500">
             {filename}
           </span>
         ) : (
-          <span className="ml-1.5 rounded border border-ink-200 bg-white px-1.5 py-px font-mono text-[10px] uppercase tracking-wide text-ink-500">
+          <span className="ml-1.5 rounded border border-ink-200 bg-white px-1.5 py-px font-mono text-[13px] uppercase tracking-wide text-ink-500">
             {lang}
           </span>
         )}
@@ -80,7 +80,7 @@ export default function CodeBlock({
             type="button"
             onClick={() => setWrapped((v) => !v)}
             title={wrapped ? '取消自动换行' : '开启自动换行'}
-            className={`rounded-md px-1.5 py-1 text-[11px] transition ${
+            className={`rounded-md px-1.5 py-1 text-[14px] transition ${
               wrapped
                 ? 'bg-brand-50 text-brand-600'
                 : 'text-ink-400 hover:bg-ink-100 hover:text-ink-700'
@@ -95,7 +95,7 @@ export default function CodeBlock({
           <button
             type="button"
             onClick={copy}
-            className={`flex items-center gap-1 rounded-md px-2 py-1 text-[11px] font-medium transition ${
+            className={`flex items-center gap-1 rounded-md px-2 py-1 text-[14px] font-medium transition ${
               copied
                 ? 'bg-ok/10 text-ok'
                 : 'text-ink-500 hover:bg-ink-100 hover:text-ink-800'
@@ -127,7 +127,7 @@ export default function CodeBlock({
         style={maxHeight ? { maxHeight } : undefined}
       >
         <pre
-          className={`m-0 p-0 text-[12.5px] leading-[1.75] ${
+          className={`m-0 p-0 text-[15.5px] leading-[1.75] ${
             wrapped ? 'whitespace-pre-wrap break-words' : 'whitespace-pre'
           }`}
         >
@@ -137,7 +137,7 @@ export default function CodeBlock({
                 {/* 行号列 */}
                 <span
                   aria-hidden="true"
-                  className="sticky left-0 z-10 select-none border-r border-ink-100 bg-white px-2.5 py-3 text-right text-[11.5px] leading-[1.75] text-ink-300"
+                  className="sticky left-0 z-10 select-none border-r border-ink-100 bg-white px-2.5 py-3 text-right text-[14.5px] leading-[1.75] text-ink-300"
                   style={{ minWidth: `${String(lineCount).length + 2}ch` }}
                 >
                   {Array.from({ length: lineCount }, (_, i) => (
