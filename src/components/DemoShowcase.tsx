@@ -28,7 +28,7 @@ type Sample = {
 
 function M3Card({ children }: { children: React.ReactNode }) {
   return (
-    <div className="w-full rounded-xl bg-white p-[1px] shadow-[0_1px_3px_rgba(0,0,0,.10),0_1px_2px_rgba(0,0,0,.06)]">
+    <div className="w-full rounded-xl bg-surface p-[1px] shadow-[0_1px_3px_rgba(0,0,0,.10),0_1px_2px_rgba(0,0,0,.06)]">
       <div className="p-4">{children}</div>
     </div>
   );
@@ -36,7 +36,7 @@ function M3Card({ children }: { children: React.ReactNode }) {
 
 function M3PrimaryButton({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-flex h-10 items-center justify-center rounded-[20px] bg-brand-500 px-6 text-[17px] font-medium tracking-[.01em] text-white">
+    <span className="inline-flex h-10 items-center justify-center rounded-[20px] bg-grad-brand px-6 text-[17px] font-medium tracking-[.01em] text-white">
       {children}
     </span>
   );
@@ -123,7 +123,7 @@ Column(
           <div className="flex h-[168px] flex-col rounded-lg border border-dashed border-danger/40 bg-danger/5 p-2">
             <div className="flex flex-1 flex-col items-start justify-center">
               <span className="text-[14px] text-ink-500">空状态</span>
-              <svg viewBox="0 0 24 24" className="mt-1 h-6 w-6 text-ink-300" fill="none" stroke="currentColor" strokeWidth="1.6">
+              <svg viewBox="0 0 24 24" className="mt-1 h-6 w-6 text-ink-400" fill="none" stroke="currentColor" strokeWidth="1.6">
                 <path d="M3 12h4l2 3h6l2-3h4" />
                 <path d="M5 5h14l2 7v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5L5 5Z" />
               </svg>
@@ -136,7 +136,7 @@ Column(
         <div className="flex-1">
           <div className="flex h-[168px] flex-col items-center justify-center rounded-lg border border-dashed border-ok/40 bg-ok/5 p-2">
             <span className="text-[14px] text-ink-500">空状态</span>
-            <svg viewBox="0 0 24 24" className="mt-1 h-6 w-6 text-ink-300" fill="none" stroke="currentColor" strokeWidth="1.6">
+            <svg viewBox="0 0 24 24" className="mt-1 h-6 w-6 text-ink-400" fill="none" stroke="currentColor" strokeWidth="1.6">
               <path d="M3 12h4l2 3h6l2-3h4" />
               <path d="M5 5h14l2 7v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5L5 5Z" />
             </svg>
@@ -196,7 +196,7 @@ export default function DemoShowcase() {
   const s = SAMPLES[active];
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-ink-100 bg-white shadow-pop">
+    <div className="overflow-hidden rounded-xl border border-ink-100 bg-surface shadow-pop">
       {/* tab 栏 */}
       <div className="flex items-center gap-1 overflow-x-auto border-b border-ink-100 bg-ink-50/60 px-2 thin-scroll">
         {SAMPLES.map((sample, i) => (
@@ -237,7 +237,7 @@ export default function DemoShowcase() {
 
       {/* 讲解 */}
       <div className="flex items-start gap-2.5 border-t border-ink-100 bg-brand-50/50 px-4 py-3">
-        <svg viewBox="0 0 24 24" className="mt-0.5 h-4 w-4 shrink-0 text-brand-500" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg viewBox="0 0 24 24" className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" fill="none" stroke="currentColor" strokeWidth="2">
           <circle cx="12" cy="12" r="9" />
           <path d="M12 16v-5M12 8h.01" strokeLinecap="round" />
         </svg>

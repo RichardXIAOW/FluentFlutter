@@ -42,7 +42,7 @@ export default function PropTable({ rows }: { rows: PropRow[] }) {
       {compact ? (
         <div className="space-y-2 lg:hidden">
           {rows.map((r) => (
-            <div key={r.name} className="rounded-xl border border-ink-100 bg-white p-3.5">
+            <div key={r.name} className="rounded-xl border border-ink-100 bg-surface p-3.5">
               <div className="flex items-center gap-2">
                 <code className="font-mono text-[16px] font-semibold text-ink-900">
                   {r.name}
@@ -82,7 +82,7 @@ export default function PropTable({ rows }: { rows: PropRow[] }) {
                   <tr
                     key={r.name}
                     className={`border-t border-ink-100 align-top transition hover:bg-brand-50/40 ${
-                      i % 2 === 1 ? 'bg-ink-50/40' : 'bg-white'
+                      i % 2 === 1 ? 'bg-ink-50/40' : 'bg-surface'
                     }`}
                   >
                     <td className="whitespace-nowrap px-4 py-3">
@@ -112,7 +112,7 @@ export default function PropTable({ rows }: { rows: PropRow[] }) {
                           {r.def}
                         </code>
                       ) : (
-                        <span className="text-ink-300">—</span>
+                        <span className="text-ink-400">—</span>
                       )}
                     </td>
                     <td className="px-4 py-3 leading-relaxed text-ink-600">{r.desc}</td>

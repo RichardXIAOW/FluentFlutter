@@ -27,13 +27,13 @@ export default function GuidePage() {
   return (
     <main id="main" className="mx-auto max-w-page px-4 py-10 sm:px-6">
       {/* ══════════ Hero ══════════ */}
-      <section className="relative overflow-hidden rounded-3xl border border-brand-100 bg-gradient-to-br from-brand-50 via-white to-brand-50/40 px-6 py-12 shadow-card sm:px-10 sm:py-16">
+      <section className="relative overflow-hidden rounded-xl border border-brand-100 bg-gradient-to-br from-brand-50 via-surface to-brand-50/40 px-6 py-12 shadow-card sm:px-10 sm:py-16">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute -right-20 -top-20 h-[320px] w-[320px] rounded-full bg-brand-200/30 blur-3xl"
         />
         <div className="relative max-w-2xl">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1 text-[14.5px] font-medium text-brand-600 shadow-sm ring-1 ring-brand-100">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-surface px-3 py-1 text-[14.5px] font-medium text-brand-600 shadow-sm ring-1 ring-brand-100">
             <svg viewBox="0 0 24 24" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="2.2">
               <path d="M12 3 2 20h20L12 3Zm0 7v4m0 3h.01" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
@@ -41,7 +41,7 @@ export default function GuidePage() {
           </span>
           <h1 className="mt-4 text-balance text-[33px] font-bold leading-tight tracking-tight text-ink-900 sm:text-[42px]">
             这份手册
-            <span className="text-brand-500">怎么用</span>
+            <span className="text-brand-600">怎么用</span>
           </h1>
           <p className="mt-4 text-pretty text-[17.5px] leading-relaxed text-ink-600">
             它和网上大多数 Flutter 中文资料不太一样：不搬运 API 文档，
@@ -62,15 +62,15 @@ export default function GuidePage() {
               <Link
                 key={q.href}
                 href={q.href}
-                className={`group flex items-center gap-3 rounded-2xl border p-3.5 transition hover:-translate-y-0.5 hover:shadow-pop ${
+                className={`group flex items-center gap-3 rounded-xl border p-3.5 transition hover:-translate-y-0.5 hover:shadow-pop ${
                   q.primary
-                    ? 'border-brand-300 bg-white shadow-card'
-                    : 'border-ink-100 bg-white/80 hover:border-brand-200'
+                    ? 'border-brand-300 bg-surface shadow-card'
+                    : 'border-ink-100 bg-surface/80 hover:border-brand-200'
                 }`}
               >
                 <span
                   className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition group-hover:scale-105 ${
-                    q.primary ? 'bg-brand-500 text-white' : 'bg-brand-50 text-brand-600'
+                    q.primary ? 'bg-grad-brand text-white' : 'bg-brand-50 text-brand-600'
                   }`}
                 >
                   <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
@@ -94,9 +94,9 @@ export default function GuidePage() {
         {s.map((x) => (
           <div
             key={x.label}
-            className="group flex items-start gap-3.5 rounded-2xl border border-ink-100 bg-white p-4 shadow-card transition hover:border-brand-200 hover:shadow-pop"
+            className="group flex items-start gap-3.5 rounded-xl border border-ink-100 bg-surface p-4 shadow-card transition hover:border-brand-200 hover:shadow-pop"
           >
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-500 transition group-hover:scale-105">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600 transition group-hover:scale-105">
               <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <path d={x.icon} />
               </svg>
@@ -149,9 +149,9 @@ export default function GuidePage() {
           ].map((x) => (
             <div
               key={x.step}
-              className="relative flex flex-col rounded-2xl border border-ink-100 bg-white p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-pop"
+              className="relative flex flex-col rounded-xl border border-ink-100 bg-surface p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-pop"
             >
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-500 text-[17px] font-bold text-white shadow-sm">
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-grad-brand text-[17px] font-bold text-white shadow-sm">
                 {x.step}
               </span>
               <h3 className="mt-3.5 text-[17.5px] font-semibold leading-snug text-ink-900">
@@ -176,7 +176,7 @@ export default function GuidePage() {
 
       {/* ══════════ 是 / 不是 ══════════ */}
       <section className="mt-14 grid gap-4 lg:grid-cols-2">
-        <div className="rounded-2xl border border-ok/25 bg-gradient-to-b from-ok/[.05] to-white p-5">
+        <div className="rounded-xl border border-ok/25 bg-gradient-to-b from-ok/[.05] to-surface p-5">
           <h2 className="flex items-center gap-2 text-[18.5px] font-semibold text-ink-900">
             <span className="flex h-7 w-7 items-center justify-center rounded-full bg-ok/15 text-ok">
               <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -202,7 +202,7 @@ export default function GuidePage() {
           </ul>
         </div>
 
-        <div className="rounded-2xl border border-danger/25 bg-gradient-to-b from-danger/[.05] to-white p-5">
+        <div className="rounded-xl border border-danger/25 bg-gradient-to-b from-danger/[.05] to-surface p-5">
           <h2 className="flex items-center gap-2 text-[18.5px] font-semibold text-ink-900">
             <span className="flex h-7 w-7 items-center justify-center rounded-full bg-danger/15 text-danger">
               <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
@@ -231,7 +231,7 @@ export default function GuidePage() {
       </section>
 
       {/* ══════════ 组件页结构 ══════════ */}
-      <section className="mt-14 overflow-hidden rounded-2xl border border-ink-100 bg-white shadow-card">
+      <section className="mt-14 overflow-hidden rounded-xl border border-ink-100 bg-surface shadow-card">
         <div className="grid lg:grid-cols-[1fr_1.2fr]">
           <div className="border-b border-ink-100 bg-ink-50/50 p-6 lg:border-b-0 lg:border-r">
             <h2 className="text-[20px] font-semibold tracking-tight text-ink-900">
@@ -242,7 +242,7 @@ export default function GuidePage() {
               看完第一段觉得不合适，直接返回换组件，不用浪费时间。
             </p>
             <div className="mt-4 flex items-center gap-2 rounded-xl border border-brand-100 bg-brand-50/60 px-3.5 py-2.5">
-              <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0 text-brand-500" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0 text-brand-600" fill="none" stroke="currentColor" strokeWidth="2">
                 <circle cx="12" cy="12" r="9" />
                 <path d="M12 16v-5M12 8h.01" strokeLinecap="round" />
               </svg>
@@ -268,7 +268,7 @@ export default function GuidePage() {
                     className="absolute left-[11px] top-6 h-full w-px bg-ink-100"
                   />
                 )}
-                <span className="z-10 flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full bg-brand-50 text-[13.5px] font-bold text-brand-600 ring-4 ring-white">
+                <span className="z-10 flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full bg-brand-50 text-[13.5px] font-bold text-brand-600 ring-4 ring-surface">
                   {i + 1}
                 </span>
                 <span>
@@ -292,8 +292,8 @@ export default function GuidePage() {
               <Link
                 key={g.c.id}
                 href={`/components#${g.c.id}`}
-                className={`group flex items-center gap-4 rounded-2xl border border-ink-100 bg-white p-4 shadow-card transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-pop ${
-                  i % 2 === 1 ? 'sm:bg-white' : ''
+                className={`group flex items-center gap-4 rounded-xl border border-ink-100 bg-surface p-4 shadow-card transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-pop ${
+                  i % 2 === 1 ? 'sm:bg-surface' : ''
                 }`}
               >
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-brand-50 to-brand-100/60 font-mono text-[16px] font-bold text-brand-600">
@@ -316,7 +316,7 @@ export default function GuidePage() {
                     {g.items.length > 4 ? ' …' : ''}
                   </span>
                 </span>
-                <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0 text-ink-300 transition group-hover:translate-x-0.5 group-hover:text-brand-500" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0 text-ink-400 transition group-hover:translate-x-0.5 group-hover:text-brand-600" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="m9 6 6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </Link>
@@ -353,9 +353,9 @@ export default function GuidePage() {
           ].map((x) => (
             <div
               key={x.t}
-              className="group relative overflow-hidden rounded-2xl border border-ink-100 bg-white p-5 shadow-card transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-pop"
+              className="group relative overflow-hidden rounded-xl border border-ink-100 bg-surface p-5 shadow-card transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-pop"
             >
-              <span className="text-[14px] font-bold uppercase tracking-wider text-brand-500">
+              <span className="text-[14px] font-bold uppercase tracking-wider text-brand-600">
                 {x.day}
               </span>
               <h3 className="mt-1.5 text-[18px] font-semibold text-ink-900">{x.t}</h3>

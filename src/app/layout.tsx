@@ -36,18 +36,35 @@ export const viewport: Viewport = {
   themeColor: '#409eff',
 };
 
+/** 首屏防闪烁：在浏览器绘制前就把主题 class 打到 <html> 上。
+ *  若等 React 水合后再切，会先闪一帧白底，深色下尤其刺眼。
+ *  键名 ff-theme 必须与 ThemeToggle.tsx 一致。 */
+const THEME_BOOT = `(function(){try{
+var s=localStorage.getItem('ff-theme');
+var dark;
+if(s==='light'){dark=false}
+else if(s==='dark'){dark=true}
+else if(s==='system'){dark=window.matchMedia('(prefers-color-scheme: dark)').matches}
+else{dark=true}
+document.documentElement.classList.toggle('dark',dark);
+}catch(e){document.documentElement.classList.add('dark')}})();`;
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="zh-CN">
+    // suppressHydrationWarning：服务端无从知道用户偏好，<html> 的 class 只能由客户端决定
+    <html lang="zh-CN" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_BOOT }} />
+      </head>
       <body>
         {/* 键盘用户跳过导航直达内容 */}
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-brand-500 focus:px-4 focus:py-2 focus:text-white"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-grad-brand focus:px-4 focus:py-2 focus:text-white"
         >
           跳到主要内容
         </a>
@@ -60,7 +77,7 @@ export default function RootLayout({
           <div className="mx-auto flex max-w-page flex-col gap-3 px-4 py-8 text-[15.5px] text-ink-500 sm:px-6 md:flex-row md:items-center">
             <p>
               <strong className="font-semibold text-ink-700">FluentFlutter</strong>
-              <span className="mx-1.5 text-ink-300">·</span>
+              <span className="mx-1.5 text-ink-400">·</span>
               内容为手写精选，示例代码可直接在 Flutter 项目中使用
             </p>
             <nav className="flex flex-wrap gap-x-4 gap-y-1 md:ml-auto">

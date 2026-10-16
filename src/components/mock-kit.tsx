@@ -79,7 +79,7 @@ export function useRipple() {
   const node = ripples.map((id) => (
     <span
       key={id}
-      className="pointer-events-none absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2 animate-[ripple_.5s_ease-out] rounded-full bg-white/40"
+      className="pointer-events-none absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2 animate-[ripple_.5s_ease-out] rounded-full bg-surface/40"
     />
   ));
   return { add, node };
@@ -103,11 +103,11 @@ export function Btn({
   const base =
     'relative inline-flex h-9 select-none items-center justify-center gap-1.5 overflow-hidden rounded-[18px] px-4 text-[15px] font-medium transition active:scale-95';
   const styles = {
-    filled: danger ? 'bg-danger text-white' : 'bg-brand-500 text-white',
-    elevated: 'bg-[#e8f1fd] text-brand-600 shadow-sm',
+    filled: danger ? 'bg-danger text-white' : 'bg-solid text-white',
+    elevated: 'bg-brand-50 text-brand-600 shadow-sm',
     outlined: 'border border-ink-300 text-brand-600',
     text: danger ? 'text-danger px-3' : 'text-brand-600 px-3',
-    tonal: 'bg-[#dceafb] text-[#1e4e84]',
+    tonal: 'bg-brand-100 text-brand-800',
   } as const;
   return (
     <button
@@ -160,7 +160,7 @@ export function SwitchI({ init = false, label }: { init?: boolean; label?: strin
         }`}
       >
         <span
-          className={`h-[18px] w-[18px] rounded-full bg-white shadow transition-transform ${
+          className={`h-[18px] w-[18px] rounded-full bg-surface shadow transition-transform ${
             on ? 'translate-x-[18px]' : ''
           }`}
         />
@@ -181,7 +181,7 @@ export function CheckI({ init = false, label }: { init?: boolean; label?: string
     >
       <span
         className={`flex h-[18px] w-[18px] items-center justify-center rounded-[4px] transition ${
-          on ? 'bg-brand-500 text-white' : 'border-2 border-ink-300'
+          on ? 'bg-solid text-white' : 'border-2 border-ink-300'
         }`}
       >
         {on && (
@@ -232,7 +232,7 @@ export function SliderI({ init = 60 }: { init?: number }) {
           style={{ width: `${v}%` }}
         />
         <span
-          className="absolute top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-500 ring-2 ring-white"
+          className="absolute top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-500 ring-2 ring-surface"
           style={{ left: `${v}%` }}
         />
         <input
@@ -261,7 +261,7 @@ export function WrapChips({ items }: { items: string[] }) {
           onClick={() => setSel(i)}
           className={`rounded-full px-2.5 py-1 text-[13.5px] transition active:scale-95 ${
             sel === i
-              ? 'bg-brand-500 text-white'
+              ? 'bg-solid text-white'
               : 'bg-ink-50 text-ink-600 ring-1 ring-ink-200 hover:bg-brand-50'
           }`}
         >
@@ -307,7 +307,7 @@ export function FilterChips({ items }: { items: string[] }) {
           type="button"
           onClick={() => setSel((s) => s.map((v, j) => (j === i ? !v : v)))}
           className={`flex items-center gap-1 rounded-lg px-3 py-1.5 text-[14.5px] transition active:scale-95 ${
-            sel[i] ? 'bg-brand-500 text-white' : 'bg-ink-50 text-ink-600 ring-1 ring-ink-200'
+            sel[i] ? 'bg-solid text-white' : 'bg-ink-50 text-ink-600 ring-1 ring-ink-200'
           }`}
         >
           {sel[i] && (
@@ -385,7 +385,7 @@ export function NavBarG({
   const [sel, setSel] = useState(0);
   if (variant === 'classic') {
     return (
-      <div className="flex w-full items-stretch rounded-xl bg-white px-1 py-1 shadow-card ring-1 ring-ink-100">
+      <div className="flex w-full items-stretch rounded-xl bg-surface px-1 py-1 shadow-card ring-1 ring-ink-100">
         {items.map((it, i) => (
           <button
             key={it.t}
@@ -403,7 +403,7 @@ export function NavBarG({
     );
   }
   return (
-    <div className="flex w-full items-center justify-around rounded-2xl bg-[#eef4fc] px-2 py-2">
+    <div className="flex w-full items-center justify-around rounded-xl bg-brand-50 px-2 py-2">
       {items.map((it, i) => (
         <button
           key={it.t}
@@ -413,7 +413,7 @@ export function NavBarG({
         >
           <span
             className={`relative flex h-7 w-14 items-center justify-center rounded-full transition ${
-              sel === i ? 'bg-[#d3e5fa]' : ''
+              sel === i ? 'bg-brand-100' : ''
             }`}
           >
             <MI d={it.d} size={18} className={sel === i ? 'text-brand-700' : 'text-ink-500'} />
@@ -434,7 +434,7 @@ export function NavBarG({
 export function ExpansionI({ q, a, init = false }: { q: string; a: string; init?: boolean }) {
   const [open, setOpen] = useState(init);
   return (
-    <div className="rounded-lg bg-white px-3 py-2 shadow-card ring-1 ring-ink-100">
+    <div className="rounded-lg bg-surface px-3 py-2 shadow-card ring-1 ring-ink-100">
       <button
         type="button"
         onClick={() => setOpen(!open)}
@@ -479,7 +479,7 @@ export function DropdownI({ items, init = 0 }: { items: string[]; init?: number 
         </svg>
       </button>
       {open && (
-        <div className="mt-1 overflow-hidden rounded-lg bg-white shadow-pop ring-1 ring-ink-100">
+        <div className="mt-1 overflow-hidden rounded-lg bg-surface shadow-pop ring-1 ring-ink-100">
           {items.map((t, i) => (
             <button
               key={t}
@@ -525,10 +525,10 @@ export function StepperI({ steps }: { steps: string[] }) {
               <span
                 className={`flex h-6 w-6 items-center justify-center rounded-full text-[12px] transition ${
                   done
-                    ? 'bg-brand-500 text-white'
+                    ? 'bg-solid text-white'
                     : active
-                      ? 'border-2 border-brand-500 bg-white text-brand-600'
-                      : 'border-2 border-ink-300 bg-white text-ink-400'
+                      ? 'border-2 border-brand-500 bg-surface text-brand-600'
+                      : 'border-2 border-ink-300 bg-surface text-ink-400'
                 }`}
               >
                 {done ? '✓' : i + 1}
@@ -557,7 +557,7 @@ export function SnackBarI() {
       <button
         type="button"
         onClick={() => setGone(false)}
-        className="rounded-lg border border-ink-200 bg-white px-3.5 py-2 text-[14px] text-brand-600 shadow-card transition hover:border-brand-300"
+        className="rounded-lg border border-ink-200 bg-surface px-3.5 py-2 text-[14px] text-brand-600 shadow-card transition hover:border-brand-300"
       >
         ↻ 再看一次 SnackBar
       </button>
@@ -569,7 +569,7 @@ export function SnackBarI() {
       <button
         type="button"
         onClick={() => setGone(true)}
-        className="ml-auto text-[14.5px] font-medium text-[#7fb8f7] transition hover:text-white"
+        className="ml-auto text-[14.5px] font-medium text-brand-400 transition hover:text-white"
       >
         撤销
       </button>
@@ -601,14 +601,14 @@ export function DialogI({
       <button
         type="button"
         onClick={() => setGone(false)}
-        className="rounded-lg border border-ink-200 bg-white px-3.5 py-2 text-[14px] text-brand-600 shadow-card transition hover:border-brand-300"
+        className="rounded-lg border border-ink-200 bg-surface px-3.5 py-2 text-[14px] text-brand-600 shadow-card transition hover:border-brand-300"
       >
         ↻ 再打开对话框
       </button>
     );
   }
   return (
-    <div className="w-full rounded-2xl bg-white p-5 shadow-pop anim-in">
+    <div className="w-full rounded-xl bg-surface p-5 shadow-pop anim-in">
       <p className="text-[17px] font-semibold text-ink-900">{title}</p>
       {withInput ? (
         <div className="mt-3 rounded-lg border border-ink-200 px-3 py-2">
@@ -642,14 +642,14 @@ export function SheetI({ items }: { items: string[] }) {
       <button
         type="button"
         onClick={() => setGone(false)}
-        className="rounded-lg border border-ink-200 bg-white px-3.5 py-2 text-[14px] text-brand-600 shadow-card transition hover:border-brand-300"
+        className="rounded-lg border border-ink-200 bg-surface px-3.5 py-2 text-[14px] text-brand-600 shadow-card transition hover:border-brand-300"
       >
         ↻ 再打开 BottomSheet
       </button>
     );
   }
   return (
-    <div className="w-full overflow-hidden rounded-t-2xl bg-white p-3 shadow-pop ring-1 ring-ink-100 anim-in">
+    <div className="w-full overflow-hidden rounded-t-2xl bg-surface p-3 shadow-pop ring-1 ring-ink-100 anim-in">
       <span className="mx-auto block h-1 w-9 rounded-full bg-ink-200" />
       <div className="mt-2 divide-y divide-ink-50">
         {items.map((t) => (
@@ -677,7 +677,7 @@ export function BannerI({ text }: { text: string }) {
       <button
         type="button"
         onClick={() => setGone(false)}
-        className="rounded-lg border border-ink-200 bg-white px-3.5 py-2 text-[14px] text-brand-600 shadow-card transition hover:border-brand-300"
+        className="rounded-lg border border-ink-200 bg-surface px-3.5 py-2 text-[14px] text-brand-600 shadow-card transition hover:border-brand-300"
       >
         ↻ 再看一次 Banner
       </button>
@@ -710,7 +710,7 @@ export function InkWellI() {
         setClicked(true);
         setTimeout(() => setClicked(false), 600);
       }}
-      className="relative flex w-full select-none items-center gap-3 overflow-hidden rounded-xl bg-white px-4 py-3 shadow-card ring-1 ring-ink-100 transition active:bg-ink-50"
+      className="relative flex w-full select-none items-center gap-3 overflow-hidden rounded-xl bg-surface px-4 py-3 shadow-card ring-1 ring-ink-100 transition active:bg-ink-50"
     >
       {node}
       <span className="relative text-[15.5px] text-ink-900">

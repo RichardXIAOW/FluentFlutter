@@ -47,7 +47,7 @@ export default function FlutterPreview({
   if (mode === 'image' && image && !imgFailed) {
     return (
       <div className="overflow-hidden rounded-xl border border-ink-100 bg-ink-50">
-        <div className="flex items-center justify-between border-b border-ink-100 bg-white px-3 py-1.5">
+        <div className="flex items-center justify-between border-b border-ink-100 bg-surface px-3 py-1.5">
           <span className="text-[14.5px] text-ink-400">渲染效果（静态截图）</span>
         </div>
         <div className="preview-grid flex items-center justify-center p-6">
@@ -69,7 +69,7 @@ export default function FlutterPreview({
   if (mode === 'live' && url && live) {
     return (
       <div className="overflow-hidden rounded-xl border border-ink-100 bg-ink-50">
-        <div className="flex items-center gap-2 border-b border-ink-100 bg-white px-3 py-1.5">
+        <div className="flex items-center gap-2 border-b border-ink-100 bg-surface px-3 py-1.5">
           <span
             className={`h-1.5 w-1.5 rounded-full ${
               loaded ? 'bg-ok' : 'animate-pulse bg-warn'
@@ -115,7 +115,7 @@ export default function FlutterPreview({
               onError={() => setFailed(true)}
               // sandbox 只给必要权限：允许脚本与同源资源，不允许弹窗/顶层跳转
               sandbox="allow-scripts allow-same-origin"
-              className="h-[420px] w-full border-0 bg-white"
+              className="h-[420px] w-full border-0 bg-surface"
             />
           </div>
         )}
@@ -141,7 +141,7 @@ export default function FlutterPreview({
               <button
                 type="button"
                 onClick={() => setLive(true)}
-                className="absolute bottom-3 right-3 flex items-center gap-1.5 rounded-lg bg-ink-900/85 px-3 py-1.5 text-[15px] font-medium text-white backdrop-blur transition hover:bg-ink-900"
+                className="absolute bottom-3 right-3 flex items-center gap-1.5 rounded-lg bg-scrim/85 px-3 py-1.5 text-[15px] font-medium text-white backdrop-blur transition hover:bg-scrim"
               >
                 <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="currentColor">
                   <path d="M8 5v14l11-7L8 5Z" />
@@ -152,7 +152,7 @@ export default function FlutterPreview({
           </>
         ) : (
           <div className="flex flex-col items-center gap-3 py-6 text-center">
-            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-white text-ink-300 shadow-card">
+            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-surface text-ink-400 shadow-card">
               <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8">
                 <rect x="3" y="4" width="18" height="14" rx="2" />
                 <path d="M8 21h8M12 18v3" strokeLinecap="round" />
@@ -163,7 +163,7 @@ export default function FlutterPreview({
               <button
                 type="button"
                 onClick={() => setLive(true)}
-                className="mt-1 flex items-center gap-1.5 rounded-lg bg-brand-500 px-3.5 py-2 text-[15.5px] font-medium text-white shadow-sm transition hover:bg-brand-600"
+                className="mt-1 flex items-center gap-1.5 rounded-lg bg-grad-brand px-3.5 py-2 text-[15.5px] font-medium text-white shadow-sm transition hover:brightness-110"
               >
                 <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="currentColor">
                   <path d="M8 5v14l11-7L8 5Z" />

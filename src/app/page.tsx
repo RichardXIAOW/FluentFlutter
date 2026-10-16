@@ -27,30 +27,35 @@ export default function HomePage() {
   return (
     <main id="main">
       {/* ── Hero ── */}
-      <section className="relative overflow-hidden border-b border-ink-100 bg-gradient-to-b from-brand-50/70 via-white to-white">
-        {/* 背景装饰：一眼看得出是 Flutter，但不抢内容 */}
+      <section className="relative overflow-hidden border-b border-ink-100 bg-canvas">
+        {/* 细网格底纹：科技感来源，靠渐隐遮罩收边，避免纹理顶到边界显得脏 */}
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-grid mask-fade-radial" />
+        {/* 两团微光：青蓝 + 紫，呼应主色渐变 */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute -right-24 -top-24 h-[420px] w-[420px] rounded-full bg-brand-200/25 blur-3xl"
+          className="pointer-events-none absolute -right-32 -top-40 h-[460px] w-[460px] rounded-full bg-brand-400/20 blur-[110px]"
         />
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute -left-20 top-40 h-[300px] w-[300px] rounded-full bg-brand-100/40 blur-3xl"
+          className="pointer-events-none absolute -left-28 top-24 h-[360px] w-[360px] rounded-full bg-accent-400/20 blur-[110px]"
         />
 
-        <div className="relative mx-auto max-w-page px-4 py-14 sm:px-6 sm:py-20">
+        <div className="relative mx-auto max-w-page px-4 py-16 sm:px-6 sm:py-24">
           <div className="mx-auto max-w-3xl text-center">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-brand-200 bg-white px-3 py-1 text-[14.5px] font-medium text-brand-600 shadow-sm">
-              <span className="h-1.5 w-1.5 rounded-full bg-ok" />
+            <span className="inline-flex items-center gap-2 rounded-full border border-brand-500/25 bg-brand-500/[0.08] px-3.5 py-1.5 text-[14px] font-medium text-brand-600">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-ok opacity-70" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-ok" />
+              </span>
               {allComponents.length} 个组件 · 全部手写精选
             </span>
 
-            <h1 className="mt-5 text-balance text-[33px] font-bold leading-tight tracking-tight text-ink-900 sm:text-[46px]">
+            <h1 className="mt-6 text-balance text-[34px] font-bold leading-[1.15] tracking-tight text-ink-900 sm:text-[48px]">
               Flutter 从入门
-              <span className="text-brand-500"> 到工程化</span>
+              <span className="text-grad"> 到工程化</span>
             </h1>
 
-            <p className="mx-auto mt-4 max-w-2xl text-pretty text-[17.5px] leading-relaxed text-ink-600 sm:text-[18.5px]">
+            <p className="mx-auto mt-5 max-w-2xl text-pretty text-[17.5px] leading-relaxed text-ink-600 sm:text-[18.5px]">
               一条线走完：<strong className="font-semibold text-ink-800">Dart 语言</strong> →
               <strong className="font-semibold text-ink-800">框架与组件封装</strong> →
               <strong className="font-semibold text-ink-800">67 个 Material 组件</strong> →
@@ -58,14 +63,14 @@ export default function HomePage() {
               不搬运 API 文档，只讲长什么样、什么场景该用、新手最容易踩什么坑。
             </p>
 
-            <div className="mx-auto mt-7 max-w-xl">
+            <div className="mx-auto mt-8 max-w-xl">
               <SearchBox />
             </div>
 
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-2.5">
+            <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
               <Link
                 href="/components"
-                className="flex h-10 items-center gap-1.5 rounded-lg bg-brand-500 px-4 text-[16.5px] font-medium text-white shadow-sm transition hover:bg-brand-600"
+                className="flex h-11 items-center gap-1.5 rounded-lg bg-grad-brand px-5 text-[16px] font-medium text-white shadow-glow-sm transition hover:brightness-110"
               >
                 浏览全部组件
                 <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2">
@@ -74,7 +79,7 @@ export default function HomePage() {
               </Link>
               <Link
                 href="/resources"
-                className="flex h-10 items-center gap-1.5 rounded-lg border border-ink-200 bg-white px-4 text-[16.5px] font-medium text-ink-700 shadow-sm transition hover:border-brand-300 hover:text-brand-600"
+                className="flex h-11 items-center gap-1.5 rounded-lg border border-ink-200 bg-surface px-5 text-[16px] font-medium text-ink-700 transition hover:border-brand-400/60 hover:text-brand-600"
               >
                 学习资源
                 <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2">
@@ -109,7 +114,7 @@ export default function HomePage() {
             <Link
               key={g.cat.id}
               href={`/components#${g.cat.id}`}
-              className="group flex flex-col rounded-2xl border border-ink-100 bg-white p-4 shadow-card transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-pop"
+              className="group flex flex-col rounded-xl border border-ink-100 bg-surface p-4 shadow-card transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-pop"
             >
               <div className="flex items-center gap-2">
                 <h3 className="text-[17px] font-semibold text-ink-900 group-hover:text-brand-600">
@@ -157,7 +162,7 @@ export default function HomePage() {
               <Link
                 key={c.slug}
                 href={`/components/${c.slug}`}
-                className="group flex flex-col rounded-xl border border-ink-100 bg-white p-4 transition hover:border-brand-300 hover:shadow-card"
+                className="group flex flex-col rounded-xl border border-ink-100 bg-surface p-4 transition hover:border-brand-300 hover:shadow-card"
               >
                 <code className="font-mono text-[16.5px] font-semibold text-ink-900 group-hover:text-brand-600">
                   {c.name}
@@ -174,10 +179,10 @@ export default function HomePage() {
 
       {/* ── 资源入口 ── */}
       <section className="mx-auto max-w-page px-4 py-14 sm:px-6">
-        <div className="overflow-hidden rounded-2xl border border-brand-100 bg-gradient-to-br from-brand-50 to-white p-6 sm:p-8">
+        <div className="overflow-hidden rounded-xl border border-brand-100 bg-gradient-to-br from-brand-50 to-surface p-6 sm:p-8">
           <div className="flex flex-col gap-5 md:flex-row md:items-center">
             <div className="flex-1">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1 text-[14px] font-medium text-brand-600 shadow-sm">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-surface px-2.5 py-1 text-[14px] font-medium text-brand-600 shadow-sm">
                 五步学习路线
               </span>
               <h2 className="mt-3 text-[23px] font-semibold tracking-tight text-ink-900 sm:text-[26px]">
@@ -207,7 +212,7 @@ export default function HomePage() {
 
             <Link
               href="/resources"
-              className="flex h-11 shrink-0 items-center justify-center gap-2 rounded-xl bg-brand-500 px-5 text-[17px] font-medium text-white shadow-sm transition hover:bg-brand-600"
+              className="flex h-11 shrink-0 items-center justify-center gap-2 rounded-xl bg-grad-brand px-5 text-[17px] font-medium text-white shadow-sm transition hover:brightness-110"
             >
               进入学习路线
               <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">

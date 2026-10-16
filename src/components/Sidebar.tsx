@@ -69,7 +69,7 @@ export default function Sidebar({
               <span className="text-[15px] font-semibold tracking-wide text-ink-500 group-hover:text-ink-800">
                 {g.cat.name}
               </span>
-              <span className="ml-auto text-[13.5px] text-ink-300">
+              <span className="ml-auto text-[13.5px] text-ink-400">
                 {g.items.length}
               </span>
             </button>
@@ -91,7 +91,7 @@ export default function Sidebar({
                         <span className="truncate font-mono">{it.name}</span>
                         <span
                           className={`ml-auto truncate text-[14px] ${
-                            on ? 'text-brand-400' : 'text-ink-400'
+                            on ? 'text-brand-600' : 'text-ink-400'
                           }`}
                         >
                           {it.title}

@@ -91,7 +91,7 @@ export default function DemoPreview({
   return (
     <section
       id={`demo-${index + 1}`}
-      className="scroll-mt-24 overflow-hidden rounded-2xl border border-ink-100 bg-white shadow-card"
+      className="scroll-mt-24 overflow-hidden rounded-xl border border-ink-100 bg-surface shadow-card"
     >
       {/* 标题 */}
       <header className="flex flex-wrap items-baseline gap-x-3 gap-y-1 px-4 pt-4 sm:px-5">
@@ -108,7 +108,7 @@ export default function DemoPreview({
         {mode !== 'none' ? (
           mode === 'mock' ? (
             /* 图形 mock：可交互的 HTML 复刻 */
-            <div className="preview-grid rounded-xl border border-ink-100 bg-white px-3 py-1">
+            <div className="preview-grid rounded-xl border border-ink-100 bg-surface px-3 py-1">
               {mock}
             </div>
           ) : (
@@ -141,7 +141,7 @@ export default function DemoPreview({
 
       {/* ── 可展开的代码区 ── */}
       {showCode && mode !== 'none' && (
-        <div className="anim-in border-t border-ink-100 bg-[#f8f9fb] px-4 py-4 sm:px-5">
+        <div className="anim-in border-t border-ink-100 bg-subtle px-4 py-4 sm:px-5">
           <CodeBlock code={demo.code} lang="dart" maxHeight={560} />
         </div>
       )}

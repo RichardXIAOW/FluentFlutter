@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { categories } from '@/data/categories';
 import { getComponentsByCategory } from '@/data';
 import SearchBox from './SearchBox';
+import ThemeToggle from './ThemeToggle';
 
 /**
  * 顶部导航
@@ -45,7 +46,7 @@ export default function Header() {
 
   return (
     <>
-      <header className="fixed inset-x-0 top-0 z-40 h-[var(--hd-h)] border-b border-ink-100 bg-white/85 backdrop-blur-md">
+      <header className="fixed inset-x-0 top-0 z-40 h-[var(--hd-h)] border-b border-ink-100 bg-surface/75 backdrop-blur-xl">
         <div className="mx-auto flex h-full max-w-page items-center gap-4 px-4 sm:px-6">
           {/* 移动端菜单按钮 */}
           <button
@@ -66,7 +67,7 @@ export default function Header() {
 
           {/* Logo */}
           <Link href="/" className="flex shrink-0 items-center gap-2.5">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-500 text-white shadow-sm">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-grad-brand text-white shadow-sm">
               <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor">
                 {/* Flutter 风格的简化双菱形 */}
                 <path d="M13.9 2 6.4 9.5l2.6 2.6L19 2h-5.1Z" opacity=".95" />
@@ -89,9 +90,9 @@ export default function Header() {
               <Link
                 key={n.href}
                 href={n.href}
-                className={`rounded-lg px-3.5 py-2 text-[15.5px] font-medium transition ${
+                className={`relative rounded-lg px-3.5 py-2 text-[15.5px] font-medium transition ${
                   isActive(n.href)
-                    ? 'bg-brand-50 text-brand-600'
+                    ? 'bg-brand-500/10 text-brand-600 ring-1 ring-brand-500/25'
                     : 'text-ink-600 hover:bg-ink-50 hover:text-ink-900'
                 }`}
               >
@@ -101,12 +102,13 @@ export default function Header() {
           </nav>
 
           <div className="ml-auto flex items-center gap-2">
-            <SearchBox className="hidden w-[280px] sm:block" />
+            <SearchBox className="hidden w-[272px] sm:block" />
+            <ThemeToggle />
             <a
               href="https://api.flutter.dev/flutter/material/material-library.html"
               target="_blank"
               rel="noreferrer"
-              className="hidden h-10 shrink-0 items-center gap-1.5 rounded-lg border border-ink-200 px-3.5 text-[14px] font-medium text-ink-600 transition hover:border-brand-300 hover:bg-brand-50 hover:text-brand-600 md:flex"
+              className="hidden h-10 shrink-0 items-center gap-1.5 rounded-lg border border-ink-200 px-3.5 text-[14px] font-medium text-ink-600 transition hover:border-brand-300 hover:text-brand-600 md:flex"
             >
               官方 API
               <svg viewBox="0 0 24 24" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="2">
@@ -119,8 +121,11 @@ export default function Header() {
 
       {/* 移动端抽屉 */}
       {mobileOpen && (
-        <div className="fixed inset-x-0 top-[var(--hd-h)] z-30 max-h-[calc(100vh-var(--hd-h))] overflow-y-auto border-b border-ink-100 bg-white px-4 pb-6 pt-4 shadow-pop anim-in thin-scroll lg:hidden">
-          <SearchBox className="mb-4" />
+        <div className="fixed inset-x-0 top-[var(--hd-h)] z-30 max-h-[calc(100vh-var(--hd-h))] overflow-y-auto border-b border-ink-100 bg-surface px-4 pb-6 pt-4 shadow-pop anim-in thin-scroll lg:hidden">
+          <div className="mb-4 flex items-center gap-2">
+            <SearchBox className="flex-1" />
+            <ThemeToggle />
+          </div>
 
           <div className="mb-4 flex flex-wrap gap-1.5">
             {nav.map((n) => (
@@ -129,7 +134,7 @@ export default function Header() {
                 href={n.href}
                 className={`rounded-lg px-3 py-1.5 text-[16px] font-medium transition ${
                   isActive(n.href)
-                    ? 'bg-brand-500 text-white'
+                    ? 'bg-grad-brand text-white'
                     : 'bg-ink-50 text-ink-600'
                 }`}
               >

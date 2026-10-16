@@ -56,7 +56,7 @@ export default function CodeBlock({
   };
 
   return (
-    <div className="group/code overflow-hidden rounded-xl border border-ink-100 bg-white shadow-card">
+    <div className="group/code overflow-hidden rounded-xl border border-ink-100 bg-surface shadow-card">
       {/* 头部：文件名 / 语言 / 操作 */}
       <div className="flex items-center gap-2 border-b border-ink-100 bg-ink-50/70 px-3 py-2">
         <span className="flex items-center gap-1.5">
@@ -70,7 +70,7 @@ export default function CodeBlock({
             {filename}
           </span>
         ) : (
-          <span className="ml-1.5 rounded border border-ink-200 bg-white px-1.5 py-px font-mono text-[13px] uppercase tracking-wide text-ink-500">
+          <span className="ml-1.5 rounded border border-ink-200 bg-surface px-1.5 py-px font-mono text-[13px] uppercase tracking-wide text-ink-500">
             {lang}
           </span>
         )}
@@ -137,7 +137,7 @@ export default function CodeBlock({
                 {/* 行号列 */}
                 <span
                   aria-hidden="true"
-                  className="sticky left-0 z-10 select-none border-r border-ink-100 bg-white px-2.5 py-3 text-right text-[14.5px] leading-[1.75] text-ink-300"
+                  className="sticky left-0 z-10 select-none border-r border-ink-100 bg-surface px-2.5 py-3 text-right text-[14.5px] leading-[1.75] text-ink-400"
                   style={{ minWidth: `${String(lineCount).length + 2}ch` }}
                 >
                   {Array.from({ length: lineCount }, (_, i) => (

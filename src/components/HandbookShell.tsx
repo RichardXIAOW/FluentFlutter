@@ -36,11 +36,11 @@ export default function HandbookShell() {
   return (
     <main id="main" className="mx-auto max-w-page px-4 pb-10 pt-6 sm:px-6">
       {/* ── 顶部信息条 ── */}
-      <div className="mb-4 overflow-hidden rounded-2xl border border-brand-100 bg-gradient-to-br from-brand-50 to-white">
+      <div className="mb-4 overflow-hidden rounded-xl border border-brand-100 bg-gradient-to-br from-brand-50 to-surface">
         <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center">
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="rounded-full bg-white px-2.5 py-1 text-[14px] font-medium text-brand-600 shadow-sm">
+              <span className="rounded-full bg-surface px-2.5 py-1 text-[14px] font-medium text-brand-600 shadow-sm">
                 引申阅读
               </span>
               <span className="text-[14.5px] text-ink-500">
@@ -67,7 +67,7 @@ export default function HandbookShell() {
               href="/handbook/index.html"
               target="_blank"
               rel="noreferrer"
-              className="flex h-9 items-center gap-1.5 rounded-lg bg-brand-500 px-3.5 text-[16px] font-medium text-white shadow-sm transition hover:bg-brand-600"
+              className="flex h-9 items-center gap-1.5 rounded-lg bg-grad-brand px-3.5 text-[16px] font-medium text-white shadow-sm transition hover:brightness-110"
             >
               全屏阅读
               <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2">
@@ -76,7 +76,7 @@ export default function HandbookShell() {
             </a>
             <Link
               href="/components"
-              className="flex h-9 items-center gap-1.5 rounded-lg border border-ink-200 bg-white px-3.5 text-[16px] font-medium text-ink-700 transition hover:border-brand-300 hover:text-brand-600"
+              className="flex h-9 items-center gap-1.5 rounded-lg border border-ink-200 bg-surface px-3.5 text-[16px] font-medium text-ink-700 transition hover:border-brand-300 hover:text-brand-600"
             >
               回到组件手册
             </Link>
@@ -93,9 +93,9 @@ export default function HandbookShell() {
       </div>
 
       {/* ── iframe ── */}
-      <div className="relative overflow-hidden rounded-2xl border border-ink-100 bg-white shadow-card">
+      <div className="relative overflow-hidden rounded-xl border border-ink-100 bg-surface shadow-card">
         {!loaded && (
-          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-white">
+          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-surface">
             <span className="h-6 w-6 animate-spin rounded-full border-2 border-ink-200 border-t-brand-500" />
             <p className="text-[16px] text-ink-500">正在载入指南…</p>
             <p className="text-[14.5px] text-ink-400">

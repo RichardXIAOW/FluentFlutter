@@ -37,7 +37,7 @@ export default function ComponentsPage() {
               <a
                 key={g.cat.id}
                 href={`#${g.cat.id}`}
-                className="rounded-lg border border-ink-200 bg-white px-2.5 py-1.5 text-[15px] text-ink-600 transition hover:border-brand-300 hover:bg-brand-50 hover:text-brand-600"
+                className="rounded-lg border border-ink-200 bg-surface px-2.5 py-1.5 text-[15px] text-ink-600 transition hover:border-brand-300 hover:bg-brand-50 hover:text-brand-600"
               >
                 {g.cat.name}
                 <span className="ml-1 text-ink-400">{g.items.length}</span>
@@ -66,7 +66,7 @@ export default function ComponentsPage() {
                 <Link
                   key={c.slug}
                   href={`/components/${c.slug}`}
-                  className="group flex flex-col overflow-hidden rounded-xl border border-ink-100 bg-white shadow-card transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-pop"
+                  className="group flex flex-col overflow-hidden rounded-xl border border-ink-100 bg-surface shadow-card transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-pop"
                 >
                   {/* 图形示例条：直接看到组件长什么样 */}
                   <div className="border-b border-ink-100 bg-ink-50/40 transition group-hover:bg-brand-50/40">
@@ -107,7 +107,7 @@ export default function ComponentsPage() {
           </section>
         ))}
 
-        <section className="mt-14 overflow-hidden rounded-2xl border border-brand-100 bg-gradient-to-br from-brand-50 to-white p-6">
+        <section className="mt-14 overflow-hidden rounded-xl border border-brand-100 bg-gradient-to-br from-brand-50 to-surface p-6">
           <h2 className="text-[20px] font-semibold text-ink-900">
             组件的下一步：把它们组织成项目
           </h2>
@@ -118,7 +118,7 @@ export default function ComponentsPage() {
           </p>
           <Link
             href="/handbook"
-            className="mt-4 inline-flex h-10 items-center gap-1.5 rounded-lg bg-brand-500 px-4 text-[16.5px] font-medium text-white transition hover:bg-brand-600"
+            className="mt-4 inline-flex h-10 items-center gap-1.5 rounded-lg bg-grad-brand px-4 text-[16.5px] font-medium text-white transition hover:brightness-110"
           >
             阅读工程化搭建指南
             <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">

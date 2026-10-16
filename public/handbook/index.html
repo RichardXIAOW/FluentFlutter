@@ -8,24 +8,49 @@
 :root{
   --bg:#f5f7fa; --bg2:#ffffff; --panel:#ffffff; --panel2:#f5f7fa;
   --line:#e4e7ed; --line2:#dcdfe6;
-  --tx:#1f2328; --tx2:#4a5058; --tx3:#8a9099;
-  --acc:#409eff; --acc2:#529b2e; --warn:#e6a23c; --bad:#f56c6c; --info:#3a8ee6;
+  --tx:#1f2328; --tx2:#4a5058; --tx3:#6b7280;
+  --acc:#0e7490; --acc2:#3d7a4a; --warn:#a06a10; --bad:#c0392b; --info:#1d6fb8;
   --mono:'SF Mono',Menlo,Consolas,'Roboto Mono','Cascadia Mono',monospace;
   --sans:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;
+
+  /* 主题扩展（浅色） */
+  --topbar:rgba(255,255,255,.92);
+  --acc-deep:#155e75;
+  --acc-rgb:14 116 144;   /* 与 --acc 同色，供半透明描边/底纹 */
+  --code-bg:#f6f8fa; --code-tx:#24292f;
+  --skw:#cf222e; --sstr:#0a3069; --snum:#0550ae; --scom:#6e7781;
+  --sfn:#8250df; --styp:#953800; --sann:#0969da;
 }
+
+
+/* ---------- 深色主题 ---------- */
+html.dark{
+  --bg:#0b0f16; --bg2:#0f141c; --panel:#141a23; --panel2:#1a212b;
+  --line:#232a35; --line2:#2e3644;
+  --tx:#f3f7fb; --tx2:#c9d3de; --tx3:#93a0b0;
+  --acc:#22d3ee; --acc2:#4ade80; --warn:#fbbf24; --bad:#f87171; --info:#94a3b8;
+  --topbar:rgba(15,20,28,.88);
+  --acc-deep:#67e8f9;
+  --acc-rgb:34 211 238;
+  --code-bg:#0f141c; --code-tx:#e6edf3;
+  --skw:#ff7b72; --sstr:#a5d6ff; --snum:#79c0ff; --scom:#8b949e;
+  --sfn:#d2a8ff; --styp:#ffa657; --sann:#79c0ff;
+}
+html.dark ::selection{background:rgba(34,211,238,.28)}
+
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;scroll-padding-top:96px}
 body{background:var(--bg);color:var(--tx);font-family:var(--sans);font-size:16px;line-height:1.7;
   -webkit-font-smoothing:antialiased}
 
 /* ---------- 顶栏 ---------- */
-.topbar{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);
+.topbar{position:sticky;top:0;z-index:50;background:var(--topbar);
   backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
 .topbar-in{max-width:1360px;margin:0 auto;padding:14px 24px;display:flex;gap:22px;
   align-items:center;flex-wrap:wrap}
 .brand{display:flex;align-items:center;gap:11px;font-weight:650;font-size:16.5px;letter-spacing:.2px}
 .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--acc);
-  box-shadow:0 0 0 4px rgba(64,158,255,.15)}
+  box-shadow:0 0 0 4px rgb(var(--acc-rgb) /.15)}
 .brand small{color:var(--tx3);font-weight:400;font-size:14px}
 .names{display:flex;gap:10px;align-items:center;margin-left:auto;flex-wrap:wrap}
 .field{display:flex;align-items:center;gap:7px;background:var(--panel);
@@ -64,7 +89,7 @@ h1{font-size:33px;line-height:1.3;letter-spacing:-.5px;font-weight:680;margin:8p
 h2{font-size:22.5px;font-weight:660;letter-spacing:-.2px;margin:56px 0 8px;
   padding-top:26px;border-top:1px solid var(--line);display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
 h2 .tag{font-family:var(--mono);font-size:12.5px;font-weight:500;color:var(--acc);
-  background:rgba(64,158,255,.10);border:1px solid rgba(64,158,255,.30);
+  background:rgb(var(--acc-rgb) /.10);border:1px solid rgb(var(--acc-rgb) /.30);
   padding:2px 8px;border-radius:99px}
 h2 .pct{margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--tx3);font-weight:400}
 h3{font-size:17px;font-weight:640;margin:30px 0 10px}
@@ -107,7 +132,7 @@ code.inl{font-family:var(--mono);font-size:14px;background:var(--panel2);
   transition:.16s}
 .step-head input:checked{background:var(--acc2);border-color:var(--acc2)}
 .step-head input:checked::after{content:'';position:absolute;left:6px;top:2.5px;width:4px;
-  height:9px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(42deg)}
+  height:9px;border:solid var(--panel);border-width:0 2px 2px 0;transform:rotate(42deg)}
 .step-no{font-family:var(--mono);font-size:13.5px;color:var(--tx3);min-width:34px}
 .step.done .step-no{color:var(--acc2)}
 .step-title{font-weight:620;font-size:15.8px;flex:1;letter-spacing:.1px}
@@ -121,7 +146,7 @@ code.inl{font-family:var(--mono);font-size:14px;background:var(--panel2);
 
 /* ---------- 代码块 ---------- */
 .code{border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:13px 0;
-  background:#f8f9fb}
+  background:var(--code-bg)}
 .code-head{display:flex;align-items:center;gap:10px;padding:7px 13px;
   background:var(--panel2);border-bottom:1px solid var(--line)}
 .code-head .lang{font-family:var(--mono);font-size:12.5px;color:var(--tx3);letter-spacing:.5px;
@@ -133,10 +158,10 @@ code.inl{font-family:var(--mono);font-size:14px;background:var(--panel2);
 .copy:hover{color:var(--acc2);border-color:var(--acc2)}
 .copy.ok{color:var(--acc2);border-color:var(--acc2)}
 .code pre{margin:0;padding:14px 16px;overflow-x:auto}
-.code code{font-family:var(--mono);font-size:14.1px;line-height:1.68;color:#24292f;
+.code code{font-family:var(--mono);font-size:14.1px;line-height:1.68;color:var(--code-tx);
   white-space:pre;tab-size:2}
-.c-kw{color:#cf222e}.c-typ{color:#0550ae}.c-str{color:#0a3069}.c-com{color:#6e7781;font-style:italic}
-.c-num{color:#953800}.c-ann{color:#0969da}.c-key{color:#0550ae}.c-fn{color:#8250df}
+.c-kw{color:var(--skw)}.c-typ{color:var(--snum)}.c-str{color:var(--sstr)}.c-com{color:var(--scom);font-style:italic}
+.c-num{color:var(--styp)}.c-ann{color:var(--sann)}.c-key{color:var(--snum)}.c-fn{color:var(--sfn)}
 
 /* ---------- 表格 ---------- */
 .tw{overflow-x:auto;margin:14px 0;border:1px solid var(--line);border-radius:10px}
@@ -145,7 +170,7 @@ th{background:var(--panel2);color:var(--tx2);font-weight:600;text-align:left;
   padding:9px 13px;font-size:13.9px;letter-spacing:.2px;border-bottom:1px solid var(--line)}
 td{padding:9px 13px;border-bottom:1px solid var(--line);color:var(--tx2);vertical-align:top}
 tr:last-child td{border-bottom:0}
-tbody tr:hover{background:rgba(64,158,255,.05)}
+tbody tr:hover{background:rgb(var(--acc-rgb) /.05)}
 td code,th code{font-family:var(--mono);font-size:13.6px;color:var(--acc2)}
 td b{color:var(--tx)}
 .pill{display:inline-block;font-size:12.5px;padding:1.5px 8px;border-radius:99px;
@@ -159,9 +184,9 @@ figure{margin:20px 0;border:1px solid var(--line);border-radius:12px;
   background:var(--panel);padding:16px 14px 8px}
 figure svg{display:block;width:100%;height:auto}
 figcaption{font-size:14px;color:var(--tx3);text-align:center;padding:10px 0 6px}
-.tree{font-family:var(--mono);font-size:13.9px;line-height:1.75;color:#4a5058}
+.tree{font-family:var(--mono);font-size:13.9px;line-height:1.75;color:var(--tx2)}
 .tree .d{color:var(--acc)}
-.tree .c{color:#8a9099}
+.tree .c{color:var(--tx3)}
 
 @media(max-width:1040px){
   .layout{grid-template-columns:1fr;gap:0}
@@ -446,40 +471,40 @@ dart format --output=none --set-exit-if-changed .</code></pre></div>
 <svg viewBox="0 0 680 306" xmlns="http://www.w3.org/2000/svg" font-family="'SF Mono',Menlo,Consolas,monospace">
   <defs>
     <marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto">
-      <path d="M0,0 L7,3.2 L0,6.4 z" fill="#606266"/></marker>
+      <path d="M0,0 L7,3.2 L0,6.4 z" fill="var(--tx2)"/></marker>
     <marker id="ah2" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto">
-      <path d="M0,0 L7,3.2 L0,6.4 z" fill="#409eff"/></marker>
+      <path d="M0,0 L7,3.2 L0,6.4 z" fill="var(--acc)"/></marker>
   </defs>
-  <rect x="18" y="16" width="186" height="52" rx="9" fill="#ffffff" stroke="#dcdfe6"/>
-  <text x="111" y="39" fill="#1f2328" font-size="12.5" text-anchor="middle">core/</text>
-  <text x="111" y="56" fill="#8a9099" font-size="10.5" text-anchor="middle">地基：网络·存储·主题·日志</text>
+  <rect x="18" y="16" width="186" height="52" rx="9" fill="var(--panel)" stroke="var(--line2)"/>
+  <text x="111" y="39" fill="var(--tx)" font-size="12.5" text-anchor="middle">core/</text>
+  <text x="111" y="56" fill="var(--tx3)" font-size="10.5" text-anchor="middle">地基：网络·存储·主题·日志</text>
 
-  <rect x="18" y="228" width="186" height="52" rx="9" fill="#ffffff" stroke="#dcdfe6"/>
-  <text x="111" y="251" fill="#1f2328" font-size="12.5" text-anchor="middle">shared/ui/</text>
-  <text x="111" y="268" fill="#8a9099" font-size="10.5" text-anchor="middle">跨 feature 复用的组件</text>
+  <rect x="18" y="228" width="186" height="52" rx="9" fill="var(--panel)" stroke="var(--line2)"/>
+  <text x="111" y="251" fill="var(--tx)" font-size="12.5" text-anchor="middle">shared/ui/</text>
+  <text x="111" y="268" fill="var(--tx3)" font-size="10.5" text-anchor="middle">跨 feature 复用的组件</text>
 
-  <rect x="247" y="16" width="186" height="52" rx="9" fill="#ffffff" stroke="#dcdfe6"/>
-  <text x="340" y="39" fill="#1f2328" font-size="12.5" text-anchor="middle">features/x/presentation/</text>
-  <text x="340" y="56" fill="#8a9099" font-size="10.5" text-anchor="middle">页面 · 控制器 · 局部组件</text>
+  <rect x="247" y="16" width="186" height="52" rx="9" fill="var(--panel)" stroke="var(--line2)"/>
+  <text x="340" y="39" fill="var(--tx)" font-size="12.5" text-anchor="middle">features/x/presentation/</text>
+  <text x="340" y="56" fill="var(--tx3)" font-size="10.5" text-anchor="middle">页面 · 控制器 · 局部组件</text>
 
-  <rect x="476" y="16" width="186" height="52" rx="9" fill="#ffffff" stroke="#dcdfe6"/>
-  <text x="569" y="39" fill="#1f2328" font-size="12.5" text-anchor="middle">features/x/data/</text>
-  <text x="569" y="56" fill="#8a9099" font-size="10.5" text-anchor="middle">DTO · 数据源 · 仓储实现</text>
+  <rect x="476" y="16" width="186" height="52" rx="9" fill="var(--panel)" stroke="var(--line2)"/>
+  <text x="569" y="39" fill="var(--tx)" font-size="12.5" text-anchor="middle">features/x/data/</text>
+  <text x="569" y="56" fill="var(--tx3)" font-size="10.5" text-anchor="middle">DTO · 数据源 · 仓储实现</text>
 
-  <rect x="247" y="118" width="415" height="60" rx="10" fill="rgba(64,158,255,.07)" stroke="#409eff" stroke-width="1.4"/>
-  <text x="454" y="143" fill="#337ecc" font-size="13" text-anchor="middle" font-weight="bold">features/x/domain/</text>
-  <text x="454" y="162" fill="#337ecc" font-size="10.5" text-anchor="middle">实体 + 仓储接口 · 零依赖（不许 import flutter）</text>
+  <rect x="247" y="118" width="415" height="60" rx="10" fill="rgb(var(--acc-rgb) /.07)" stroke="var(--acc)" stroke-width="1.4"/>
+  <text x="454" y="143" fill="var(--acc-deep)" font-size="13" text-anchor="middle" font-weight="bold">features/x/domain/</text>
+  <text x="454" y="162" fill="var(--acc-deep)" font-size="10.5" text-anchor="middle">实体 + 仓储接口 · 零依赖（不许 import flutter）</text>
 
-  <path d="M340 68 L400 118" stroke="#409eff" stroke-width="1.5" fill="none" marker-end="url(#ah2)"/>
-  <path d="M569 68 L510 118" stroke="#409eff" stroke-width="1.5" fill="none" marker-end="url(#ah2)"/>
-  <path d="M111 68 L111 228" stroke="#a8abb2" stroke-width="1.3" fill="none" stroke-dasharray="4 4"/>
-  <path d="M204 242 L247 205" stroke="#a8abb2" stroke-width="1.3" fill="none" stroke-dasharray="4 4" marker-end="url(#ah)"/>
+  <path d="M340 68 L400 118" stroke="var(--acc)" stroke-width="1.5" fill="none" marker-end="url(#ah2)"/>
+  <path d="M569 68 L510 118" stroke="var(--acc)" stroke-width="1.5" fill="none" marker-end="url(#ah2)"/>
+  <path d="M111 68 L111 228" stroke="var(--tx3)" stroke-width="1.3" fill="none" stroke-dasharray="4 4"/>
+  <path d="M204 242 L247 205" stroke="var(--tx3)" stroke-width="1.3" fill="none" stroke-dasharray="4 4" marker-end="url(#ah)"/>
 
-  <text x="418" y="100" fill="#409eff" font-size="10.5" text-anchor="middle">依赖</text>
-  <text x="150" y="152" fill="#606266" font-size="10.5">core 不依赖 features</text>
-  <text x="30" y="86" fill="#606266" font-size="10.5">← 谁都可以用 core</text>
+  <text x="418" y="100" fill="var(--acc)" font-size="10.5" text-anchor="middle">依赖</text>
+  <text x="150" y="152" fill="var(--tx2)" font-size="10.5">core 不依赖 features</text>
+  <text x="30" y="86" fill="var(--tx2)" font-size="10.5">← 谁都可以用 core</text>
   <rect x="18" y="196" width="288" height="22" rx="6" fill="rgba(240,113,108,.07)" stroke="rgba(240,113,108,.4)"/>
-  <text x="32" y="211" fill="#f56c6c" font-size="10.5">✗ presentation --import--&gt; data（由 lint 拦截）</text>
+  <text x="32" y="211" fill="var(--bad)" font-size="10.5">✗ presentation --import--&gt; data（由 lint 拦截）</text>
 </svg>
 <figcaption>图 1 · 依赖方向：所有箭头一律指向 domain；越界的那条被 import_lint 拦成红灯</figcaption>
 </figure>
@@ -1882,7 +1907,7 @@ Dart 是 Flutter 的地基，放在"工程化指南的附录"里位置不对 —
 
 <div class="box" style="margin:14px 0 2px"><h4>去这里读</h4>
 <p style="margin:6px 0 10px">第 1 章「工程化必备的高级语法」收录了原先在这里的全部内容：<code class="inl">var/final/const/late final</code>、<code class="inl">abstract final class</code> / <code class="inl">sealed</code>、模式匹配、<code class="inl">copyWith</code>、<code class="inl">extension</code>、<code class="inl">mixin</code>、<code class="inl">async*</code>/<code class="inl">Stream</code>、<code class="inl">required</code> 命名参数与四个语法糖。</p>
-<a class="btn" href="/resources/dart" style="display:inline-flex;align-items:center;gap:6px;background:var(--acc);border-color:var(--acc);color:#fff;padding:7px 14px">打开 Dart 语言讲解 →</a>
+<a class="btn" href="/resources/dart" style="display:inline-flex;align-items:center;gap:6px;background:var(--acc);border-color:var(--acc);color:var(--panel);padding:7px 14px">打开 Dart 语言讲解 →</a>
 </div>
 </div>
 
@@ -2257,6 +2282,22 @@ flutter:
 
   renderCode();
   refresh();
+})();
+</script>
+<script>
+/* 主题引导：与站点同源，直接读父页写好的偏好；storage 事件让父页切换时这里跟着变 */
+(function(){
+  function apply(){
+    var s=null;try{s=localStorage.getItem('ff-theme')}catch(e){}
+    var dark;
+    if(s==='light')dark=false;
+    else if(s==='dark')dark=true;
+    else if(s==='system')dark=window.matchMedia('(prefers-color-scheme: dark)').matches;
+    else dark=true;
+    document.documentElement.classList.toggle('dark',dark);
+  }
+  apply();
+  try{window.addEventListener('storage',function(e){if(!e.key||e.key==='ff-theme')apply()})}catch(e){}
 })();
 </script>
 </body>

@@ -51,7 +51,7 @@ export default function DartPage() {
 
       {/* 底部：下一站 */}
       <div className="mx-auto max-w-page px-4 pb-4 sm:px-6">
-        <div className="flex flex-col gap-3 rounded-2xl border border-brand-100 bg-gradient-to-br from-brand-50 to-white p-5 sm:flex-row sm:items-center">
+        <div className="flex flex-col gap-3 rounded-xl border border-brand-100 bg-gradient-to-br from-brand-50 to-surface p-5 sm:flex-row sm:items-center">
           <div className="min-w-0 flex-1">
             <p className="text-[14px] font-medium text-brand-600">下一步</p>
             <p className="mt-1 text-[18px] font-semibold text-ink-900">
@@ -64,7 +64,7 @@ export default function DartPage() {
           </div>
           <Link
             href="/resources/flutter"
-            className="flex h-10 shrink-0 items-center gap-1.5 rounded-lg bg-brand-500 px-4 text-[16.5px] font-medium text-white shadow-sm transition hover:bg-brand-600"
+            className="flex h-10 shrink-0 items-center gap-1.5 rounded-lg bg-grad-brand px-4 text-[16.5px] font-medium text-white shadow-sm transition hover:brightness-110"
           >
             Flutter 讲解
             <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2">

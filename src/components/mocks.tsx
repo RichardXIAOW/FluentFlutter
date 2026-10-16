@@ -77,7 +77,7 @@ export const mocks: Record<string, () => ReactNode> = {
   ),
   icon: () => (
     <MockFrame className="gap-3.5">
-      <MI d={P.home} size={26} className="text-brand-500" />
+      <MI d={P.home} size={26} className="text-brand-600" />
       <MI d={P.star} size={26} className="text-warn" />
       <MI d={P.fav} size={26} className="text-danger" />
       <MI d={P.person} size={26} className="text-ink-400" />
@@ -105,7 +105,7 @@ export const mocks: Record<string, () => ReactNode> = {
   ),
   card: () => (
     <MockFrame className="w-full max-w-[280px]">
-      <div className="w-full rounded-xl bg-white p-4 shadow-card ring-1 ring-ink-100 transition active:scale-[.98]">
+      <div className="w-full rounded-xl bg-surface p-4 shadow-card ring-1 ring-ink-100 transition active:scale-[.98]">
         <p className="text-[16px] font-semibold text-ink-900">卡片标题</p>
         <p className="mt-1.5 text-[14.5px] leading-relaxed text-ink-600">
           卡片内容，通常包一层 Margin 与圆角。
@@ -123,7 +123,7 @@ export const mocks: Record<string, () => ReactNode> = {
   'sized-box': () => (
     <MockFrame>
       <div className="flex items-center">
-        <div className="h-11 w-11 rounded-md bg-[#dceafb] transition active:scale-90" />
+        <div className="h-11 w-11 rounded-md bg-brand-100 transition active:scale-90" />
         <span className="ml-2 text-[13px] text-ink-400">← SizedBox(44, 44)</span>
       </div>
     </MockFrame>
@@ -141,7 +141,7 @@ export const mocks: Record<string, () => ReactNode> = {
       <span className="text-[16px] font-medium text-danger">¥ </span>
       <span className="text-[28px] font-bold text-danger">1299</span>
       <span className="text-[16px] font-semibold text-ink-400">.00</span>
-      <span className="ml-3 rounded bg-ok/10 px-1.5 py-0.5 text-[13px] font-medium text-[#529b2e]">
+      <span className="ml-3 rounded bg-ok/10 px-1.5 py-0.5 text-[13px] font-medium text-ok">
         官方旗舰店
       </span>
     </MockFrame>
@@ -196,8 +196,8 @@ export const mocks: Record<string, () => ReactNode> = {
   stack: () => (
     <MockFrame>
       <div className="relative h-[121px] w-[255px] transition active:scale-[.98]">
-        <div className="absolute inset-0 rounded-lg bg-[#dceafb] ring-1 ring-[#a8c9ee]" />
-        <div className="absolute left-4 top-4 h-[84px] w-[130px] rounded-lg bg-white/95 shadow-card ring-1 ring-ink-100" />
+        <div className="absolute inset-0 rounded-lg bg-brand-100 ring-1 ring-brand-200" />
+        <div className="absolute left-4 top-4 h-[84px] w-[130px] rounded-lg bg-surface/95 shadow-card ring-1 ring-ink-100" />
         <span className="absolute right-2 top-2 rounded-md bg-danger px-1.5 py-0.5 text-[12px] font-medium text-white">
           Positioned
         </span>
@@ -216,7 +216,7 @@ export const mocks: Record<string, () => ReactNode> = {
   center: () => (
     <MockFrame className="w-full max-w-[260px]">
       <div className="flex h-[111px] w-full items-center justify-center rounded-lg border border-dashed border-brand-300">
-        <span className="rounded bg-[#dceafb] px-2.5 py-1 text-[14px] text-[#1e4e84] transition active:scale-95">
+        <span className="rounded bg-brand-100 px-2.5 py-1 text-[14px] text-brand-800 transition active:scale-95">
           正中间
         </span>
       </div>
@@ -228,7 +228,7 @@ export const mocks: Record<string, () => ReactNode> = {
         <span className="flex h-9 w-12 items-center justify-center rounded bg-ink-100 text-[12.5px] text-ink-500 transition active:scale-95">
           图标
         </span>
-        <span className="flex h-9 flex-1 items-center justify-center rounded bg-brand-500 text-[13px] text-white transition active:scale-95">
+        <span className="flex h-9 flex-1 items-center justify-center rounded bg-solid text-[13px] text-white transition active:scale-95">
           Expanded(flex: 1)
         </span>
         <span className="flex h-9 w-12 items-center justify-center rounded bg-ink-100 text-[12.5px] text-ink-500 transition active:scale-95">
@@ -254,7 +254,7 @@ export const mocks: Record<string, () => ReactNode> = {
         <span className="flex h-9 w-12 items-center justify-center rounded bg-ink-100 text-[12.5px] text-ink-500 transition active:scale-95">
           图标
         </span>
-        <span className="flex h-9 items-center justify-center rounded bg-ok/15 px-3 text-[13px] text-[#3d7a4a] transition active:scale-95">
+        <span className="flex h-9 items-center justify-center rounded bg-ok/15 px-3 text-[13px] text-ok transition active:scale-95">
           Flexible(短内容)
         </span>
         <span className="flex h-9 flex-1 items-center justify-center rounded bg-ink-50 text-[13px] text-ink-400">
@@ -275,7 +275,7 @@ export const mocks: Record<string, () => ReactNode> = {
           <button
             key={i}
             type="button"
-            className="rounded-md bg-white p-1.5 shadow-card ring-1 ring-ink-100 transition active:scale-95"
+            className="rounded-md bg-surface p-1.5 shadow-card ring-1 ring-ink-100 transition active:scale-95"
           >
             <div className="h-8 rounded bg-ink-100" />
             <div className="mt-1 h-1.5 w-3/4 rounded bg-ink-200" />
@@ -301,7 +301,7 @@ export const mocks: Record<string, () => ReactNode> = {
   align: () => (
     <MockFrame className="w-full max-w-[240px]">
       <div className="relative h-[107px] w-full rounded-lg border border-dashed border-brand-300">
-        <span className="absolute bottom-1.5 left-1.5 rounded bg-[#dceafb] px-1.5 py-0.5 text-[12.5px] text-[#1e4e84] transition active:scale-95">
+        <span className="absolute bottom-1.5 left-1.5 rounded bg-brand-100 px-1.5 py-0.5 text-[12.5px] text-brand-800 transition active:scale-95">
           bottomLeft
         </span>
       </div>
@@ -333,7 +333,7 @@ export const mocks: Record<string, () => ReactNode> = {
         <span className="absolute bottom-0 left-0 right-0 flex h-6 items-center justify-center bg-black/20 text-[11.5px] text-white">
           手势条 · SafeArea 避开
         </span>
-        <span className="absolute inset-x-2 top-7 rounded bg-white/95 py-1 text-center text-[12.5px] text-ink-700">
+        <span className="absolute inset-x-2 top-7 rounded bg-surface/95 py-1 text-center text-[12.5px] text-ink-700">
           实际内容
         </span>
       </div>
@@ -343,14 +343,14 @@ export const mocks: Record<string, () => ReactNode> = {
   /* ══ 输入 ══ */
   'text-field': () => (
     <MockFrame className="w-full max-w-[260px] flex-col items-stretch gap-2">
-      <label className="rounded-lg border border-brand-500 bg-white px-3 py-2 ring-2 ring-brand-500/15 transition focus-within:ring-4">
+      <label className="rounded-lg border border-brand-500 bg-surface px-3 py-2 ring-2 ring-brand-500/15 transition focus-within:ring-4">
         <span className="block text-[12px] text-brand-600">用户名</span>
         <input
           defaultValue="pulse_dev"
           className="mt-0.5 w-full bg-transparent text-[15px] text-ink-900 outline-none"
         />
       </label>
-      <label className="rounded-lg border border-ink-200 bg-white px-3 py-2 transition focus-within:border-brand-500">
+      <label className="rounded-lg border border-ink-200 bg-surface px-3 py-2 transition focus-within:border-brand-500">
         <input
           type="password"
           placeholder="请输入密码"
@@ -361,7 +361,7 @@ export const mocks: Record<string, () => ReactNode> = {
   ),
   'text-form-field': () => (
     <MockFrame className="w-full max-w-[260px] flex-col items-stretch gap-2">
-      <div className="rounded-lg border border-danger bg-white px-3 py-2 transition focus-within:ring-2 focus-within:ring-danger/20">
+      <div className="rounded-lg border border-danger bg-surface px-3 py-2 transition focus-within:ring-2 focus-within:ring-danger/20">
         <input
           defaultValue="abc"
           className="w-full bg-transparent text-[15px] text-ink-900 outline-none"
@@ -377,12 +377,12 @@ export const mocks: Record<string, () => ReactNode> = {
     <MockFrame className="w-full max-w-[260px] flex-col items-stretch gap-2">
       <input
         placeholder="邮箱"
-        className="rounded-lg border border-ink-200 bg-white px-3 py-2 text-[14.5px] text-ink-900 outline-none transition focus:border-brand-500 placeholder:text-ink-500"
+        className="rounded-lg border border-ink-200 bg-surface px-3 py-2 text-[14.5px] text-ink-900 outline-none transition focus:border-brand-500 placeholder:text-ink-500"
       />
       <input
         placeholder="密码"
         type="password"
-        className="rounded-lg border border-ink-200 bg-white px-3 py-2 text-[14.5px] text-ink-900 outline-none transition focus:border-brand-500 placeholder:text-ink-500"
+        className="rounded-lg border border-ink-200 bg-surface px-3 py-2 text-[14.5px] text-ink-900 outline-none transition focus:border-brand-500 placeholder:text-ink-500"
       />
       <Btn kind="filled">登录</Btn>
     </MockFrame>
@@ -446,7 +446,7 @@ export const mocks: Record<string, () => ReactNode> = {
   /* ══ 数据展示 ══ */
   'list-view': () => (
     <MockFrame className="w-full max-w-[280px]">
-      <div className="w-full divide-y divide-ink-100 rounded-xl bg-white shadow-card ring-1 ring-ink-100">
+      <div className="w-full divide-y divide-ink-100 rounded-xl bg-surface shadow-card ring-1 ring-ink-100">
         {[P.cart, P.fav, P.star].map((d, i) => (
           <button
             key={i}
@@ -455,7 +455,7 @@ export const mocks: Record<string, () => ReactNode> = {
           >
             <MI d={d} size={18} className="text-ink-500" />
             <span className="text-[14.5px] text-ink-800">列表项 {i + 1}</span>
-            <MI d={P.chevR} size={15} className="ml-auto text-ink-300" />
+            <MI d={P.chevR} size={15} className="ml-auto text-ink-400" />
           </button>
         ))}
       </div>
@@ -465,7 +465,7 @@ export const mocks: Record<string, () => ReactNode> = {
     <MockFrame className="w-full max-w-[300px]">
       <button
         type="button"
-        className="w-full rounded-xl bg-white px-3.5 py-3 text-left shadow-card ring-1 ring-ink-100 transition active:bg-ink-50"
+        className="w-full rounded-xl bg-surface px-3.5 py-3 text-left shadow-card ring-1 ring-ink-100 transition active:bg-ink-50"
       >
         <div className="flex items-center gap-3">
           <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-100 text-[15px] font-semibold text-brand-700">
@@ -475,7 +475,7 @@ export const mocks: Record<string, () => ReactNode> = {
             <p className="truncate text-[15.5px] text-ink-900">曹禹</p>
             <p className="truncate text-[13.5px] text-ink-500">最近消息：明天见</p>
           </div>
-          <MI d={P.chevR} size={17} className="ml-auto text-ink-300" />
+          <MI d={P.chevR} size={17} className="ml-auto text-ink-400" />
         </div>
       </button>
     </MockFrame>
@@ -483,7 +483,7 @@ export const mocks: Record<string, () => ReactNode> = {
   image: () => (
     <MockFrame>
       <div className="relative h-[111px] w-[180px] overflow-hidden rounded-xl bg-gradient-to-br from-brand-100 to-brand-200 transition active:scale-[.98]">
-        <svg viewBox="0 0 24 24" width="30" height="30" className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-brand-400" fill="currentColor">
+        <svg viewBox="0 0 24 24" width="30" height="30" className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-brand-600" fill="currentColor">
           <path d="M5 4h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Zm1 12h12l-4-5-3 3.5L9 12l-3 4Z" />
           <circle cx="9" cy="9" r="1.8" />
         </svg>
@@ -501,7 +501,7 @@ export const mocks: Record<string, () => ReactNode> = {
         </span>
       </button>
       <button type="button" className="relative transition active:scale-90">
-        <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#dceafb] text-[17px] font-semibold text-[#1e4e84]">
+        <span className="flex h-11 w-11 items-center justify-center rounded-full bg-brand-100 text-[17px] font-semibold text-brand-800">
           L
         </span>
         <span className="absolute -right-0.5 -top-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-danger px-1 text-[11.5px] font-medium text-white">
@@ -529,7 +529,7 @@ export const mocks: Record<string, () => ReactNode> = {
   ),
   'data-table': () => (
     <MockFrame className="w-full max-w-[300px]">
-      <table className="w-full overflow-hidden rounded-lg bg-white text-left text-[13.5px] shadow-card ring-1 ring-ink-100">
+      <table className="w-full overflow-hidden rounded-lg bg-surface text-left text-[13.5px] shadow-card ring-1 ring-ink-100">
         <thead>
           <tr className="bg-ink-50 text-ink-500">
             <th className="px-2.5 py-1.5 font-medium">产品</th>
@@ -565,7 +565,7 @@ export const mocks: Record<string, () => ReactNode> = {
   skeleton: () => (
     <MockFrame className="w-full max-w-[280px] flex-col items-stretch gap-2.5">
       {[0, 1].map((i) => (
-        <div key={i} className="flex items-center gap-3 rounded-xl bg-white p-3 shadow-card ring-1 ring-ink-100">
+        <div key={i} className="flex items-center gap-3 rounded-xl bg-surface p-3 shadow-card ring-1 ring-ink-100">
           <span className="h-11 w-11 shrink-0 animate-pulse rounded-lg bg-ink-100" />
           <div className="flex-1 space-y-1.5">
             <span className="block h-2.5 w-3/4 animate-pulse rounded bg-ink-100" />
@@ -648,7 +648,7 @@ export const mocks: Record<string, () => ReactNode> = {
   /* ══ 导航 ══ */
   'app-bar': () => (
     <MockFrame className="w-full max-w-[300px]">
-      <div className="flex h-14 w-full items-center gap-3 rounded-xl bg-brand-500 px-3 text-white shadow-card">
+      <div className="flex h-14 w-full items-center gap-3 rounded-xl bg-solid px-3 text-white shadow-card">
         <IconBtn className="text-white">
           <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
             <path d="M19 12H5m6-6-6 6 6 6" />
@@ -686,7 +686,7 @@ export const mocks: Record<string, () => ReactNode> = {
   drawer: () => (
     <MockFrame className="w-full max-w-[300px]">
       <div className="flex w-full gap-1.5">
-        <div className="w-36 overflow-hidden rounded-r-xl bg-white shadow-pop ring-1 ring-ink-100">
+        <div className="w-36 overflow-hidden rounded-r-xl bg-surface shadow-pop ring-1 ring-ink-100">
           <div className="bg-brand-500 px-3 pb-3 pt-4">
             <p className="text-[15px] font-medium text-white">曹禹</p>
             <p className="text-[12.5px] text-white/70">dev@pulseshop.cn</p>
@@ -726,15 +726,15 @@ export const mocks: Record<string, () => ReactNode> = {
   /* ══ 其他 ══ */
   scaffold: () => (
     <MockFrame>
-      <div className="w-[232px] overflow-hidden rounded-xl bg-white shadow-card ring-1 ring-ink-100">
-        <div className="flex h-9 items-center bg-brand-500 px-2.5 text-[13.5px] text-white">
+      <div className="w-[232px] overflow-hidden rounded-xl bg-surface shadow-card ring-1 ring-ink-100">
+        <div className="flex h-9 items-center bg-solid px-2.5 text-[13.5px] text-white">
           AppBar
         </div>
         <div className="flex h-[79px] items-center justify-center bg-ink-50 text-[13px] text-ink-400">
           body
         </div>
         <div className="flex h-8 items-center justify-end px-2.5">
-          <button type="button" className="-mt-6 flex h-9 w-9 items-center justify-center rounded-full bg-brand-500 text-[18px] text-white shadow-pop transition active:scale-90">
+          <button type="button" className="-mt-6 flex h-9 w-9 items-center justify-center rounded-full bg-solid text-[18px] text-white shadow-pop transition active:scale-90">
             ＋
           </button>
         </div>
@@ -771,7 +771,7 @@ export const mocks: Record<string, () => ReactNode> = {
         <div
           key={w}
           className={`flex h-[97px] flex-col items-center justify-center rounded-lg px-3 text-center ring-1 transition active:scale-95 ${
-            i === 1 ? 'bg-brand-50 ring-brand-200' : 'bg-white ring-ink-100'
+            i === 1 ? 'bg-brand-50 ring-brand-200' : 'bg-surface ring-ink-100'
           }`}
         >
           <span className="font-mono text-[12.5px] text-ink-500">{w}</span>
@@ -800,7 +800,7 @@ function IndexedStackDemo({ pages }: { pages: string[] }) {
               type="button"
               onClick={() => setIdx(i)}
               className={`rounded px-2 py-0.5 text-[12.5px] transition ${
-                idx === i ? 'bg-brand-500 text-white' : 'bg-ink-50 text-ink-400 hover:bg-ink-100'
+                idx === i ? 'bg-solid text-white' : 'bg-ink-50 text-ink-400 hover:bg-ink-100'
               }`}
             >
               {t}
@@ -817,8 +817,8 @@ export function fallbackMock(name: string): ReactNode {
   return (
     <MockFrame>
       <div className="flex flex-col items-center gap-1.5">
-        <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#e8f1fd]">
-          <svg viewBox="0 0 24 24" width="22" height="22" className="text-brand-500" fill="none" stroke="currentColor" strokeWidth="1.7">
+        <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-50">
+          <svg viewBox="0 0 24 24" width="22" height="22" className="text-brand-600" fill="none" stroke="currentColor" strokeWidth="1.7">
             <rect x="4" y="5" width="16" height="14" rx="2.5" />
             <path d="M4 10h16" />
           </svg>

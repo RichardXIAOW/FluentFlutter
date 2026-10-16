@@ -82,10 +82,10 @@ function StepsRow({ steps, cur }: { steps: string[]; cur: number }) {
               <span
                 className={`flex h-6 w-6 items-center justify-center rounded-full text-[12px] ${
                   done
-                    ? 'bg-brand-500 text-white'
+                    ? 'bg-solid text-white'
                     : active
-                      ? 'border-2 border-brand-500 bg-white text-brand-600'
-                      : 'border-2 border-ink-300 bg-white text-ink-400'
+                      ? 'border-2 border-brand-500 bg-surface text-brand-600'
+                      : 'border-2 border-ink-300 bg-surface text-ink-400'
                 }`}
               >
                 {done ? '✓' : i + 1}
@@ -126,7 +126,7 @@ function IndexedStackDemo() {
               type="button"
               onClick={() => setIdx(i)}
               className={`rounded px-2 py-1 text-[12.5px] transition ${
-                idx === i ? 'bg-brand-500 text-white' : 'bg-ink-50 text-ink-500'
+                idx === i ? 'bg-solid text-white' : 'bg-ink-50 text-ink-500'
               }`}
             >
               {t}
@@ -154,7 +154,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
 
   'elevated-button::最基础的用法': () => (
     <Frame>
-      <span className="inline-flex h-9 items-center justify-center rounded-[18px] bg-[#e8f1fd] px-5 text-[15px] font-medium text-brand-600 shadow-sm">
+      <span className="inline-flex h-9 items-center justify-center rounded-[18px] bg-brand-50 px-5 text-[15px] font-medium text-brand-600 shadow-sm">
         提交
       </span>
     </Frame>
@@ -169,7 +169,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
         <div key={t} className="flex items-center gap-3">
           <span className="w-[120px] shrink-0 text-[12.5px] text-ink-400">{t}</span>
           <span
-            className={`inline-flex items-center justify-center bg-[#e8f1fd] text-[14.5px] font-medium text-brand-600 shadow-sm ${cls}`}
+            className={`inline-flex items-center justify-center bg-brand-50 text-[14.5px] font-medium text-brand-600 shadow-sm ${cls}`}
           >
             按钮
           </span>
@@ -179,13 +179,13 @@ export const demoMocks: Record<string, () => ReactNode> = {
   ),
   'elevated-button::带图标': () => (
     <Frame className="gap-3">
-      <span className="inline-flex h-9 items-center gap-1.5 rounded-[18px] bg-[#e8f1fd] px-4 text-[15px] font-medium text-brand-600 shadow-sm">
+      <span className="inline-flex h-9 items-center gap-1.5 rounded-[18px] bg-brand-50 px-4 text-[15px] font-medium text-brand-600 shadow-sm">
         <span className="text-[17px] leading-none">＋</span>新建
       </span>
-      <span className="inline-flex h-9 items-center gap-1.5 rounded-[18px] bg-[#e8f1fd] px-4 text-[15px] font-medium text-brand-600 shadow-sm">
+      <span className="inline-flex h-9 items-center gap-1.5 rounded-[18px] bg-brand-50 px-4 text-[15px] font-medium text-brand-600 shadow-sm">
         <span className="text-[17px] leading-none">↓</span>下载
       </span>
-      <span className="inline-flex h-9 items-center gap-1.5 rounded-[18px] bg-[#e8f1fd] px-4 text-[15px] font-medium text-brand-600 shadow-sm">
+      <span className="inline-flex h-9 items-center gap-1.5 rounded-[18px] bg-brand-50 px-4 text-[15px] font-medium text-brand-600 shadow-sm">
         下一步
         <MI d={P.chevR} size={15} />
       </span>
@@ -195,20 +195,20 @@ export const demoMocks: Record<string, () => ReactNode> = {
     <Frame className="w-full flex-col items-stretch gap-3 p-4">
       <div className="flex items-center gap-3">
         <span className="w-[70px] shrink-0 text-[12.5px] text-ink-400">空闲</span>
-        <span className="inline-flex h-9 items-center rounded-[18px] bg-brand-500 px-4 text-[15px] font-medium text-white shadow-sm">
+        <span className="inline-flex h-9 items-center rounded-[18px] bg-solid px-4 text-[15px] font-medium text-white shadow-sm">
           提交
         </span>
       </div>
       <div className="flex items-center gap-3">
         <span className="w-[70px] shrink-0 text-[12.5px] text-brand-600">请求中</span>
-        <span className="inline-flex h-9 min-w-[104px] items-center justify-center gap-2 rounded-[18px] bg-brand-500/45 px-4 text-[15px] font-medium text-white">
+        <span className="inline-flex h-9 min-w-[104px] items-center justify-center gap-2 rounded-[18px] bg-solid/45 px-4 text-[15px] font-medium text-white">
           <Spinner />
           提交中…
         </span>
       </div>
       <div className="flex items-center gap-3">
         <span className="w-[70px] shrink-0 text-[12.5px] text-ink-400">禁用</span>
-        <span className="inline-flex h-9 items-center rounded-[18px] bg-[#e8f1fd] px-4 text-[15px] font-medium text-ink-300 shadow-sm">
+        <span className="inline-flex h-9 items-center rounded-[18px] bg-brand-50 px-4 text-[15px] font-medium text-ink-400 shadow-sm">
           不可用
         </span>
       </div>
@@ -218,8 +218,8 @@ export const demoMocks: Record<string, () => ReactNode> = {
   'filled-button::三种强调层级': () => (
     <Frame className="w-full max-w-[300px] flex-col gap-2.5">
       {[
-        ['high', 'bg-brand-500 text-white', '主操作'],
-        ['medium', 'bg-brand-100 text-[#1e4e84]', '次操作'],
+        ['high', 'bg-solid text-white', '主操作'],
+        ['medium', 'bg-brand-100 text-brand-800', '次操作'],
         ['low', 'bg-brand-50 text-brand-700', '弱操作'],
       ].map(([lv, cls, t]) => (
         <div key={lv} className="flex w-full items-center gap-3">
@@ -239,7 +239,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
         <span className="block font-mono text-[11.5px] text-brand-600">
           主题默认 → height 40
         </span>
-        <span className="mt-1 inline-flex h-9 w-full items-center justify-center rounded-[18px] bg-brand-500 text-[14.5px] font-medium text-white">
+        <span className="mt-1 inline-flex h-9 w-full items-center justify-center rounded-[18px] bg-solid text-[14.5px] font-medium text-white">
           按钮
         </span>
       </div>
@@ -247,7 +247,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
         <span className="block font-mono text-[11.5px] text-ok">
           minimumSize: Size(0, 48)
         </span>
-        <span className="mt-1 inline-flex h-12 w-full items-center justify-center rounded-[24px] bg-brand-500 text-[15px] font-medium text-white">
+        <span className="mt-1 inline-flex h-12 w-full items-center justify-center rounded-xl bg-solid text-[15px] font-medium text-white">
           按钮
         </span>
       </div>
@@ -256,7 +256,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
 
   'outlined-button::成组出现的次要操作': () => (
     <Frame className="p-4">
-      <div className="w-full max-w-[300px] rounded-xl bg-white p-3 shadow-card ring-1 ring-ink-100">
+      <div className="w-full max-w-[300px] rounded-xl bg-surface p-3 shadow-card ring-1 ring-ink-100">
         <p className="mb-2.5 text-[13px] text-ink-500">
           成组时用描边区分层级，主操作仍然用实心
         </p>
@@ -277,7 +277,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
 
   'text-button::对话框里的标准排布': () => (
     <Frame className="p-4">
-      <div className="w-full max-w-[290px] rounded-xl bg-white p-4 shadow-pop ring-1 ring-ink-100">
+      <div className="w-full max-w-[290px] rounded-xl bg-surface p-4 shadow-pop ring-1 ring-ink-100">
         <p className="text-[15.5px] font-semibold text-ink-900">放弃编辑？</p>
         <p className="mt-1 text-[13.5px] leading-relaxed text-ink-500">
           未保存的内容会丢失。
@@ -296,7 +296,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
 
   'icon-button::AppBar 上的标准用法': () => (
     <Frame className="p-4">
-      <div className="flex h-12 w-full max-w-[330px] items-center gap-1 rounded-xl bg-brand-500 px-1.5 text-white">
+      <div className="flex h-12 w-full max-w-[330px] items-center gap-1 rounded-xl bg-solid px-1.5 text-white">
         <IconBtn className="text-white">
           <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
             <path d="M19 12H5m6-6-6 6 6 6" />
@@ -320,7 +320,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
   'icon-button::带圆形底的图标按钮': () => (
     <Frame className="gap-5">
       {[
-        ['filled', 'bg-brand-500 text-white'],
+        ['filled', 'bg-solid text-white'],
         ['tonal', 'bg-brand-50 text-brand-600'],
         ['outlined', 'border border-ink-300 text-brand-600'],
       ].map(([t, cls]) => (
@@ -342,7 +342,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
         <span className="text-[12px] text-ok">可点</span>
       </div>
       <div className="flex flex-col items-center gap-1.5">
-        <span className="flex h-9 w-9 items-center justify-center rounded-full text-ink-300">
+        <span className="flex h-9 w-9 items-center justify-center rounded-full text-ink-400">
           <MI d={P.share} size={20} />
         </span>
         <span className="text-[12px] text-ink-400">onPressed: null</span>
@@ -363,7 +363,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
         </div>
       ))}
       <div className="flex flex-col items-center gap-1.5">
-        <MI d={P.star} size={26} className="text-brand-300" />
+        <MI d={P.star} size={26} className="text-brand-600" />
         <span className="text-[12px] text-ink-400">color</span>
       </div>
     </Frame>
@@ -458,7 +458,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
   ),
   'divider::列表分隔线：用 separated 而不是手写': () => (
     <Frame className="w-full max-w-[280px]">
-      <div className="w-full overflow-hidden rounded-xl bg-white shadow-card ring-1 ring-ink-100">
+      <div className="w-full overflow-hidden rounded-xl bg-surface shadow-card ring-1 ring-ink-100">
         {[
           ['收货地址', '广东省深圳市'],
           ['支付方式', '微信支付'],
@@ -481,7 +481,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
 
   'card::最常见的商品/文章卡片': () => (
     <Frame className="w-full max-w-[270px]">
-      <div className="w-full overflow-hidden rounded-xl bg-white shadow-card ring-1 ring-ink-100">
+      <div className="w-full overflow-hidden rounded-xl bg-surface shadow-card ring-1 ring-ink-100">
         <div className="h-[81px] bg-gradient-to-br from-brand-100 to-brand-200" />
         <div className="p-3">
           <p className="text-[14.5px] font-semibold text-ink-900">PulseShop 会员年卡</p>
@@ -499,9 +499,9 @@ export const demoMocks: Record<string, () => ReactNode> = {
   'card::纯色卡片（无阴影，靠底色区分）': () => (
     <Frame className="w-full max-w-[400px] gap-2.5">
       {[
-        ['elevated', 'bg-white shadow-card ring-1 ring-ink-100', '阴影 + 白底'],
+        ['elevated', 'bg-surface shadow-card ring-1 ring-ink-100', '阴影 + 白底'],
         ['filled', 'bg-ink-50', '纯色底，无阴影'],
-        ['outlined', 'border border-ink-200 bg-white', '只有描边'],
+        ['outlined', 'border border-ink-200 bg-surface', '只有描边'],
       ].map(([t, cls, d]) => (
         <div key={t} className={`flex-1 rounded-xl p-2.5 ${cls}`}>
           <p className="text-[13.5px] font-semibold text-ink-900">{t}</p>
@@ -574,7 +574,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
         <span className="font-mono text-[11.5px] text-ink-400">原始尺寸</span>
       </div>
       <div className="flex flex-col items-center gap-1.5">
-        <span className="flex aspect-square h-[74px] items-center justify-center rounded-lg bg-brand-500 text-[12px] text-white">
+        <span className="flex aspect-square h-[74px] items-center justify-center rounded-lg bg-solid text-[12px] text-white">
           正方形
         </span>
         <span className="font-mono text-[11.5px] text-brand-600">AspectRatio 1:1</span>
@@ -606,7 +606,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
         <span className="text-[15px] font-medium text-danger">¥</span>
         <span className="text-[28px] font-bold leading-none text-danger">1299</span>
         <span className="text-[15px] font-semibold text-danger">.00</span>
-        <span className="ml-2 rounded bg-ok/10 px-1.5 py-0.5 text-[12px] font-medium text-[#529b2e]">
+        <span className="ml-2 rounded bg-ok/10 px-1.5 py-0.5 text-[12px] font-medium text-ok">
           官方旗舰店
         </span>
       </div>
@@ -627,14 +627,14 @@ export const demoMocks: Record<string, () => ReactNode> = {
     <Frame className="w-full max-w-[410px] gap-3 p-4">
       <div className="flex-1">
         <span className="mb-1 block text-[11.5px] text-danger">❌ Container 盖住水波</span>
-        <div className="flex items-center gap-2 rounded-lg bg-white px-3 py-2.5 shadow-card ring-1 ring-ink-100">
+        <div className="flex items-center gap-2 rounded-lg bg-surface px-3 py-2.5 shadow-card ring-1 ring-ink-100">
           <span className="text-[13.5px] text-ink-700">点我</span>
-          <span className="ml-auto text-[11px] text-ink-300">无反馈</span>
+          <span className="ml-auto text-[11px] text-ink-400">无反馈</span>
         </div>
       </div>
       <div className="flex-1">
         <span className="mb-1 block text-[11.5px] text-ok">✅ Ink 铺底 + InkWell 在上</span>
-        <div className="relative flex items-center gap-2 overflow-hidden rounded-lg bg-white px-3 py-2.5 shadow-card ring-1 ring-ink-100">
+        <div className="relative flex items-center gap-2 overflow-hidden rounded-lg bg-surface px-3 py-2.5 shadow-card ring-1 ring-ink-100">
           <span className="absolute left-1/2 top-1/2 h-14 w-14 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-500/20" />
           <span className="relative text-[13.5px] text-ink-700">点我</span>
           <span className="relative ml-auto text-[11px] text-brand-600">有涟漪</span>
@@ -648,10 +648,10 @@ export const demoMocks: Record<string, () => ReactNode> = {
         <span className="absolute inset-y-0 right-0 flex w-14 items-center justify-center bg-danger text-[12.5px] font-medium text-white">
           删除
         </span>
-        <div className="relative -translate-x-[52px] rounded-xl bg-white px-3 py-2.5 shadow-card ring-1 ring-ink-100">
+        <div className="relative -translate-x-[52px] rounded-xl bg-surface px-3 py-2.5 shadow-card ring-1 ring-ink-100">
           <span className="flex items-center gap-2">
             <span className="text-[14px] text-ink-800">滑动整行都可触发</span>
-            <MI d={P.chevR} size={15} className="ml-auto text-ink-300" />
+            <MI d={P.chevR} size={15} className="ml-auto text-ink-400" />
           </span>
           <span className="mt-1 block text-[11.5px] text-ink-400">
             InkWell 的 onTap 全区域可点
@@ -670,16 +670,16 @@ export const demoMocks: Record<string, () => ReactNode> = {
           MainAxisAlignment.spaceBetween
         </span>
         <div className="flex w-full items-center justify-between rounded border border-dashed border-brand-200 bg-brand-50/40 p-1.5">
-          <Box className="h-6 w-12 bg-brand-500 !text-white">左侧</Box>
-          <Box className="h-6 w-12 bg-[#dceafb] !text-[#1e4e84]">右侧</Box>
+          <Box className="h-6 w-12 bg-solid !text-white">左侧</Box>
+          <Box className="h-6 w-12 bg-brand-100 !text-brand-800">右侧</Box>
         </div>
       </div>
       <div>
         <span className="mb-1 block font-mono text-[11px] text-ink-400">Spacer() 撑开</span>
         <div className="flex w-full items-center rounded border border-dashed border-brand-200 bg-brand-50/40 p-1.5">
-          <Box className="h-6 w-12 bg-brand-500 !text-white">左侧</Box>
+          <Box className="h-6 w-12 bg-solid !text-white">左侧</Box>
           <span className="mx-1 flex-1 border-t border-dotted border-brand-400" />
-          <Box className="h-6 w-12 bg-[#dceafb] !text-[#1e4e84]">右侧</Box>
+          <Box className="h-6 w-12 bg-brand-100 !text-brand-800">右侧</Box>
         </div>
       </div>
     </Frame>
@@ -699,7 +699,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
         <span className="mb-1 block text-[11.5px] text-ok">✅ 用 Expanded → 自动换行</span>
         <div className="flex w-full gap-1.5 rounded border border-ok/40 bg-ok/5 p-1.5">
           <Box className="h-6 w-9 shrink-0 bg-ink-200 !text-ink-600">图标</Box>
-          <span className="min-w-0 flex-1 rounded bg-brand-500 px-2 py-1 text-[12px] leading-tight text-white">
+          <span className="min-w-0 flex-1 rounded bg-solid px-2 py-1 text-[12px] leading-tight text-white">
             很长的标题文字自动换行不溢出
           </span>
         </div>
@@ -716,8 +716,8 @@ export const demoMocks: Record<string, () => ReactNode> = {
         <div key={t}>
           <span className="mb-1 block font-mono text-[11px] text-ink-400">{t}</span>
           <div className={`flex h-11 w-full gap-1.5 rounded border border-dashed border-brand-200 p-1.5 ${cls}`}>
-            <Box className="h-9 w-9 bg-brand-500 !text-white">小</Box>
-            <Box className="h-5 w-9 bg-[#dceafb] !text-[#1e4e84]">中</Box>
+            <Box className="h-9 w-9 bg-solid !text-white">小</Box>
+            <Box className="h-5 w-9 bg-brand-100 !text-brand-800">中</Box>
           </div>
         </div>
       ))}
@@ -741,8 +741,8 @@ export const demoMocks: Record<string, () => ReactNode> = {
         </span>
         <div className="flex flex-1 flex-col items-center justify-center rounded border border-dashed border-ok/50 bg-ok/5 p-2">
           <div className="flex flex-col items-center gap-1">
-            <Box className="h-5 w-14 bg-brand-500 !text-white">子项</Box>
-            <Box className="h-5 w-14 bg-brand-500 !text-white">子项</Box>
+            <Box className="h-5 w-14 bg-solid !text-white">子项</Box>
+            <Box className="h-5 w-14 bg-solid !text-white">子项</Box>
           </div>
         </div>
       </div>
@@ -756,7 +756,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
       ].map(([l, v]) => (
         <div key={l}>
           <span className="mb-0.5 block text-[12px] text-ink-500">{l}</span>
-          <div className="rounded-lg border border-ink-200 bg-white px-3 py-1.5 text-[14px] text-ink-900">
+          <div className="rounded-lg border border-ink-200 bg-surface px-3 py-1.5 text-[14px] text-ink-900">
             {v}
           </div>
         </div>
@@ -816,7 +816,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
             <span className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-100 text-[19px] font-semibold text-brand-700">
               曹
             </span>
-            <span className={`absolute bottom-0 right-0 h-4 w-4 rounded-full ${c} ring-2 ring-white`} />
+            <span className={`absolute bottom-0 right-0 h-4 w-4 rounded-full ${c} ring-2 ring-surface`} />
           </span>
           <span className="text-[12px] text-ink-400">{t}</span>
         </div>
@@ -825,8 +825,8 @@ export const demoMocks: Record<string, () => ReactNode> = {
   ),
   'stack::加载遮罩：内容之上盖一层半透明': () => (
     <Frame className="w-full max-w-[270px]">
-      <div className="relative w-full overflow-hidden rounded-xl bg-white shadow-card ring-1 ring-ink-100">
-        <span className="absolute inset-0 z-10 flex items-center justify-center bg-white/70">
+      <div className="relative w-full overflow-hidden rounded-xl bg-surface shadow-card ring-1 ring-ink-100">
+        <span className="absolute inset-0 z-10 flex items-center justify-center bg-surface/70">
           <Spinner size={22} cls="border-brand-200 border-t-brand-500" />
         </span>
         <div className="space-y-2 p-3">
@@ -860,7 +860,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
   ),
   'padding::列表项的标准内边距': () => (
     <Frame className="w-full max-w-[290px]">
-      <div className="w-full overflow-hidden rounded-xl bg-white shadow-card ring-1 ring-ink-100">
+      <div className="w-full overflow-hidden rounded-xl bg-surface shadow-card ring-1 ring-ink-100">
         <div className="flex items-center gap-3 px-4 py-3">
           <span className="h-9 w-9 shrink-0 rounded-lg bg-brand-50" />
           <span className="min-w-0 flex-1">
@@ -904,7 +904,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
       <div>
         <span className="mb-1 block text-[11px] text-ok">✅ 给子组件一个有限尺寸</span>
         <div className="flex h-9 w-full items-center justify-center rounded border border-dashed border-ok/50 bg-ok/5">
-          <span className="flex h-6 w-20 items-center justify-center rounded bg-brand-500 text-[12px] text-white">
+          <span className="flex h-6 w-20 items-center justify-center rounded bg-solid text-[12px] text-white">
             子组件
           </span>
         </div>
@@ -920,7 +920,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
         </span>
         <div className="flex w-full gap-1.5">
           <Box className="h-7 w-10 shrink-0 bg-ink-100 !text-ink-500">固定</Box>
-          <Box className="h-7 flex-1 bg-brand-500 !text-white">Expanded</Box>
+          <Box className="h-7 flex-1 bg-solid !text-white">Expanded</Box>
         </div>
       </div>
       <div>
@@ -929,8 +929,8 @@ export const demoMocks: Record<string, () => ReactNode> = {
         </span>
         <div className="flex w-full gap-1.5">
           <Box className="h-7 w-10 shrink-0 bg-ink-100 !text-ink-500">固定</Box>
-          <Box className="h-7 w-[52px] bg-ok/20 !text-[#3d7a4a]">Flexible</Box>
-          <Box className="h-7 flex-1 bg-ink-50 !text-ink-300">空</Box>
+          <Box className="h-7 w-[52px] bg-ok/20 !text-ok">Flexible</Box>
+          <Box className="h-7 flex-1 bg-ink-50 !text-ink-400">空</Box>
         </div>
       </div>
     </Frame>
@@ -966,7 +966,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
         <div className="flex h-[65px] flex-col rounded border border-dashed border-ok/50 bg-ok/5 p-1.5">
           <span className="text-[12.5px] text-ink-600">正文内容</span>
           <span className="flex-1" />
-          <span className="rounded bg-brand-500 py-1 text-center text-[12px] text-white">
+          <span className="rounded bg-solid py-1 text-center text-[12px] text-white">
             底部按钮
           </span>
         </div>
@@ -980,7 +980,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
         <span className="mb-1 block font-mono text-[11px] text-ink-400">Expanded(flex: 1)</span>
         <div className="flex w-full gap-1.5">
           <Box className="h-7 w-10 shrink-0 bg-ink-100 !text-ink-500">固定</Box>
-          <Box className="h-7 flex-1 bg-brand-500 !text-white">撑满剩余</Box>
+          <Box className="h-7 flex-1 bg-solid !text-white">撑满剩余</Box>
         </div>
       </div>
       <div>
@@ -989,8 +989,8 @@ export const demoMocks: Record<string, () => ReactNode> = {
         </span>
         <div className="flex w-full gap-1.5">
           <Box className="h-7 w-10 shrink-0 bg-ink-100 !text-ink-500">固定</Box>
-          <Box className="h-7 w-[56px] bg-ok/25 !text-[#3d7a4a]">只占内容</Box>
-          <Box className="h-7 flex-1 bg-ink-50 !text-ink-300">剩余</Box>
+          <Box className="h-7 w-[56px] bg-ok/25 !text-ok">只占内容</Box>
+          <Box className="h-7 flex-1 bg-ink-50 !text-ink-400">剩余</Box>
         </div>
       </div>
     </Frame>
@@ -1003,7 +1003,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
           <span
             key={t}
             className={`rounded-full px-2.5 py-1 text-[13px] ${
-              i < 3 ? 'bg-brand-500 text-white' : 'bg-ink-50 text-ink-600 ring-1 ring-ink-200'
+              i < 3 ? 'bg-solid text-white' : 'bg-ink-50 text-ink-600 ring-1 ring-ink-200'
             }`}
           >
             {t}
@@ -1022,7 +1022,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
             className="flex items-center gap-1 rounded bg-brand-50 px-2 py-0.5 text-[12.5px] text-brand-700 ring-1 ring-brand-200"
           >
             {t}
-            <span className="text-[11.5px] text-brand-400">×</span>
+            <span className="text-[11.5px] text-brand-600">×</span>
           </span>
         ))}
       </div>
@@ -1038,8 +1038,8 @@ export const demoMocks: Record<string, () => ReactNode> = {
       <span className="font-mono text-[11px] text-ink-400">crossAxisCount: 3 · spacing 8</span>
       <div className="grid w-full max-w-[240px] grid-cols-3 gap-2">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="rounded-md bg-white p-1 shadow-card ring-1 ring-ink-100">
-            <div className="flex aspect-square items-center justify-center rounded bg-brand-50 text-[11px] text-brand-400">
+          <div key={i} className="rounded-md bg-surface p-1 shadow-card ring-1 ring-ink-100">
+            <div className="flex aspect-square items-center justify-center rounded bg-brand-50 text-[11px] text-brand-600">
               {i + 1}
             </div>
             <div className="mt-1 h-1.5 w-3/4 rounded bg-ink-100" />
@@ -1095,7 +1095,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
 
   'single-child-scroll-view::表单页面（最常用场景）': () => (
     <Frame className="w-full max-w-[240px]">
-      <div className="h-[123px] w-full overflow-y-auto rounded-xl bg-white p-2.5 shadow-card ring-1 ring-ink-100 thin-scroll">
+      <div className="h-[123px] w-full overflow-y-auto rounded-xl bg-surface p-2.5 shadow-card ring-1 ring-ink-100 thin-scroll">
         {['收货人', '手机号', '所在地区', '详细地址'].map((t) => (
           <div key={t} className="mb-2">
             <span className="mb-0.5 block text-[11px] text-ink-400">{t}</span>
@@ -1107,8 +1107,8 @@ export const demoMocks: Record<string, () => ReactNode> = {
   ),
   'single-child-scroll-view::内容不足一屏也想能下拉（刷新手势）': () => (
     <Frame className="w-full max-w-[240px]">
-      <div className="relative h-[123px] w-full overflow-hidden rounded-xl bg-white shadow-card ring-1 ring-ink-100">
-        <div className="flex h-8 items-center justify-center gap-1.5 text-[11.5px] text-brand-500">
+      <div className="relative h-[123px] w-full overflow-hidden rounded-xl bg-surface shadow-card ring-1 ring-ink-100">
+        <div className="flex h-8 items-center justify-center gap-1.5 text-[11.5px] text-brand-600">
           <Spinner size={12} cls="border-brand-200 border-t-brand-500" />
           下拉刷新中…
         </div>
@@ -1129,16 +1129,16 @@ export const demoMocks: Record<string, () => ReactNode> = {
       <div className="relative h-[107px] w-full rounded-lg border border-dashed border-brand-300 bg-brand-50/30">
         <span className="absolute left-1/2 top-1/2 h-px w-3 -translate-x-1/2 bg-ink-300" />
         <span className="absolute left-1/2 top-1/2 h-3 w-px -translate-y-1/2 bg-ink-300" />
-        <span className="absolute left-1 top-1 rounded bg-brand-500 px-1.5 py-0.5 text-[10.5px] text-white">
+        <span className="absolute left-1 top-1 rounded bg-solid px-1.5 py-0.5 text-[10.5px] text-white">
           (-1,-1)
         </span>
-        <span className="absolute right-1 top-1 rounded bg-brand-500 px-1.5 py-0.5 text-[10.5px] text-white">
+        <span className="absolute right-1 top-1 rounded bg-solid px-1.5 py-0.5 text-[10.5px] text-white">
           (1,-1)
         </span>
-        <span className="absolute bottom-1 left-1 rounded bg-brand-500 px-1.5 py-0.5 text-[10.5px] text-white">
+        <span className="absolute bottom-1 left-1 rounded bg-solid px-1.5 py-0.5 text-[10.5px] text-white">
           (-1,1)
         </span>
-        <span className="absolute bottom-1 right-1 rounded bg-brand-500 px-1.5 py-0.5 text-[10.5px] text-white">
+        <span className="absolute bottom-1 right-1 rounded bg-solid px-1.5 py-0.5 text-[10.5px] text-white">
           (1,1)
         </span>
         <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded bg-ok px-1.5 py-0.5 text-[10.5px] text-white">
@@ -1171,7 +1171,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
             <div key={i} className="h-3 rounded bg-ink-100" />
           ))}
         </div>
-        <span className="absolute bottom-2 right-2 flex h-8 w-8 items-center justify-center rounded-full bg-white text-brand-600 shadow-pop ring-1 ring-ink-100">
+        <span className="absolute bottom-2 right-2 flex h-8 w-8 items-center justify-center rounded-full bg-surface text-brand-600 shadow-pop ring-1 ring-ink-100">
           <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M12 19V5m-6 6 6-6 6 6" />
           </svg>
@@ -1191,7 +1191,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
           <span
             key={t}
             className={`flex-1 rounded py-1 text-center text-[13px] ${
-              i === 1 ? 'bg-white font-medium text-brand-600 shadow-sm' : 'text-ink-500'
+              i === 1 ? 'bg-surface font-medium text-brand-600 shadow-sm' : 'text-ink-500'
             }`}
           >
             {t}
@@ -1216,7 +1216,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
 
   'safe-area::底部操作栏：正确写法': () => (
     <Frame className="w-full max-w-[240px]">
-      <div className="relative h-[125px] w-full overflow-hidden rounded-xl bg-white shadow-card ring-1 ring-ink-100">
+      <div className="relative h-[125px] w-full overflow-hidden rounded-xl bg-surface shadow-card ring-1 ring-ink-100">
         <div className="space-y-2 p-2.5">
           <div className="h-2.5 w-2/3 rounded bg-ink-100" />
           <div className="h-2.5 w-1/2 rounded bg-ink-100" />
@@ -1226,7 +1226,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
             <span className="flex-1 rounded-full border border-ink-300 py-1 text-center text-[12px] text-brand-600">
               取消
             </span>
-            <span className="flex-1 rounded-full bg-brand-500 py-1 text-center text-[12px] text-white">
+            <span className="flex-1 rounded-full bg-solid py-1 text-center text-[12px] text-white">
               确认
             </span>
           </div>
@@ -1244,7 +1244,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
     <Frame className="w-full max-w-[260px] flex-col items-stretch gap-2.5 p-4">
       <div>
         <span className="mb-0.5 block text-[12px] text-ink-500">收件人</span>
-        <div className="rounded-lg border border-ink-300 bg-white px-3 py-1.5 text-[14px] text-ink-900">
+        <div className="rounded-lg border border-ink-300 bg-surface px-3 py-1.5 text-[14px] text-ink-900">
           曹禹
         </div>
         <span className="mt-0.5 block text-[11.5px] text-ink-400">
@@ -1253,7 +1253,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
       </div>
       <div>
         <span className="mb-0.5 block text-[12px] text-ink-500">备注</span>
-        <div className="rounded-lg border border-ink-200 bg-white px-3 py-1.5 text-[14px] text-ink-400">
+        <div className="rounded-lg border border-ink-200 bg-surface px-3 py-1.5 text-[14px] text-ink-400">
           选填
         </div>
       </div>
@@ -1261,7 +1261,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
   ),
   'text-field::密码框': () => (
     <Frame className="w-full max-w-[260px] p-4">
-      <div className="w-full rounded-lg border-2 border-brand-500 bg-white px-3 py-1.5 ring-2 ring-brand-500/15">
+      <div className="w-full rounded-lg border-2 border-brand-500 bg-surface px-3 py-1.5 ring-2 ring-brand-500/15">
         <span className="block text-[11.5px] text-brand-600">密码</span>
         <div className="mt-0.5 flex items-center">
           <span className="text-[15px] tracking-[3px] text-ink-900">••••••••</span>
@@ -1280,7 +1280,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
   ),
   'text-field::用 controller 读值 + 释放': () => (
     <Frame className="w-full max-w-[260px] flex-col items-stretch gap-2 p-4">
-      <div className="rounded-lg border border-ink-300 bg-white px-3 py-1.5">
+      <div className="rounded-lg border border-ink-300 bg-surface px-3 py-1.5">
         <span className="text-[14px] text-ink-900">pulse_dev</span>
         <span className="ml-0.5 inline-block h-3.5 w-px animate-pulse bg-brand-500 align-middle" />
       </div>
@@ -1297,7 +1297,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
   ),
   'text-field::只允许输入数字 + 限长': () => (
     <Frame className="w-full max-w-[260px] flex-col items-stretch gap-2 p-4">
-      <div className="rounded-lg border border-ink-300 bg-white px-3 py-1.5">
+      <div className="rounded-lg border border-ink-300 bg-surface px-3 py-1.5">
         <div className="flex items-center">
           <span className="font-mono text-[14.5px] tracking-wide text-ink-900">13800138000</span>
           <span className="ml-auto font-mono text-[11.5px] text-ink-400">11/11</span>
@@ -1316,7 +1316,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
     <Frame className="w-full max-w-[260px] p-4">
       <div className="w-full">
         <span className="mb-0.5 block text-[12px] text-danger">手机号</span>
-        <div className="rounded-lg border-2 border-danger bg-white px-3 py-1.5 text-[14px] text-ink-900">
+        <div className="rounded-lg border-2 border-danger bg-surface px-3 py-1.5 text-[14px] text-ink-900">
           abc123
         </div>
         <span className="mt-0.5 block text-[12px] text-danger">
@@ -1334,12 +1334,12 @@ export const demoMocks: Record<string, () => ReactNode> = {
       ].map(([l, v]) => (
         <div key={l}>
           <span className="mb-0.5 block text-[12px] text-ink-500">{l}</span>
-          <div className="rounded-lg border border-ink-300 bg-white px-3 py-1.5 text-[14px] text-ink-900">
+          <div className="rounded-lg border border-ink-300 bg-surface px-3 py-1.5 text-[14px] text-ink-900">
             {v}
           </div>
         </div>
       ))}
-      <span className="mt-0.5 rounded-full bg-brand-500 py-1.5 text-center text-[14px] font-medium text-white">
+      <span className="mt-0.5 rounded-full bg-solid py-1.5 text-center text-[14px] font-medium text-white">
         登录
       </span>
     </Frame>
@@ -1348,7 +1348,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
     <Frame className="w-full max-w-[260px] p-4">
       <div className="w-full">
         <span className="mb-0.5 block text-[12px] text-ink-500">手机号</span>
-        <div className="flex items-center gap-2 rounded-lg border-2 border-brand-500 bg-white px-3 py-1.5">
+        <div className="flex items-center gap-2 rounded-lg border-2 border-brand-500 bg-surface px-3 py-1.5">
           <span className="text-[14px] text-ink-900">13800138000</span>
           <span className="ml-auto">
             <Spinner size={13} cls="border-brand-200 border-t-brand-500" />
@@ -1362,11 +1362,11 @@ export const demoMocks: Record<string, () => ReactNode> = {
   'form::Form 的三个核心动作': () => (
     <Frame className="w-full max-w-[270px] flex-col gap-2 p-4">
       {[
-        ['validate()', '校验全部字段', 'bg-ok/15 text-[#3d7a4a]'],
+        ['validate()', '校验全部字段', 'bg-ok/15 text-ok'],
         ['save()', '把值写回各字段', 'bg-brand-50 text-brand-600'],
-        ['reset()', '清空并回到初始值', 'bg-warn/15 text-[#a06a10]'],
+        ['reset()', '清空并回到初始值', 'bg-warn/15 text-warn'],
       ].map(([code, t, cls]) => (
-        <div key={code} className="flex items-center gap-2 rounded-lg bg-white px-2.5 py-1.5 shadow-card ring-1 ring-ink-100">
+        <div key={code} className="flex items-center gap-2 rounded-lg bg-surface px-2.5 py-1.5 shadow-card ring-1 ring-ink-100">
           <span className={`rounded px-1.5 py-0.5 font-mono text-[11.5px] ${cls}`}>{code}</span>
           <span className="text-[13px] text-ink-700">{t}</span>
         </div>
@@ -1375,11 +1375,11 @@ export const demoMocks: Record<string, () => ReactNode> = {
   ),
   'form::提交时先校验、提交中禁用按钮': () => (
     <Frame className="w-full max-w-[260px] flex-col items-stretch gap-2 p-4">
-      <div className="rounded-lg border-2 border-danger bg-white px-3 py-1.5 text-[14px] text-ink-900">
+      <div className="rounded-lg border-2 border-danger bg-surface px-3 py-1.5 text-[14px] text-ink-900">
         abc
       </div>
       <span className="text-[11.5px] text-danger">手机号格式不正确</span>
-      <span className="flex items-center justify-center gap-2 rounded-full bg-brand-500/45 py-1.5 text-[14px] font-medium text-white">
+      <span className="flex items-center justify-center gap-2 rounded-full bg-solid/45 py-1.5 text-[14px] font-medium text-white">
         <Spinner size={13} />
         提交中…
       </span>
@@ -1391,7 +1391,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
 
   'checkbox::带文字的复选框：用 CheckboxListTile': () => (
     <Frame className="w-full max-w-[270px]">
-      <div className="w-full overflow-hidden rounded-xl bg-white shadow-card ring-1 ring-ink-100">
+      <div className="w-full overflow-hidden rounded-xl bg-surface shadow-card ring-1 ring-ink-100">
         {[
           ['包邮', true],
           ['七天无理由', false],
@@ -1401,7 +1401,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
             <div className="flex items-center gap-3 px-3 py-2.5">
               <span
                 className={`flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-[4px] ${
-                  on ? 'bg-brand-500 text-white' : 'border-2 border-ink-300'
+                  on ? 'bg-solid text-white' : 'border-2 border-ink-300'
                 }`}
               >
                 {on ? (
@@ -1411,7 +1411,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
                 ) : null}
               </span>
               <span className="text-[14px] text-ink-800">{t}</span>
-              <span className="ml-auto text-[11px] text-ink-300">整行可点</span>
+              <span className="ml-auto text-[11px] text-ink-400">整行可点</span>
             </div>
           </div>
         ))}
@@ -1420,10 +1420,10 @@ export const demoMocks: Record<string, () => ReactNode> = {
   ),
   'checkbox::全选 / 半选（tristate 的经典用法）': () => (
     <Frame className="w-full max-w-[270px] p-4">
-      <div className="w-full rounded-xl bg-white p-3 shadow-card ring-1 ring-ink-100">
+      <div className="w-full rounded-xl bg-surface p-3 shadow-card ring-1 ring-ink-100">
         <div className="flex items-center gap-2.5 border-b border-ink-100 pb-2">
           <span className="flex h-[18px] w-[18px] items-center justify-center rounded-[4px] bg-brand-500">
-            <span className="h-0.5 w-2.5 rounded bg-white" />
+            <span className="h-0.5 w-2.5 rounded bg-surface" />
           </span>
           <span className="text-[14px] font-medium text-ink-900">全选</span>
           <span className="ml-auto text-[11.5px] text-ink-400">已选 2/3</span>
@@ -1437,7 +1437,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
             <div key={String(t)} className="flex items-center gap-2.5">
               <span
                 className={`flex h-[18px] w-[18px] items-center justify-center rounded-[4px] ${
-                  on ? 'bg-brand-500 text-white' : 'border-2 border-ink-300'
+                  on ? 'bg-solid text-white' : 'border-2 border-ink-300'
                 }`}
               >
                 {on ? (
@@ -1456,7 +1456,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
 
   'switch::设置页标准写法': () => (
     <Frame className="w-full max-w-[280px]">
-      <div className="w-full overflow-hidden rounded-xl bg-white shadow-card ring-1 ring-ink-100">
+      <div className="w-full overflow-hidden rounded-xl bg-surface shadow-card ring-1 ring-ink-100">
         {[
           ['消息推送', true],
           ['深色模式', false],
@@ -1476,12 +1476,12 @@ export const demoMocks: Record<string, () => ReactNode> = {
   ),
   'switch::切换时发请求（注意别卡住 UI）': () => (
     <Frame className="w-full max-w-[280px] flex-col items-stretch gap-2.5 p-4">
-      <div className="flex items-center rounded-lg bg-white px-3.5 py-2.5 shadow-card ring-1 ring-ink-100">
+      <div className="flex items-center rounded-lg bg-surface px-3.5 py-2.5 shadow-card ring-1 ring-ink-100">
         <span className="text-[14px] text-ink-800">同步到云端</span>
         <span className="ml-auto flex items-center gap-2">
           <Spinner size={13} cls="border-brand-200 border-t-brand-500" />
           <span className="relative flex h-[22px] w-[40px] items-center rounded-full bg-brand-500/50 px-0.5">
-            <span className="ml-auto h-[18px] w-[18px] rounded-full bg-white shadow" />
+            <span className="ml-auto h-[18px] w-[18px] rounded-full bg-surface shadow" />
           </span>
         </span>
       </div>
@@ -1499,8 +1499,8 @@ export const demoMocks: Record<string, () => ReactNode> = {
       </div>
       <div className="relative h-1.5 rounded-full bg-ink-100">
         <span className="absolute left-[25%] right-[25%] top-0 h-full rounded-full bg-brand-500" />
-        <span className="absolute left-[25%] top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-500 ring-2 ring-white" />
-        <span className="absolute left-[75%] top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-500 ring-2 ring-white" />
+        <span className="absolute left-[25%] top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-500 ring-2 ring-surface" />
+        <span className="absolute left-[75%] top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-500 ring-2 ring-surface" />
       </div>
       <div className="flex justify-between font-mono text-[11px] text-ink-400">
         <span>0</span>
@@ -1516,7 +1516,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
           ❌ value=120 但 max=100 → 抛异常
         </span>
         <div className="relative h-1.5 rounded-full bg-danger/20">
-          <span className="absolute right-0 top-1/2 h-4 w-4 -translate-y-1/2 rounded-full bg-danger ring-2 ring-white" />
+          <span className="absolute right-0 top-1/2 h-4 w-4 -translate-y-1/2 rounded-full bg-danger ring-2 ring-surface" />
         </div>
       </div>
       <div>
@@ -1525,7 +1525,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
         </span>
         <div className="relative h-1.5 rounded-full bg-ink-100">
           <span className="absolute left-0 right-0 top-0 h-full rounded-full bg-brand-500" />
-          <span className="absolute right-0 top-1/2 h-4 w-4 -translate-y-1/2 rounded-full bg-brand-500 ring-2 ring-white" />
+          <span className="absolute right-0 top-1/2 h-4 w-4 -translate-y-1/2 rounded-full bg-brand-500 ring-2 ring-surface" />
         </div>
       </div>
     </Frame>
@@ -1542,12 +1542,12 @@ export const demoMocks: Record<string, () => ReactNode> = {
   'search-bar::带搜索建议（SearchAnchor）': () => (
     <Frame className="w-full max-w-[270px] p-4">
       <div className="w-full">
-        <div className="flex h-10 w-full items-center gap-2 rounded-t-full bg-white px-3.5 ring-1 ring-brand-300">
-          <MI d={P.search} size={16} className="shrink-0 text-brand-500" />
+        <div className="flex h-10 w-full items-center gap-2 rounded-t-full bg-surface px-3.5 ring-1 ring-brand-300">
+          <MI d={P.search} size={16} className="shrink-0 text-brand-600" />
           <span className="text-[14px] text-ink-900">无线</span>
           <span className="ml-auto h-3.5 w-px bg-ink-300" />
         </div>
-        <div className="overflow-hidden rounded-b-lg bg-white shadow-pop ring-1 ring-ink-100">
+        <div className="overflow-hidden rounded-b-lg bg-surface shadow-pop ring-1 ring-ink-100">
           {['无线耳机', '无线充电器', '无线鼠标'].map((t, i) => (
             <div
               key={t}
@@ -1573,7 +1573,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
             <path d="M12 15.5 5.5 9h13L12 15.5Z" />
           </svg>
         </div>
-        <div className="mt-1 overflow-hidden rounded-lg bg-white shadow-pop ring-1 ring-ink-100">
+        <div className="mt-1 overflow-hidden rounded-lg bg-surface shadow-pop ring-1 ring-ink-100">
           {['广东省', '湖南省', '浙江省'].map((t, i) => (
             <div
               key={t}
@@ -1592,13 +1592,13 @@ export const demoMocks: Record<string, () => ReactNode> = {
   'dropdown-button::带 null 选项（允许「不限」）': () => (
     <Frame className="w-full max-w-[220px] p-4">
       <div className="w-full">
-        <div className="flex h-10 w-full items-center justify-between rounded-lg border border-ink-300 bg-white px-3 text-[14px] text-ink-400">
+        <div className="flex h-10 w-full items-center justify-between rounded-lg border border-ink-300 bg-surface px-3 text-[14px] text-ink-400">
           不限
           <svg viewBox="0 0 24 24" width="16" height="16" className="text-ink-400" fill="currentColor">
             <path d="M12 15.5 5.5 9h13L12 15.5Z" />
           </svg>
         </div>
-        <div className="mt-1 overflow-hidden rounded-lg bg-white shadow-pop ring-1 ring-ink-100">
+        <div className="mt-1 overflow-hidden rounded-lg bg-surface shadow-pop ring-1 ring-ink-100">
           <div className="px-3 py-1.5 text-[13px] text-ink-400">不限（value: null）</div>
           {['广东省', '湖南省'].map((t) => (
             <div key={t} className="px-3 py-1.5 text-[13px] text-ink-700">
@@ -1614,7 +1614,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
 
   'radio::一组单选（用 RadioListTile，整行可点）': () => (
     <Frame className="w-full max-w-[280px]">
-      <div className="w-full overflow-hidden rounded-xl bg-white shadow-card ring-1 ring-ink-100">
+      <div className="w-full overflow-hidden rounded-xl bg-surface shadow-card ring-1 ring-ink-100">
         {[
           ['标准配送（3-5 天）', true],
           ['次日达（+¥12）', false],
@@ -1630,7 +1630,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
                 {on ? <span className="h-2 w-2 rounded-full bg-brand-500" /> : null}
               </span>
               <span className="text-[14px] text-ink-800">{t}</span>
-              <span className="ml-auto text-[11px] text-ink-300">整行可点</span>
+              <span className="ml-auto text-[11px] text-ink-400">整行可点</span>
             </div>
           </div>
         ))}
@@ -1639,7 +1639,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
   ),
   'radio::选项少的时候用 Chip 更省空间': () => (
     <Frame className="flex-wrap gap-2.5">
-      <span className="rounded-full bg-brand-500 px-4 py-1.5 text-[14px] font-medium text-white">
+      <span className="rounded-full bg-solid px-4 py-1.5 text-[14px] font-medium text-white">
         一个月
       </span>
       <span className="rounded-full bg-ink-50 px-4 py-1.5 text-[14px] text-ink-600 ring-1 ring-ink-200">
@@ -1654,10 +1654,10 @@ export const demoMocks: Record<string, () => ReactNode> = {
   'chip::四个变体对照': () => (
     <Frame className="w-full max-w-[320px] flex-wrap gap-2 p-4">
       {[
-        ['assist', 'bg-white ring-1 ring-ink-300 text-ink-700', '→'],
+        ['assist', 'bg-surface ring-1 ring-ink-300 text-ink-700', '→'],
         ['filter', 'bg-brand-50 ring-1 ring-brand-300 text-brand-700', '✓'],
         ['input', 'bg-ink-50 ring-1 ring-ink-200 text-ink-700', '×'],
-        ['suggestion', 'bg-white ring-1 ring-ink-200 text-ink-600', '＋'],
+        ['suggestion', 'bg-surface ring-1 ring-ink-200 text-ink-600', '＋'],
       ].map(([t, cls, ic]) => (
         <span
           key={t}
@@ -1672,9 +1672,9 @@ export const demoMocks: Record<string, () => ReactNode> = {
   'chip::状态标签（订单状态这类）': () => (
     <Frame className="w-full max-w-[310px] flex-col gap-2 p-4">
       {[
-        ['待付款', 'bg-warn/15 text-[#a06a10]', '#20261016'],
+        ['待付款', 'bg-warn/15 text-warn', '#20261016'],
         ['已发货', 'bg-brand-50 text-brand-700', '#20261015'],
-        ['已完成', 'bg-ok/15 text-[#3d7a4a]', '#20261014'],
+        ['已完成', 'bg-ok/15 text-ok', '#20261014'],
         ['已取消', 'bg-ink-100 text-ink-500', '#20261013'],
       ].map(([t, cls, no]) => (
         <div key={t} className="flex items-center gap-3">
@@ -1689,7 +1689,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
     <Frame className="w-full max-w-[290px] flex-col gap-2 p-4">
       <div className="flex flex-wrap gap-1.5">
         {['包邮', '现货'].map((t) => (
-          <span key={t} className="flex items-center gap-1 rounded-lg bg-brand-500 px-2.5 py-1 text-[13px] text-white">
+          <span key={t} className="flex items-center gap-1 rounded-lg bg-solid px-2.5 py-1 text-[13px] text-white">
             <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
               <path d="m5 12.5 4.5 4.5L19 7.5" />
             </svg>
@@ -1758,7 +1758,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
     <Frame className="w-full max-w-[410px] gap-3 p-4">
       <div className="flex-1">
         <span className="mb-1 block text-[11px] text-danger">❌ children 一次建完</span>
-        <div className="h-[97px] overflow-hidden rounded-lg bg-white shadow-card ring-1 ring-ink-100">
+        <div className="h-[97px] overflow-hidden rounded-lg bg-surface shadow-card ring-1 ring-ink-100">
           {[1, 2, 3].map((i) => (
             <div key={i} className="border-b border-ink-50 px-2.5 py-1.5 text-[12.5px] text-ink-700">
               项 {i}
@@ -1769,20 +1769,20 @@ export const demoMocks: Record<string, () => ReactNode> = {
       </div>
       <div className="flex-1">
         <span className="mb-1 block text-[11px] text-ok">✅ .builder 按需构建</span>
-        <div className="h-[97px] overflow-hidden rounded-lg bg-white shadow-card ring-1 ring-ink-100">
+        <div className="h-[97px] overflow-hidden rounded-lg bg-surface shadow-card ring-1 ring-ink-100">
           {[1, 2, 3].map((i) => (
             <div key={i} className="border-b border-ink-50 px-2.5 py-1.5 text-[12.5px] text-ink-700">
               项 {i}
             </div>
           ))}
-          <div className="bg-ok/10 px-2.5 py-1 text-[11px] text-[#3d7a4a]">只建可视区</div>
+          <div className="bg-ok/10 px-2.5 py-1 text-[11px] text-ok">只建可视区</div>
         </div>
       </div>
     </Frame>
   ),
   'list-view::带分隔线与自定义内边距': () => (
     <Frame className="w-full max-w-[270px]">
-      <div className="w-full overflow-hidden rounded-xl bg-white shadow-card ring-1 ring-ink-100">
+      <div className="w-full overflow-hidden rounded-xl bg-surface shadow-card ring-1 ring-ink-100">
         {[
           ['收货地址', '广东省深圳市'],
           ['支付方式', '微信支付'],
@@ -1801,7 +1801,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
   ),
   'list-view::触底加载下一页': () => (
     <Frame className="w-full max-w-[270px]">
-      <div className="w-full overflow-hidden rounded-xl bg-white shadow-card ring-1 ring-ink-100">
+      <div className="w-full overflow-hidden rounded-xl bg-surface shadow-card ring-1 ring-ink-100">
         {[1, 2].map((i) => (
           <div key={i} className="border-b border-ink-50 px-3 py-2 text-[13px] text-ink-700">
             列表项 {i}
@@ -1809,7 +1809,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
         ))}
         <div className="flex items-center justify-center gap-2 py-2.5">
           <Spinner size={13} cls="border-brand-200 border-t-brand-500" />
-          <span className="text-[12px] text-brand-500">加载更多…</span>
+          <span className="text-[12px] text-brand-600">加载更多…</span>
         </div>
       </div>
     </Frame>
@@ -1822,7 +1822,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
         ['两行', ['曹禹', '最近消息：明天见']],
         ['三行', ['曹禹', '最近消息：明天见', '昨天 22:10']],
       ].map(([t, lines]) => (
-        <div key={String(t)} className="flex items-center gap-3 rounded-lg bg-white px-3 py-2 shadow-card ring-1 ring-ink-100">
+        <div key={String(t)} className="flex items-center gap-3 rounded-lg bg-surface px-3 py-2 shadow-card ring-1 ring-ink-100">
           <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-100 text-[13px] font-semibold text-brand-700">
             曹
           </span>
@@ -1847,7 +1847,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
     <Frame className="w-full max-w-[410px] gap-3 p-4">
       <div className="flex-1">
         <span className="mb-1 block font-mono text-[11px] text-ink-400">默认</span>
-        <div className="overflow-hidden rounded-lg bg-white shadow-card ring-1 ring-ink-100">
+        <div className="overflow-hidden rounded-lg bg-surface shadow-card ring-1 ring-ink-100">
           {['项 A', '项 B', '项 C'].map((t) => (
             <div key={t} className="flex items-center gap-2.5 border-b border-ink-50 px-3 py-2.5">
               <span className="h-7 w-7 shrink-0 rounded-full bg-brand-100" />
@@ -1858,7 +1858,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
       </div>
       <div className="flex-1">
         <span className="mb-1 block font-mono text-[11px] text-ok">dense: true</span>
-        <div className="overflow-hidden rounded-lg bg-white shadow-card ring-1 ring-ink-100">
+        <div className="overflow-hidden rounded-lg bg-surface shadow-card ring-1 ring-ink-100">
           {['项 A', '项 B', '项 C', '项 D'].map((t) => (
             <div key={t} className="flex items-center gap-2.5 border-b border-ink-50 px-3 py-1.5">
               <span className="h-5 w-5 shrink-0 rounded-full bg-brand-100" />
@@ -1882,7 +1882,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
               <Spinner size={20} cls="border-brand-200 border-t-brand-500" />
             ) : (
               <div className="flex flex-col items-center gap-1">
-                <svg viewBox="0 0 24 24" width="20" height="20" className="text-ink-300" fill="none" stroke="currentColor" strokeWidth="1.8">
+                <svg viewBox="0 0 24 24" width="20" height="20" className="text-ink-400" fill="none" stroke="currentColor" strokeWidth="1.8">
                   <path d="M3 3l18 18M21 15V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10" />
                 </svg>
                 <span className="font-mono text-[10.5px] text-ink-400">errorBuilder</span>
@@ -1900,7 +1900,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
         <div className="h-[86px] w-[96px] rounded-lg bg-ink-100" />
         <span className="text-[11.5px] text-ink-400">占位灰块</span>
       </div>
-      <span className="text-ink-300">→</span>
+      <span className="text-ink-400">→</span>
       <div className="flex flex-col items-center gap-1.5">
         <div className="h-[86px] w-[96px] rounded-lg bg-gradient-to-br from-brand-200 to-brand-400 opacity-70" />
         <span className="font-mono text-[11px] text-brand-600">FadeInImage</span>
@@ -1918,10 +1918,10 @@ export const demoMocks: Record<string, () => ReactNode> = {
       </div>
       <div className="flex flex-col items-center gap-1.5">
         <span className="relative">
-          <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#dceafb] text-[17px] font-semibold text-[#1e4e84]">
+          <span className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-100 text-[17px] font-semibold text-brand-800">
             L
           </span>
-          <span className="absolute -right-0.5 -top-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-danger px-1 text-[11px] font-medium text-white ring-2 ring-white">
+          <span className="absolute -right-0.5 -top-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-danger px-1 text-[11px] font-medium text-white ring-2 ring-surface">
             5
           </span>
         </span>
@@ -1932,7 +1932,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
 
   'badge::底栏未读 + 图标未读': () => (
     <Frame className="w-full max-w-[310px]">
-      <div className="flex w-full items-center justify-around rounded-2xl bg-[#eef4fc] px-2 py-2">
+      <div className="flex w-full items-center justify-around rounded-xl bg-brand-50 px-2 py-2">
         {[
           { d: P.home, t: '首页', n: '', dot: false },
           { d: P.notif, t: '消息', n: '99+', dot: false },
@@ -1960,18 +1960,18 @@ export const demoMocks: Record<string, () => ReactNode> = {
 
   'data-table::可排序的销售明细表': () => (
     <Frame className="w-full max-w-[320px] p-4">
-      <div className="w-full overflow-hidden rounded-lg bg-white text-left text-[12px] shadow-card ring-1 ring-ink-100">
+      <div className="w-full overflow-hidden rounded-lg bg-surface text-left text-[12px] shadow-card ring-1 ring-ink-100">
         <div className="flex bg-ink-50 text-ink-600">
           <span className="flex flex-1 items-center gap-1 px-2 py-1.5 font-medium">
             产品
-            <svg viewBox="0 0 24 24" width="9" height="9" fill="currentColor" className="text-brand-500">
+            <svg viewBox="0 0 24 24" width="9" height="9" fill="currentColor" className="text-brand-600">
               <path d="M12 8.5 18.5 15h-13L12 8.5Z" />
             </svg>
           </span>
           <span className="w-14 px-2 py-1.5 font-medium">区域</span>
           <span className="flex w-20 items-center justify-end gap-1 px-2 py-1.5 font-medium">
             销售额
-            <svg viewBox="0 0 24 24" width="9" height="9" fill="currentColor" className="text-ink-300">
+            <svg viewBox="0 0 24 24" width="9" height="9" fill="currentColor" className="text-ink-400">
               <path d="M12 15.5 5.5 9h13L12 15.5Z" />
             </svg>
           </span>
@@ -2022,7 +2022,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
         <span className="flex-1 rounded-full border border-ink-300 py-1 text-center text-[12px] text-ink-600">
           上一步
         </span>
-        <span className="flex-1 rounded-full bg-brand-500 py-1 text-center text-[12px] text-white">
+        <span className="flex-1 rounded-full bg-solid py-1 text-center text-[12px] text-white">
           下一步
         </span>
       </div>
@@ -2055,7 +2055,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
   ),
   'snack-bar::成功 / 失败用不同颜色': () => (
     <Frame className="w-full max-w-[300px] flex-col gap-2 p-4">
-      <div className="flex w-full items-center gap-2 rounded-lg bg-[#3d7a4a] px-3.5 py-2.5 shadow-pop">
+      <div className="flex w-full items-center gap-2 rounded-lg bg-ok px-3.5 py-2.5 shadow-pop">
         <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#fff" strokeWidth="2.6" strokeLinecap="round">
           <path d="m5 12.5 4.5 4.5L19 7.5" />
         </svg>
@@ -2077,7 +2077,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
         </div>
         <div className="absolute inset-x-0 top-8 flex items-center rounded-lg bg-[#2c3038] px-3.5 py-2.5 shadow-pop">
           <span className="text-[13px] text-white">最新一条</span>
-          <span className="ml-auto text-[13px] text-[#7fb8f7]">撤销</span>
+          <span className="ml-auto text-[13px] text-brand-400">撤销</span>
         </div>
       </div>
       <span className="font-mono text-[10.5px] text-ink-400">
@@ -2102,7 +2102,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
         <span className="absolute -top-1.5 left-2 rounded bg-danger px-1 py-0.5 text-[10px] text-white">
           ⚠ 横屏高度不足
         </span>
-        <div className="mt-1 rounded-lg bg-white p-3 shadow-pop">
+        <div className="mt-1 rounded-lg bg-surface p-3 shadow-pop">
           <p className="text-[14.5px] font-semibold text-ink-900">删除这条记录？</p>
           <p className="mt-1 text-[12.5px] text-ink-600">删除后无法恢复。</p>
           <div className="mt-2.5 flex justify-end gap-1.5">
@@ -2120,7 +2120,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
   'dialog::带输入框的自定义弹窗（含键盘避让）': () => (
     <Frame className="w-full max-w-[270px] p-4">
       <div className="w-full">
-        <div className="rounded-2xl bg-white p-3.5 shadow-pop">
+        <div className="rounded-xl bg-surface p-3.5 shadow-pop">
           <p className="text-[15px] font-semibold text-ink-900">添加备注</p>
           <div className="mt-2 rounded-lg border-2 border-brand-500 px-2.5 py-1.5 ring-2 ring-brand-500/15">
             <span className="text-[13.5px] text-ink-900">尽快发货</span>
@@ -2129,7 +2129,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
           <div className="mt-2 rounded-lg bg-ink-200/70 p-1">
             <div className="grid grid-cols-6 gap-0.5">
               {Array.from({ length: 12 }).map((_, i) => (
-                <span key={i} className="h-3 rounded bg-white/80" />
+                <span key={i} className="h-3 rounded bg-ink-200" />
               ))}
             </div>
           </div>
@@ -2193,14 +2193,14 @@ export const demoMocks: Record<string, () => ReactNode> = {
   ),
   'circular-progress-indicator::按钮里的加载态': () => (
     <Frame className="gap-3 p-4">
-      <span className="inline-flex h-9 items-center rounded-[18px] bg-brand-500 px-4 text-[14px] font-medium text-white">
+      <span className="inline-flex h-9 items-center rounded-[18px] bg-solid px-4 text-[14px] font-medium text-white">
         提交
       </span>
-      <span className="inline-flex h-9 min-w-[96px] items-center justify-center gap-2 rounded-[18px] bg-brand-500/45 px-4 text-[14px] font-medium text-white">
+      <span className="inline-flex h-9 min-w-[96px] items-center justify-center gap-2 rounded-[18px] bg-solid/45 px-4 text-[14px] font-medium text-white">
         <Spinner size={14} />
         提交中
       </span>
-      <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-brand-500/45 text-white">
+      <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-solid/45 text-white">
         <Spinner size={14} />
       </span>
     </Frame>
@@ -2208,7 +2208,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
 
   'linear-progress-indicator::页面顶部的加载条': () => (
     <Frame className="w-full max-w-[290px] p-4">
-      <div className="w-full overflow-hidden rounded-lg bg-white shadow-card ring-1 ring-ink-100">
+      <div className="w-full overflow-hidden rounded-lg bg-surface shadow-card ring-1 ring-ink-100">
         <div className="h-[3px] w-full bg-brand-100">
           <div className="h-full w-2/3 bg-brand-500" />
         </div>
@@ -2251,7 +2251,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
   ),
   'tooltip::自定义外观': () => (
     <Frame className="w-full max-w-[290px] flex-col items-center gap-2 p-4">
-      <span className="relative rounded-lg bg-brand-500 px-3 py-1.5 text-[13px] text-white shadow-pop">
+      <span className="relative rounded-lg bg-solid px-3 py-1.5 text-[13px] text-white shadow-pop">
         自定义气泡
         <span className="absolute left-1/2 top-full h-2 w-2 -translate-x-1/2 -translate-y-1 rotate-45 bg-brand-500" />
       </span>
@@ -2264,7 +2264,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
 
   'refresh-indicator::列表下拉刷新': () => (
     <Frame className="w-full max-w-[270px] p-4">
-      <div className="w-full overflow-hidden rounded-xl bg-white shadow-card ring-1 ring-ink-100">
+      <div className="w-full overflow-hidden rounded-xl bg-surface shadow-card ring-1 ring-ink-100">
         <div className="flex items-center justify-center gap-2 py-3">
           <Spinner size={15} cls="border-brand-200 border-t-brand-500" />
           <span className="text-[12px] text-brand-600">正在刷新…</span>
@@ -2279,7 +2279,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
   ),
   'refresh-indicator::下拉刷新 + 上拉加载更多': () => (
     <Frame className="w-full max-w-[270px] p-4">
-      <div className="w-full overflow-hidden rounded-xl bg-white shadow-card ring-1 ring-ink-100">
+      <div className="w-full overflow-hidden rounded-xl bg-surface shadow-card ring-1 ring-ink-100">
         <div className="flex items-center justify-center gap-1.5 border-b border-ink-50 py-2 text-[11.5px] text-ok">
           <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round">
             <path d="m5 12.5 4.5 4.5L19 7.5" />
@@ -2293,7 +2293,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
         ))}
         <div className="flex items-center justify-center gap-2 py-2.5">
           <Spinner size={13} cls="border-brand-200 border-t-brand-500" />
-          <span className="text-[11.5px] text-brand-500">上拉加载更多…</span>
+          <span className="text-[11.5px] text-brand-600">上拉加载更多…</span>
         </div>
       </div>
     </Frame>
@@ -2306,7 +2306,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
   ),
   'bottom-sheet::内容较多：可拖拽调整高度': () => (
     <Frame className="w-full max-w-[280px] p-4">
-      <div className="relative h-[116px] w-full overflow-hidden rounded-t-2xl bg-white shadow-pop ring-1 ring-ink-100">
+      <div className="relative h-[116px] w-full overflow-hidden rounded-t-2xl bg-surface shadow-pop ring-1 ring-ink-100">
         <div className="flex justify-center pt-2">
           <span className="h-1 w-9 rounded-full bg-ink-300" />
         </div>
@@ -2347,7 +2347,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
 
   'app-bar::标准顶栏': () => (
     <Frame className="w-full max-w-[330px] p-4">
-      <div className="flex h-12 w-full items-center gap-1 rounded-xl bg-brand-500 px-1.5 text-white">
+      <div className="flex h-12 w-full items-center gap-1 rounded-xl bg-solid px-1.5 text-white">
         <IconBtn className="text-white">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
             <path d="M19 12H5m6-6-6 6 6 6" />
@@ -2367,7 +2367,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
   ),
   'app-bar::标题 + 副标题（两行）': () => (
     <Frame className="w-full max-w-[330px] p-4">
-      <div className="flex h-14 w-full items-center gap-1.5 rounded-xl bg-brand-500 px-1.5 text-white">
+      <div className="flex h-14 w-full items-center gap-1.5 rounded-xl bg-solid px-1.5 text-white">
         <IconBtn className="text-white">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
             <path d="M19 12H5m6-6-6 6 6 6" />
@@ -2383,7 +2383,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
   'app-bar::搜索框直接放在顶栏里': () => (
     <Frame className="w-full max-w-[330px] p-4">
       <div className="flex h-14 w-full items-center gap-2 rounded-xl bg-brand-500 px-2.5">
-        <span className="flex h-8 flex-1 items-center gap-1.5 rounded-full bg-white/95 px-3">
+        <span className="flex h-8 flex-1 items-center gap-1.5 rounded-full bg-surface/95 px-3">
           <MI d={P.search} size={14} className="text-ink-400" />
           <span className="text-[13px] text-ink-400">搜索商品</span>
         </span>
@@ -2394,8 +2394,8 @@ export const demoMocks: Record<string, () => ReactNode> = {
 
   'navigation-bar::用 IndexedStack 保住各页状态': () => (
     <Frame className="w-full max-w-[310px] p-4">
-      <div className="w-full rounded-2xl bg-[#eef4fc] p-2">
-        <div className="mb-2 flex h-9 items-center justify-center rounded-lg bg-white text-[12.5px] text-ink-600 shadow-sm">
+      <div className="w-full rounded-xl bg-brand-50 p-2">
+        <div className="mb-2 flex h-9 items-center justify-center rounded-lg bg-surface text-[12.5px] text-ink-600 shadow-sm">
           各页状态被保留（滚动位置 / 输入内容）
         </div>
         <NavBarGBlock />
@@ -2404,7 +2404,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
   ),
   'navigation-bar::带未读角标': () => (
     <Frame className="w-full max-w-[310px] p-4">
-      <div className="flex w-full items-center justify-around rounded-2xl bg-[#eef4fc] px-2 py-2">
+      <div className="flex w-full items-center justify-around rounded-xl bg-brand-50 px-2 py-2">
         {[
           { d: P.home, t: '首页', on: true, badge: false },
           { d: P.cart, t: '购物车', on: false, badge: false },
@@ -2414,12 +2414,12 @@ export const demoMocks: Record<string, () => ReactNode> = {
           <div key={it.t} className="flex flex-col items-center gap-0.5">
             <span
               className={`relative flex h-7 w-14 items-center justify-center rounded-full ${
-                it.on ? 'bg-[#d3e5fa]' : ''
+                it.on ? 'bg-brand-100' : ''
               }`}
             >
               <MI d={it.d} size={18} className={it.on ? 'text-brand-700' : 'text-ink-500'} />
               {it.badge ? (
-                <span className="absolute right-3 top-0 h-2 w-2 rounded-full bg-danger ring-2 ring-[#eef4fc]" />
+                <span className="absolute right-3 top-0 h-2 w-2 rounded-full bg-danger ring-2 ring-brand-50" />
               ) : null}
             </span>
             <span className={`text-[11.5px] ${it.on ? 'font-medium text-brand-700' : 'text-ink-500'}`}>
@@ -2433,8 +2433,8 @@ export const demoMocks: Record<string, () => ReactNode> = {
 
   'tab-bar::顶栏 + 标签页（最标准形态）': () => (
     <Frame className="w-full max-w-[330px] p-4">
-      <div className="w-full overflow-hidden rounded-xl bg-white shadow-card ring-1 ring-ink-100">
-        <div className="flex h-10 items-center bg-brand-500 px-3 text-[14.5px] font-medium text-white">
+      <div className="w-full overflow-hidden rounded-xl bg-surface shadow-card ring-1 ring-ink-100">
+        <div className="flex h-10 items-center bg-solid px-3 text-[14.5px] font-medium text-white">
           我的订单
         </div>
         <div className="px-3 pt-1">
@@ -2462,7 +2462,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
   ),
   'tab-bar::标签多到放不下：isScrollable': () => (
     <Frame className="w-full max-w-[310px] p-4">
-      <div className="w-full overflow-hidden rounded-xl bg-white p-3 shadow-card ring-1 ring-ink-100">
+      <div className="w-full overflow-hidden rounded-xl bg-surface p-3 shadow-card ring-1 ring-ink-100">
         <div className="flex gap-3 overflow-x-auto border-b border-ink-100 pb-2 thin-scroll">
           {['推荐', '数码', '服饰', '生鲜', '美妆', '家居'].map((t, i) => (
             <span
@@ -2488,9 +2488,9 @@ export const demoMocks: Record<string, () => ReactNode> = {
   'drawer::标准侧边菜单': () => (
     <Frame className="w-full max-w-[310px] p-4">
       <div className="flex h-[130px] w-full overflow-hidden rounded-xl shadow-card ring-1 ring-ink-100">
-        <div className="w-[62%] bg-white">
+        <div className="w-[62%] bg-surface">
           <div className="bg-brand-500 px-3 pb-2.5 pt-3.5">
-            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/25 text-[13.5px] font-semibold text-white">
+            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-surface/25 text-[13.5px] font-semibold text-white">
               曹
             </span>
             <p className="mt-1.5 text-[13.5px] font-medium text-white">曹禹</p>
@@ -2510,7 +2510,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
             ))}
           </div>
         </div>
-        <div className="flex-1 bg-ink-900/40" />
+        <div className="flex-1 bg-scrim/40" />
       </div>
     </Frame>
   ),
@@ -2534,15 +2534,15 @@ export const demoMocks: Record<string, () => ReactNode> = {
 
   'scaffold::标准页面模板（照抄就能用）': () => (
     <Frame className="p-4">
-      <div className="w-[186px] overflow-hidden rounded-xl bg-white shadow-card ring-1 ring-ink-100">
-        <div className="flex h-8 items-center bg-brand-500 px-2.5 text-[12px] text-white">
+      <div className="w-[186px] overflow-hidden rounded-xl bg-surface shadow-card ring-1 ring-ink-100">
+        <div className="flex h-8 items-center bg-solid px-2.5 text-[12px] text-white">
           appBar
         </div>
         <div className="flex h-[67px] items-center justify-center bg-ink-50 text-[12px] text-ink-400">
           body
         </div>
         <div className="flex h-7 items-center justify-end px-2.5">
-          <span className="-mt-5 flex h-8 w-8 items-center justify-center rounded-full bg-brand-500 text-[17px] text-white shadow-pop">
+          <span className="-mt-5 flex h-8 w-8 items-center justify-center rounded-full bg-solid text-[17px] text-white shadow-pop">
             ＋
           </span>
         </div>
@@ -2578,7 +2578,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
         ['页面 A', true],
         ['页面 B', false],
       ].map(([t, on]) => (
-        <div key={String(t)} className="rounded-lg bg-white p-2 shadow-card ring-1 ring-ink-100">
+        <div key={String(t)} className="rounded-lg bg-surface p-2 shadow-card ring-1 ring-ink-100">
           <span className="block text-[12px] text-ink-700">{t}</span>
           <div
             className={`mt-1.5 flex items-center rounded px-2 py-1 text-[11.5px] ${
@@ -2594,18 +2594,18 @@ export const demoMocks: Record<string, () => ReactNode> = {
 
   'theme::两个页面之间切换明暗主题': () => (
     <Frame className="gap-3 p-4">
-      <div className="flex-1 overflow-hidden rounded-xl bg-white p-3 shadow-card ring-1 ring-ink-100">
+      <div className="flex-1 overflow-hidden rounded-xl bg-surface p-3 shadow-card ring-1 ring-ink-100">
         <span className="block text-[12.5px] font-medium text-ink-900">浅色</span>
         <div className="mt-1.5 h-2 w-3/4 rounded bg-ink-100" />
         <div className="mt-1 h-2 w-1/2 rounded bg-ink-100" />
-        <div className="mt-2 inline-block rounded-full bg-brand-500 px-2 py-0.5 text-[11px] text-white">
+        <div className="mt-2 inline-block rounded-full bg-solid px-2 py-0.5 text-[11px] text-white">
           按钮
         </div>
       </div>
       <div className="flex-1 overflow-hidden rounded-xl bg-[#1f2328] p-3">
         <span className="block text-[12.5px] font-medium text-white">深色</span>
-        <div className="mt-1.5 h-2 w-3/4 rounded bg-white/15" />
-        <div className="mt-1 h-2 w-1/2 rounded bg-white/15" />
+        <div className="mt-1.5 h-2 w-3/4 rounded bg-surface/15" />
+        <div className="mt-1 h-2 w-1/2 rounded bg-surface/15" />
         <div className="mt-2 inline-block rounded-full bg-brand-400 px-2 py-0.5 text-[11px] text-[#0d1b2a]">
           按钮
         </div>
@@ -2619,7 +2619,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
         ['Card', '统一圆角 12 + 阴影（CardTheme）'],
         ['FilledButton', '统一主色（FilledButtonTheme）'],
       ].map(([name, desc]) => (
-        <div key={name} className="flex items-center gap-2 rounded-lg bg-white p-2 shadow-card ring-1 ring-ink-100">
+        <div key={name} className="flex items-center gap-2 rounded-lg bg-surface p-2 shadow-card ring-1 ring-ink-100">
           <span className="rounded bg-brand-50 px-1.5 py-0.5 font-mono text-[11px] text-brand-700">
             {name}
           </span>
@@ -2653,7 +2653,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
   ),
   'theme::中文字体：在一处指定，全局生效': () => (
     <Frame className="w-full max-w-[310px] p-4">
-      <div className="w-full rounded-lg bg-white p-2.5 shadow-card ring-1 ring-ink-100">
+      <div className="w-full rounded-lg bg-surface p-2.5 shadow-card ring-1 ring-ink-100">
         <span className="block font-mono text-[11px] text-ink-400">
           ThemeData(fontFamily: …)
         </span>
@@ -2675,7 +2675,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
         ['600-900', 2, '平板', 'ring-2 ring-brand-300'],
         ['> 900', 3, '桌面', 'ring-1 ring-ink-100'],
       ].map(([w, n, t, ring]) => (
-        <div key={String(w)} className={`flex-1 rounded-lg bg-white p-2.5 shadow-card ${ring}`}>
+        <div key={String(w)} className={`flex-1 rounded-lg bg-surface p-2.5 shadow-card ${ring}`}>
           <span className="block font-mono text-[10.5px] text-ink-400">{w}</span>
           <span className="mt-0.5 block text-[13px] font-medium text-ink-800">{t}</span>
           <div
@@ -2696,7 +2696,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
 function NavBarGBlock() {
   const [sel, setSel] = useState(0);
   return (
-    <div className="flex w-full items-center justify-around rounded-2xl bg-[#e1ebf8] px-2 py-2">
+    <div className="flex w-full items-center justify-around rounded-xl bg-brand-100 px-2 py-2">
       {[
         { d: P.home, t: '首页' },
         { d: P.cart, t: '购物车' },
@@ -2710,7 +2710,7 @@ function NavBarGBlock() {
         >
           <span
             className={`flex h-7 w-14 items-center justify-center rounded-full ${
-              sel === i ? 'bg-[#d3e5fa]' : ''
+              sel === i ? 'bg-brand-100' : ''
             }`}
           >
             <MI d={it.d} size={18} className={sel === i ? 'text-brand-700' : 'text-ink-500'} />
@@ -2729,7 +2729,7 @@ function ClassicBar({ items }: { items: string[] }) {
   const [sel, setSel] = useState(0);
   const icons = [P.home, P.inbox, P.cart, P.person];
   return (
-    <div className="flex w-full items-stretch rounded-xl bg-white px-1 py-1 shadow-card ring-1 ring-ink-100">
+    <div className="flex w-full items-stretch rounded-xl bg-surface px-1 py-1 shadow-card ring-1 ring-ink-100">
       {items.map((t, i) => (
         <button
           key={t}

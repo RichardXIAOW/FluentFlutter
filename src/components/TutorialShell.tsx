@@ -105,7 +105,7 @@ export default function TutorialShell({
   return (
     <div className="mx-auto max-w-page px-4 sm:px-6">
       {/* ══ Hero ══ */}
-      <header className="relative mt-6 overflow-hidden rounded-3xl border border-ink-100 bg-white shadow-card">
+      <header className="relative mt-6 overflow-hidden rounded-xl border border-ink-100 bg-surface shadow-card">
         {/* 装饰 */}
         <div
           aria-hidden="true"
@@ -131,7 +131,7 @@ export default function TutorialShell({
               <button
                 type="button"
                 onClick={() => jump(flat[0]?.id ?? '')}
-                className="flex h-10 items-center gap-1.5 rounded-xl bg-brand-500 px-4 text-[16.5px] font-medium text-white shadow-sm transition hover:bg-brand-600"
+                className="flex h-10 items-center gap-1.5 rounded-xl bg-grad-brand px-4 text-[16.5px] font-medium text-white shadow-sm transition hover:brightness-110"
               >
                 从第一节开始
                 <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2">
@@ -141,7 +141,7 @@ export default function TutorialShell({
               {siblings?.next && (
                 <Link
                   href={siblings.next.href}
-                  className="flex h-10 items-center gap-1.5 rounded-xl border border-ink-200 bg-white px-4 text-[16.5px] font-medium text-ink-700 transition hover:border-brand-300 hover:text-brand-600"
+                  className="flex h-10 items-center gap-1.5 rounded-xl border border-ink-200 bg-surface px-4 text-[16.5px] font-medium text-ink-700 transition hover:border-brand-300 hover:text-brand-600"
                 >
                   直接看 {siblings.next.label}
                 </Link>
@@ -151,7 +151,7 @@ export default function TutorialShell({
 
           {/* 右侧：章节目录卡 */}
           <div className="min-w-0">
-            <div className="rounded-2xl border border-ink-100 bg-ink-50/60 p-4">
+            <div className="rounded-xl border border-ink-100 bg-ink-50/60 p-4">
               <p className="text-[13.5px] font-semibold uppercase tracking-wider text-ink-400">
                 本页章节
               </p>
@@ -165,16 +165,16 @@ export default function TutorialShell({
                         type="button"
                         onClick={() => jump(c.sections[0]?.id ?? '')}
                         className={`group flex w-full items-start gap-2.5 rounded-lg px-2 py-1.5 text-left transition ${
-                          isCur ? 'bg-white shadow-sm' : 'hover:bg-white/70'
+                          isCur ? 'bg-surface shadow-sm' : 'hover:bg-surface/70'
                         }`}
                       >
                         <span
                           className={`mt-px flex h-5 w-5 shrink-0 items-center justify-center rounded-md text-[13.5px] font-bold ${
                             isCur
-                              ? 'bg-brand-500 text-white'
+                              ? 'bg-grad-brand text-white'
                               : done
                                 ? 'bg-ok/15 text-ok'
-                                : 'bg-white text-ink-400 ring-1 ring-ink-100'
+                                : 'bg-surface text-ink-400 ring-1 ring-ink-100'
                           }`}
                         >
                           {done ? '✓' : i + 1}
@@ -237,7 +237,7 @@ export default function TutorialShell({
                         >
                           <span
                             className={`shrink-0 font-mono text-[13.5px] leading-[1.7] ${
-                              on ? 'text-brand-500' : 'text-ink-300'
+                              on ? 'text-brand-600' : 'text-ink-400'
                             }`}
                           >
                             {s.title.split(' ')[0]}
@@ -256,7 +256,7 @@ export default function TutorialShell({
         {/* ── 中：正文 ── */}
         <main id="main" className="min-w-0 flex-1">
           {/* 移动端目录 */}
-          <details className="mb-6 overflow-hidden rounded-2xl border border-ink-100 bg-white lg:hidden">
+          <details className="mb-6 overflow-hidden rounded-xl border border-ink-100 bg-surface lg:hidden">
             <summary className="flex cursor-pointer items-center gap-2 px-4 py-3 text-[16px] font-medium text-ink-800">
               <svg viewBox="0 0 24 24" className="h-4 w-4 text-ink-400" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M4 6h16M4 12h16M4 18h10" strokeLinecap="round" />
@@ -295,11 +295,11 @@ export default function TutorialShell({
               <section key={c.id} className={ci > 0 ? 'mt-14' : ''}>
                 {/* 章节头 */}
                 <div className="flex items-center gap-3">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-600 font-mono text-[18px] font-bold text-white shadow-sm">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 font-mono text-[18px] font-bold text-white shadow-sm">
                     {ci}
                   </span>
                   <div className="min-w-0">
-                    <p className="text-[13.5px] font-semibold uppercase tracking-wider text-brand-500">
+                    <p className="text-[13.5px] font-semibold uppercase tracking-wider text-brand-600">
                       {c.no}
                     </p>
                     <h2 className="text-[24px] font-bold tracking-tight text-ink-900">{c.title}</h2>
@@ -324,7 +324,7 @@ export default function TutorialShell({
               {siblings.prev ? (
                 <Link
                   href={siblings.prev.href}
-                  className="group flex items-center gap-3 rounded-2xl border border-ink-100 bg-white p-4 transition hover:border-brand-200 hover:shadow-card"
+                  className="group flex items-center gap-3 rounded-xl border border-ink-100 bg-surface p-4 transition hover:border-brand-200 hover:shadow-card"
                 >
                   <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-ink-50 text-ink-500 transition group-hover:bg-brand-50 group-hover:text-brand-600">
                     <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
@@ -344,7 +344,7 @@ export default function TutorialShell({
               {siblings.next && (
                 <Link
                   href={siblings.next.href}
-                  className="group flex items-center justify-end gap-3 rounded-2xl border border-ink-100 bg-white p-4 text-right transition hover:border-brand-200 hover:shadow-card"
+                  className="group flex items-center justify-end gap-3 rounded-xl border border-ink-100 bg-surface p-4 text-right transition hover:border-brand-200 hover:shadow-card"
                 >
                   <span className="min-w-0">
                     <span className="block text-[13.5px] uppercase tracking-wide text-ink-400">下一站</span>
@@ -352,7 +352,7 @@ export default function TutorialShell({
                       {siblings.next.label}
                     </span>
                   </span>
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600 transition group-hover:bg-brand-500 group-hover:text-white">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600 transition group-hover:bg-grad-brand group-hover:text-white">
                     <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
@@ -423,7 +423,7 @@ function SectionView({ s }: { s: Section }) {
     <article id={s.id} className="scroll-mt-24 pt-9">
       <h3 className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1 text-[20px] font-bold leading-snug text-ink-900">
         {num && (
-          <span className="shrink-0 font-mono text-[16px] font-semibold text-brand-500">{num}</span>
+          <span className="shrink-0 font-mono text-[16px] font-semibold text-brand-600">{num}</span>
         )}
         <span className="min-w-0">{text}</span>
         {s.level && (
@@ -554,10 +554,10 @@ function BlockView({ b }: { b: Block }) {
           {b.items.map((it, i) => (
             <div
               key={i}
-              className="rounded-xl border border-ink-100 bg-white p-3.5 transition hover:border-brand-200"
+              className="rounded-xl border border-ink-100 bg-surface p-3.5 transition hover:border-brand-200"
             >
               <dt className="flex items-center gap-1.5 font-mono text-[15.5px] font-semibold text-brand-700">
-                <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 shrink-0 text-brand-300" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 shrink-0 text-brand-600" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M5 12h14" strokeLinecap="round" />
                 </svg>
                 {it.term}
@@ -613,7 +613,7 @@ function BlockView({ b }: { b: Block }) {
 
     case 'keypoints':
       return (
-        <div className="max-w-[80ch] rounded-2xl border border-brand-100 bg-gradient-to-br from-brand-50/70 to-white p-4">
+        <div className="max-w-[80ch] rounded-xl border border-brand-100 bg-gradient-to-br from-brand-50/70 to-surface p-4">
           <p className="flex items-center gap-1.5 text-[15px] font-semibold text-brand-700">
             <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1" strokeLinecap="round" />

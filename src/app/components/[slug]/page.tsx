@@ -112,9 +112,9 @@ export default function ComponentPage({
               {c.highlights.map((h) => (
                 <li
                   key={h}
-                  className="flex items-start gap-2 rounded-xl border border-ink-100 bg-white p-3 text-[15.5px] leading-relaxed text-ink-600 shadow-card"
+                  className="flex items-start gap-2 rounded-xl border border-ink-100 bg-surface p-3 text-[15.5px] leading-relaxed text-ink-600 shadow-card"
                 >
-                  <svg viewBox="0 0 24 24" className="mt-0.5 h-4 w-4 shrink-0 text-brand-500" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg viewBox="0 0 24 24" className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="m5 12.5 4.5 4.5L19 7.5" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                   <span>{h}</span>
@@ -125,7 +125,7 @@ export default function ComponentPage({
         </header>
 
         {/* ── 图形示例：一眼看到这个组件长什么样 ── */}
-        <section className="mt-6 overflow-hidden rounded-2xl border border-ink-100 bg-white shadow-card">
+        <section className="mt-6 overflow-hidden rounded-xl border border-ink-100 bg-surface shadow-card">
           <div className="flex items-center gap-2 border-b border-ink-100 bg-ink-50/70 px-4 py-2">
             <span className="text-[14.5px] font-medium text-ink-500">组件效果</span>
             <span className="text-[13.5px] text-ink-400">
@@ -138,7 +138,7 @@ export default function ComponentPage({
         {/* ── 什么时候用 / 别用 ── */}
         {c.whenToUse ? (
           <section className="mt-8 grid gap-4 md:grid-cols-2">
-            <div className="rounded-2xl border border-ok/25 bg-ok/[.04] p-4">
+            <div className="rounded-xl border border-ok/25 bg-ok/[.04] p-4">
               <h2 className="flex items-center gap-1.5 text-[16.5px] font-semibold text-ink-900">
                 <svg viewBox="0 0 24 24" className="h-4 w-4 text-ok" fill="none" stroke="currentColor" strokeWidth="2.2">
                   <path d="m5 12.5 4.5 4.5L19 7.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -156,7 +156,7 @@ export default function ComponentPage({
             </div>
 
             {c.whenToUse.dont?.length ? (
-              <div className="rounded-2xl border border-danger/25 bg-danger/[.04] p-4">
+              <div className="rounded-xl border border-danger/25 bg-danger/[.04] p-4">
                 <h2 className="flex items-center gap-1.5 text-[16.5px] font-semibold text-ink-900">
                   <svg viewBox="0 0 24 24" className="h-4 w-4 text-danger" fill="none" stroke="currentColor" strokeWidth="2.2">
                     <path d="M6 6l12 12M18 6 6 18" strokeLinecap="round" />
@@ -178,8 +178,8 @@ export default function ComponentPage({
 
         {/* ── 补充说明 ── */}
         {c.notes ? (
-          <div className="mt-4 flex items-start gap-2.5 rounded-2xl border border-brand-100 bg-brand-50/60 p-4">
-            <svg viewBox="0 0 24 24" className="mt-0.5 h-4 w-4 shrink-0 text-brand-500" fill="none" stroke="currentColor" strokeWidth="2">
+          <div className="mt-4 flex items-start gap-2.5 rounded-xl border border-brand-100 bg-brand-50/60 p-4">
+            <svg viewBox="0 0 24 24" className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" fill="none" stroke="currentColor" strokeWidth="2">
               <circle cx="12" cy="12" r="9" />
               <path d="M12 16v-5M12 8h.01" strokeLinecap="round" />
             </svg>
@@ -228,7 +228,7 @@ export default function ComponentPage({
                   <Link
                     key={slug}
                     href={`/components/${slug}`}
-                    className="group flex items-center gap-2 rounded-xl border border-ink-100 bg-white px-3.5 py-2.5 shadow-card transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-pop"
+                    className="group flex items-center gap-2 rounded-xl border border-ink-100 bg-surface px-3.5 py-2.5 shadow-card transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-pop"
                   >
                     <code className="font-mono text-[16px] font-medium text-ink-900 group-hover:text-brand-600">
                       {r.name}
@@ -252,7 +252,7 @@ export default function ComponentPage({
                 <Link
                   key={s.slug}
                   href={`/components/${s.slug}`}
-                  className="rounded-lg border border-ink-100 bg-white px-2.5 py-1.5 font-mono text-[15px] text-ink-600 transition hover:border-brand-200 hover:text-brand-600"
+                  className="rounded-lg border border-ink-100 bg-surface px-2.5 py-1.5 font-mono text-[15px] text-ink-600 transition hover:border-brand-200 hover:text-brand-600"
                 >
                   {s.name}
                 </Link>
@@ -262,7 +262,7 @@ export default function ComponentPage({
         ) : null}
 
         {/* ── 引申阅读 ── */}
-        <section className="mt-12 overflow-hidden rounded-2xl border border-brand-100 bg-gradient-to-br from-brand-50 to-white p-5">
+        <section className="mt-12 overflow-hidden rounded-xl border border-brand-100 bg-gradient-to-br from-brand-50 to-surface p-5">
           <h2 className="text-[18px] font-semibold text-ink-900">
             想在真实项目里用起来？
           </h2>
@@ -272,7 +272,7 @@ export default function ComponentPage({
           </p>
           <Link
             href="/handbook"
-            className="mt-3 inline-flex h-9 items-center gap-1.5 rounded-lg bg-brand-500 px-3.5 text-[16px] font-medium text-white transition hover:bg-brand-600"
+            className="mt-3 inline-flex h-9 items-center gap-1.5 rounded-lg bg-grad-brand px-3.5 text-[16px] font-medium text-white transition hover:brightness-110"
           >
             查看工程化搭建指南
             <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2">

@@ -2,46 +2,296 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ══════════════════════════════════════════════════════════════════════
+   主题变量
+   两个主题共用同一套语义名，值整体翻转 —— 所以 bg-ink-50 在浅色下是
+   浅灰填充面、在深色下自动变成深色填充面，无需改任何 class。
+   语义：ink-900 最强文字 → ink-50 最弱填充面
+   ══════════════════════════════════════════════════════════════════════ */
+
 :root {
   --hd-h: 64px;
   --side-w: 292px;
-  /* 画布底色：比纯白深半档，让白卡片自然浮起（Stripe/MDN 同款做法） */
-  --canvas: #fafbfc;
+
+  /* 面 */
+  --canvas: 248 250 252;      /* #f8fafc 页面底 */
+  --surface: 255 255 255;     /* #ffffff 卡片 */
+  --subtle: 248 250 252;      /* #f8fafc 代码区 / 斑马纹 */
+  --shadow-rgb: 15 23 42;
+
+  /* 中性色阶 —— slate，比原来的 Element 灰更冷更现代
+     50–300 只做填充面与描边，400–900 是六级文字层次。
+     文字层次必须整段落深一格：Tailwind slate-400 (#94a3b8) 在白底只有
+     2.56:1，而 text-ink-400 有 169 处调用，绝不能拿它当正文色。
+     重排后 400 起就是 4.76:1，六级依次 4.8 / 7.6 / 10.4 / 14.6 / 17.9 / 20.2 */
+  --ink-50: 248 250 252;
+  --ink-100: 241 245 249;
+  --ink-200: 226 232 240;
+  --ink-300: 203 213 225;
+  --ink-400: 100 116 139;    /* #64748b  白底 4.76:1 —— meta / 次要说明 */
+  --ink-500: 71 85 105;      /* #475569  白底 7.58:1 */
+  --ink-600: 51 65 85;       /* #334155  白底 10.35:1 */
+  --ink-700: 30 41 59;       /* #1e293b  白底 14.63:1 —— 正文默认 */
+  --ink-800: 15 23 42;       /* #0f172a  白底 17.85:1 */
+  --ink-900: 2 6 23;         /* #020617  白底 20.17:1 —— 标题 */
+
+  /* 主强调：青蓝
+     500 起整段落深一格：浅色的青在白底上做文字/图形都太淡
+     (#06b6d4 仅 2.43:1，连 3:1 图形标准都过不了) */
+  --brand-50: 236 254 255;
+  --brand-100: 207 250 254;
+  --brand-200: 165 243 252;
+  --brand-300: 103 232 249;
+  --brand-400: 34 211 238;
+  --brand-500: 8 145 178;    /* #0891b2  白底 3.68:1 —— 图标 / 进度条 / 描边 */
+  --brand-600: 14 116 144;   /* #0e7490  白底 5.36:1 —— 强调文字 */
+  --brand-700: 21 94 117;    /* #155e75  白底 7.27:1 */
+  --brand-800: 22 78 99;     /* #164e63  白底 9.11:1 */
+  --brand-900: 8 51 68;      /* #083344  白底 12.6:1 */
+
+  /* 次强调：紫 */
+  --accent-50: 238 242 255;
+  --accent-100: 224 231 255;
+  --accent-200: 199 210 254;
+  --accent-300: 165 180 252;
+  --accent-400: 129 140 248;
+  --accent-500: 99 102 241;
+  --accent-600: 79 70 229;
+  --accent-700: 67 56 202;
+  --accent-800: 55 48 163;
+  --accent-900: 49 46 129;
+
+  /* 语义色 */
+  --ok: 22 163 74;
+  --warn: 217 119 6;
+  --danger: 220 38 38;
+  --info: 100 116 139;
+
+  /* 主按钮渐变：两端都够深，白字在整条渐变上都过 WCAG AA */
+  --grad-from: 14 116 144;  /* brand-600 —— 白字 5.36:1，决定渐变下限 */
+  --grad-to: 79 70 229;     /* accent-600 —— 白字 6.29:1 */
+
+  /* 实心强调填充（给 mock 用，白字压在上面）*/
+  --solid: 14 116 144;      /* brand-600，白字 5.36:1 */
+
+  /* 遮罩 / 浮层：无论哪个主题都必须压得住底下的截图，所以不参与倒序 */
+  --scrim: 15 23 42;
+
+  /* 装饰 */
+  --grid-line: 15 23 42;    /* 网格纹理线 */
+  --glow: 6 182 212;        /* 微光 */
+
+  /* 语法高亮 */
+  --tok-kw: #cf222e;
+  --tok-str: #0a3069;
+  --tok-num: #0550ae;
+  --tok-com: #6e7781;
+  --tok-fn: #8250df;
+  --tok-typ: #953800;
+  --tok-ann: #0969da;
+  --tok-punc: #57606a;
+  --tok-prop: #0550ae;
 }
+
+.dark {
+  --canvas: 11 15 22;        /* #0b0f16 */
+  --surface: 20 26 35;       /* #141a23 */
+  --subtle: 26 33 43;        /* #1a212b —— 比卡片亮一档，斑马纹/代码区才看得出 */
+  --shadow-rgb: 0 0 0;
+
+  /* 中性色阶整体倒序：900 最亮 → 50 最暗 */
+  --ink-50: 21 27 36;
+  --ink-100: 34 41 51;
+  --ink-200: 46 54 68;
+  --ink-300: 63 72 85;
+  --ink-400: 124 134 152;    /* 4.7:1 on canvas —— meta 文字过 AA */
+  --ink-500: 147 160 176;
+  --ink-600: 174 185 199;
+  --ink-700: 201 211 222;
+  --ink-800: 227 233 240;
+  --ink-900: 243 247 251;
+
+  /* 青蓝倒序：暗端做填充面，亮端做文字与强调 */
+  --brand-50: 8 51 68;
+  --brand-100: 22 78 99;
+  --brand-200: 21 94 117;
+  --brand-300: 14 116 144;
+  --brand-400: 34 211 238;
+  --brand-500: 34 211 238;
+  --brand-600: 103 232 249;
+  --brand-700: 165 243 252;
+  --brand-800: 207 250 254;
+  --brand-900: 236 254 255;
+
+  --accent-50: 30 27 75;
+  --accent-100: 49 46 129;
+  --accent-200: 55 48 163;
+  --accent-300: 67 56 202;
+  --accent-400: 129 140 248;
+  --accent-500: 129 140 248;
+  --accent-600: 165 180 252;
+  --accent-700: 199 210 254;
+  --accent-800: 224 231 255;
+  --accent-900: 238 242 255;
+
+  --ok: 74 222 128;
+  --warn: 251 191 36;
+  --danger: 248 113 113;
+  --info: 148 163 184;
+
+  /* 深色下渐变两端压深，保证白字对比度 */
+  --grad-from: 14 116 144;
+  --grad-to: 67 56 202;
+
+  /* 深色下用更深的青做实心填充，白字才有 7.3:1 */
+  --solid: 21 94 117;
+
+  /* 深色下浮层比卡片亮一档，才能从底面上"浮"起来 */
+  --scrim: 30 41 59;
+
+  --grid-line: 148 163 184;
+  --glow: 34 211 238;
+
+  /* 语法高亮：GitHub Dark 配色 */
+  --tok-kw: #ff7b72;
+  --tok-str: #a5d6ff;
+  --tok-num: #79c0ff;
+  --tok-com: #8b949e;
+  --tok-fn: #d2a8ff;
+  --tok-typ: #ffa657;
+  --tok-ann: #79c0ff;
+  --tok-punc: #c9d1d9;
+  --tok-prop: #79c0ff;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   基础
+   ══════════════════════════════════════════════════════════════════════ */
 
 html {
   scroll-behavior: smooth;
   scroll-padding-top: calc(var(--hd-h) + 16px);
+  color-scheme: light;
+}
+html.dark {
+  color-scheme: dark;
 }
 
 body {
   @apply font-sans text-ink-700 antialiased;
-  background: var(--canvas);
+  background: rgb(var(--canvas));
   /* 中文正文行高：1.75 起步才不挤 */
   line-height: 1.75;
   text-rendering: optimizeLegibility;
 }
 
-/* ── 代码高亮（自研轻量配色，不引第三方高亮库） ── */
-.tok-kw { color: #cf222e; }
-.tok-str { color: #0a3069; }
-.tok-num { color: #0550ae; }
-.tok-com { color: #6e7781; font-style: italic; }
-.tok-fn { color: #8250df; }
-.tok-typ { color: #953800; }
-.tok-ann { color: #0969da; }
-.tok-punc { color: #57606a; }
-.tok-prop { color: #0550ae; }
+/* 主题切换时给一点过渡，但不要拖成动画 → 只过渡颜色 */
+body,
+header,
+aside,
+main,
+footer,
+article,
+section,
+nav,
+a,
+button,
+div,
+span,
+li,
+td,
+th,
+pre,
+code,
+input,
+kbd,
+svg {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-duration: 160ms;
+  transition-timing-function: ease;
+}
 
-/* ── 滚动条 ── */
+::selection {
+  background: rgb(var(--brand-500) / 0.24);
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   代码高亮（自研轻量配色，变量化后可随主题切换）
+   ══════════════════════════════════════════════════════════════════════ */
+.tok-kw { color: var(--tok-kw); }
+.tok-str { color: var(--tok-str); }
+.tok-num { color: var(--tok-num); }
+.tok-com { color: var(--tok-com); font-style: italic; }
+.tok-fn { color: var(--tok-fn); }
+.tok-typ { color: var(--tok-typ); }
+.tok-ann { color: var(--tok-ann); }
+.tok-punc { color: var(--tok-punc); }
+.tok-prop { color: var(--tok-prop); }
+
+/* ══════════════════════════════════════════════════════════════════════
+   滚动条
+   ══════════════════════════════════════════════════════════════════════ */
 .thin-scroll::-webkit-scrollbar { width: 8px; height: 8px; }
 .thin-scroll::-webkit-scrollbar-thumb {
-  background: #d4d8de; border-radius: 4px;
+  background: rgb(var(--ink-300)); border-radius: 4px;
 }
-.thin-scroll::-webkit-scrollbar-thumb:hover { background: #b8bdc4; }
+.thin-scroll::-webkit-scrollbar-thumb:hover { background: rgb(var(--ink-400)); }
 .thin-scroll::-webkit-scrollbar-track { background: transparent; }
 
-/* ── 动画 ── */
+/* ══════════════════════════════════════════════════════════════════════
+   装饰：网格纹理 / 微光
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* 科技感底纹：细网格，只做背景不做焦点 */
+.bg-grid {
+  background-image:
+    linear-gradient(to right, rgb(var(--grid-line) / 0.055) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(var(--grid-line) / 0.055) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+/* 网格渐隐遮罩，避免纹理顶到边界显得脏 */
+.mask-fade-b {
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 55%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 55%, transparent 100%);
+}
+.mask-fade-radial {
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, #000 40%, transparent 100%);
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, #000 40%, transparent 100%);
+}
+
+/* 渐变文字（标题强调） */
+.text-grad {
+  background-image: linear-gradient(
+    100deg,
+    rgb(var(--brand-500)),
+    rgb(var(--accent-400)) 55%,
+    rgb(var(--accent-500))
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* 渐变描边卡片：外圈 1px 渐变 + 内部实底 */
+.ring-grad {
+  position: relative;
+}
+.ring-grad::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgb(var(--brand-500) / 0.5), rgb(var(--accent-500) / 0.35));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   动画
+   ══════════════════════════════════════════════════════════════════════ */
 @keyframes fade-up {
   from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: none; }
@@ -57,15 +307,20 @@ body {
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .anim-in { animation: none; }
+  * { transition-duration: 0.01ms !important; }
 }
 
-/* ── 预览区棋盘底（区分透明区域） ── */
+/* ══════════════════════════════════════════════════════════════════════
+   预览区棋盘底（区分透明区域）—— 随主题切换
+   ══════════════════════════════════════════════════════════════════════ */
 .preview-grid {
   background-image:
-    linear-gradient(45deg, #f5f7fa 25%, transparent 25%),
-    linear-gradient(-45deg, #f5f7fa 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, #f5f7fa 75%),
-    linear-gradient(-45deg, transparent 75%, #f5f7fa 75%);
+    linear-gradient(45deg, rgb(var(--grid-cell)) 25%, transparent 25%),
+    linear-gradient(-45deg, rgb(var(--grid-cell)) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgb(var(--grid-cell)) 75%),
+    linear-gradient(-45deg, transparent 75%, rgb(var(--grid-cell)) 75%);
   background-size: 16px 16px;
   background-position: 0 0, 0 8px, 8px -8px, -8px 0;
 }
+:root { --grid-cell: 241 245 249; }
+.dark { --grid-cell: 26 33 43; }
