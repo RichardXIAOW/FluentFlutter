@@ -68,9 +68,9 @@ export default function ComponentsPage() {
                   href={`/components/${c.slug}`}
                   className="group flex flex-col overflow-hidden rounded-xl border border-ink-100 bg-surface shadow-card transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-pop"
                 >
-                  {/* 图形示例条：直接看到组件长什么样 */}
+                  {/* 图形示例条：直接看到组件长什么样（卡片整体是链接，这里禁用内部交互） */}
                   <div className="border-b border-ink-100 bg-ink-50/40 transition group-hover:bg-brand-50/40">
-                    <MockBox slug={c.slug} />
+                    <MockBox slug={c.slug} className="pointer-events-none" />
                   </div>
 
                   <div className="flex flex-1 flex-col p-4 pt-3">

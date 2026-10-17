@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type ReactNode } from 'react';
+import { useRef, useState, type ReactNode } from 'react';
 import {
   MI,
   P,
@@ -10,7 +10,19 @@ import {
   SnackBarI,
   DialogI,
   SheetI,
+  PressBtn,
+  FieldI,
+  RadioListI,
+  ChoiceChipsI,
+  CheckListI,
+  FilterBarI,
+  SearchBarI,
+  Btn,
+  SliderI,
+  DropI,
+  TapListI,
 } from './mock-kit';
+import { snack } from './MockRuntime';
 
 /**
  * 示例级预览注册表 —— 键为「组件 slug::示例标题」，与 data 里 title 严格一致。
@@ -63,6 +75,718 @@ const Box = ({
     {children}
   </span>
 );
+
+/* 勾选协议 → 才能注册（CheckboxListTile 的真实行为） */
+function AgreeRegisterI() {
+  const [ok, setOk] = useState(true);
+  return (
+    <div className="w-full overflow-hidden rounded-xl bg-surface p-3 shadow-card ring-1 ring-ink-100">
+      <button
+        type="button"
+        onClick={() => setOk(!ok)}
+        className="flex w-full items-center gap-3 text-left"
+      >
+        <span
+          className={`flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-[4px] transition ${
+            ok ? 'bg-solid text-white' : 'border-2 border-ink-300'
+          }`}
+        >
+          {ok && (
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round">
+              <path d="m5 12.5 4.5 4.5L19 7.5" />
+            </svg>
+          )}
+        </span>
+        <span className="text-[14px] text-ink-800">
+          我已阅读并同意<span className="text-brand-600">《用户协议》</span>
+        </span>
+      </button>
+      <div className="mt-3 flex items-center gap-2">
+        <PressBtn
+          disabled={!ok}
+          toast="注册成功"
+          className={`inline-flex h-9 flex-1 items-center justify-center rounded-[18px] text-[14px] font-medium ${
+            ok ? 'bg-solid text-white' : 'bg-ink-100 text-ink-400'
+          }`}
+        >
+          注册
+        </PressBtn>
+      </div>
+      <span className="mt-1.5 block text-center text-[11px] text-ink-400">
+        {ok ? '已勾选，「注册」可点' : '不勾选时「注册」是灰的（onPressed: null）'}
+      </span>
+    </div>
+  );
+}
+
+/* 带输入框的备注弹窗：能输入、能取消/确定、关掉还能再开 */
+function RemarkDialogI() {
+  const [open, setOpen] = useState(true);
+  const [val, setVal] = useState('');
+  return (
+    <div className="w-full">
+      {open ? (
+        <div className="anim-in w-full">
+          <div className="rounded-xl bg-surface p-3.5 shadow-pop">
+            <p className="text-[15px] font-semibold text-ink-900">添加备注</p>
+            <div className="mt-2 rounded-lg border-2 border-brand-500 px-2.5 py-1.5 ring-2 ring-brand-500/15">
+              <input
+                value={val}
+                onChange={(e) => setVal(e.target.value)}
+                placeholder="请输入备注内容"
+                className="w-full bg-transparent text-[13.5px] text-ink-900 outline-none placeholder:text-ink-400"
+              />
+            </div>
+            <div className="mt-2 flex justify-end gap-1">
+              <PressBtn
+                onClick={() => setOpen(false)}
+                className="px-2.5 py-1 text-[13px] text-brand-600"
+              >
+                取消
+              </PressBtn>
+              <PressBtn
+                onClick={() => setOpen(false)}
+                toast={val ? `已保存备注：${val}` : '已确定'}
+                className="rounded-full bg-solid px-3 py-1 text-[13px] font-medium text-white"
+              >
+                确定
+              </PressBtn>
+            </div>
+            <div className="mt-2 rounded-lg bg-ink-200/70 p-1">
+              <div className="grid grid-cols-6 gap-0.5">
+                {Array.from({ length: 12 }).map((_, i) => (
+                  <span key={i} className="h-3 rounded bg-ink-200" />
+                ))}
+              </div>
+            </div>
+          </div>
+          <span className="mt-1.5 block text-center font-mono text-[10.5px] text-ink-400">
+            viewInsets.bottom 把弹窗顶上去
+          </span>
+        </div>
+      ) : (
+        <PressBtn
+          onClick={() => {
+            setOpen(true);
+            setVal('');
+          }}
+          className="mx-auto block rounded-lg border border-ink-200 bg-surface px-3.5 py-2 text-[14px] text-brand-600 shadow-card"
+        >
+          ↻ 再打开「添加备注」
+        </PressBtn>
+      )}
+    </div>
+  );
+}
+
+/* 顶栏 + TabBar：切标签换内容（TabBarView 的真实行为） */
+function OrderTabsI() {
+  const tabs = ['全部', '待付款', '已完成'];
+  const bodies = ['全部订单', '待付款订单', '已完成订单'];
+  const [sel, setSel] = useState(0);
+  return (
+    <div className="w-full overflow-hidden rounded-xl bg-surface shadow-card ring-1 ring-ink-100">
+      <div className="flex h-10 items-center bg-solid px-3 text-[14.5px] font-medium text-white">
+        我的订单
+      </div>
+      <div className="px-3 pt-1">
+        <div className="flex w-full border-b border-ink-100">
+          {tabs.map((t, i) => (
+            <button
+              key={t}
+              type="button"
+              onClick={() => setSel(i)}
+              className={`relative flex-1 pb-2 pt-1 text-center text-[14px] transition ${
+                sel === i ? 'font-medium text-brand-600' : 'text-ink-500 hover:text-ink-800'
+              }`}
+            >
+              {t}
+              {sel === i && (
+                <span className="absolute inset-x-4 -bottom-px h-[2.5px] rounded-full bg-brand-500" />
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="anim-in p-3 text-[12.5px] text-ink-500" key={sel}>
+        {bodies[sel]}
+      </div>
+    </div>
+  );
+}
+
+/* isScrollable 的 TabBar：能横向滚，也能切 */
+function ScrollTabsI() {
+  const tabs = ['推荐', '数码', '家电', '美妆', '母婴', '运动', '图书'];
+  const [sel, setSel] = useState(0);
+  return (
+    <>
+      <div className="flex gap-3 overflow-x-auto border-b border-ink-100 pb-2 thin-scroll">
+        {tabs.map((t, i) => (
+          <button
+            key={t}
+            type="button"
+            onClick={() => setSel(i)}
+            className={`relative shrink-0 text-[13.5px] transition ${
+              sel === i ? 'font-medium text-brand-600' : 'text-ink-500 hover:text-ink-800'
+            }`}
+          >
+            {t}
+            {sel === i && (
+              <span className="absolute -bottom-2 left-1/2 h-[2.5px] w-4 -translate-x-1/2 rounded-full bg-brand-500" />
+            )}
+          </button>
+        ))}
+      </div>
+      <span className="mt-2 block text-[12px] text-ink-500">
+        当前：{tabs[sel]}
+      </span>
+    </>
+  );
+}
+
+/* 价格滑块：拖动改「最高价」与筛选提示 */
+function PriceSliderI() {
+  const [v, setV] = useState(500);
+  return (
+    <div className="flex w-full flex-col items-stretch gap-2">
+      <span className="text-[14px] text-ink-700">
+        最高价：<span className="font-medium text-brand-600">¥{v}</span>
+      </span>
+      <div className="relative h-1.5 rounded-full bg-ink-100">
+        <span
+          className="absolute left-0 top-0 h-full rounded-full bg-brand-500"
+          style={{ width: `${v / 10}%` }}
+        />
+        <span
+          className="absolute top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-500 ring-2 ring-surface"
+          style={{ left: `${v / 10}%` }}
+        />
+        <input
+          type="range"
+          min={0}
+          max={1000}
+          step={50}
+          value={v}
+          onChange={(e) => setV(Number(e.target.value))}
+          aria-label="最高价"
+          className="absolute inset-x-0 -top-2 h-6 w-full cursor-pointer opacity-0"
+        />
+      </div>
+      <div className="flex justify-between font-mono text-[11px] text-ink-400">
+        <span>0</span>
+        <span>500</span>
+        <span>1000</span>
+      </div>
+      <span className="font-mono text-[10.5px] text-ink-400">
+        onChangeEnd 松手才发请求 →「筛选：0 ~ {v}」
+      </span>
+    </div>
+  );
+}
+
+/* 分段控件：视图切换（单选） */
+function ViewSegI() {
+  const [sel, setSel] = useState(0);
+  return (
+    <div className="flex overflow-hidden rounded-full border border-ink-300">
+      {[
+        { t: '列表', d: 'M4 6h16M4 12h16M4 18h10' },
+        { t: '网格', rect: true },
+      ].map((it, i) => (
+        <button
+          key={it.t}
+          type="button"
+          onClick={() => setSel(i)}
+          className={`flex h-9 items-center gap-1.5 px-4 text-[14px] transition ${
+            i > 0 ? 'border-l border-ink-300' : ''
+          } ${sel === i ? 'bg-brand-50 font-medium text-brand-600' : 'text-ink-600 hover:bg-ink-50'}`}
+        >
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            {it.rect ? (
+              <>
+                <rect x="4" y="4" width="7" height="7" rx="1" />
+                <rect x="13" y="4" width="7" height="7" rx="1" />
+                <rect x="4" y="13" width="7" height="7" rx="1" />
+                <rect x="13" y="13" width="7" height="7" rx="1" />
+              </>
+            ) : (
+              <path d={it.d} />
+            )}
+          </svg>
+          {it.t}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+/* 分段控件：多选（周一/周三/周五） */
+function WeekSegI() {
+  const [on, setOn] = useState([true, false, true]);
+  const tabs = ['周一', '周三', '周五'];
+  return (
+    <div className="flex overflow-hidden rounded-full border border-ink-300">
+      {tabs.map((t, i) => (
+        <button
+          key={t}
+          type="button"
+          onClick={() => setOn((s) => s.map((v, j) => (j === i ? !v : v)))}
+          className={`flex h-9 items-center gap-1 px-4 text-[14px] transition ${
+            i > 0 ? 'border-l border-ink-300' : ''
+          } ${on[i] ? 'bg-brand-50 font-medium text-brand-600' : 'text-ink-600 hover:bg-ink-50'}`}
+        >
+          {on[i] && (
+            <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
+              <path d="m5 12.5 4.5 4.5L19 7.5" />
+            </svg>
+          )}
+          {t}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+/* 步骤条 + 上一步/下一步（末步变提交订单） */
+function OrderStepperI() {
+  const steps = ['收货信息', '配送方式', '确认支付'];
+  const [cur, setCur] = useState(1);
+  const last = cur === steps.length - 1;
+  return (
+    <div className="flex w-full flex-col gap-3">
+      <StepsRow steps={steps} cur={cur} />
+      <div className="flex gap-1.5">
+        <PressBtn
+          disabled={cur === 0}
+          onClick={() => setCur((c) => Math.max(0, c - 1))}
+          className={`flex-1 rounded-full border py-1 text-center text-[12px] ${
+            cur === 0
+              ? 'border-ink-200 text-ink-300'
+              : 'border-ink-300 text-ink-600 hover:bg-ink-50'
+          }`}
+        >
+          上一步
+        </PressBtn>
+        <PressBtn
+          onClick={() => {
+            if (last) snack('已提交订单');
+            else setCur((c) => Math.min(steps.length - 1, c + 1));
+          }}
+          className="flex-[2] rounded-full bg-solid py-1 text-center text-[12px] text-white"
+        >
+          {last ? '提交订单' : '下一步（末步 → 提交订单）'}
+        </PressBtn>
+      </div>
+      <span className="font-mono text-[11px] text-ink-400">
+        每步都先校验再放行 · 当前第 {cur + 1} 步
+      </span>
+    </div>
+  );
+}
+
+/* Chip 四变体：静态 / 可删除 / 可多选 / 可单选 / 触发动作 —— 每种都真的能点 */
+function ChipVariantsI() {
+  const [del, setDel] = useState(false);
+  const [filter, setFilter] = useState(true);
+  const [choice, setChoice] = useState(true);
+  return (
+    <div className="flex w-full flex-wrap items-start gap-2">
+      <span className="inline-flex items-center rounded-lg bg-surface px-3 py-1.5 text-[13px] text-ink-700 ring-1 ring-ink-300">
+        数码
+      </span>
+      <span className="inline-flex items-center gap-1.5 rounded-lg bg-surface px-3 py-1.5 text-[13px] text-ink-700 ring-1 ring-ink-300">
+        <span className="opacity-70">#</span>新品
+      </span>
+      {del ? (
+        <PressBtn
+          onClick={() => setDel(false)}
+          className="inline-flex items-center rounded-lg border border-dashed border-ink-300 px-3 py-1.5 text-[13px] text-ink-500"
+        >
+          + 恢复「已选条件」
+        </PressBtn>
+      ) : (
+        <span className="inline-flex items-center gap-1.5 rounded-lg bg-surface px-3 py-1.5 text-[13px] text-ink-700 ring-1 ring-ink-300">
+          已选条件
+          <PressBtn
+            onClick={() => setDel(true)}
+            ariaLabel="删除已选条件"
+            className="flex h-4 w-4 items-center justify-center rounded-full text-ink-500 hover:bg-ink-200"
+          >
+            <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round">
+              <path d="M6 6l12 12M18 6 6 18" />
+            </svg>
+          </PressBtn>
+        </span>
+      )}
+      <PressBtn
+        onClick={() => setFilter((v) => !v)}
+        className={`inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-[13px] ring-1 transition ${
+          filter
+            ? 'bg-brand-50 text-brand-700 ring-brand-300'
+            : 'bg-surface text-ink-600 ring-ink-300'
+        }`}
+      >
+        {filter && (
+          <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
+            <path d="m5 12.5 4.5 4.5L19 7.5" />
+          </svg>
+        )}
+        包邮
+      </PressBtn>
+      <PressBtn
+        onClick={() => setChoice((v) => !v)}
+        className={`inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-[13px] ring-1 transition ${
+          choice
+            ? 'bg-brand-50 text-brand-700 ring-brand-300'
+            : 'bg-surface text-ink-600 ring-ink-300'
+        }`}
+      >
+        {choice && (
+          <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
+            <path d="m5 12.5 4.5 4.5L19 7.5" />
+          </svg>
+        )}
+        M
+      </PressBtn>
+      <PressBtn
+        onClick={() => snack('开始下载…')}
+        className="inline-flex items-center gap-1.5 rounded-lg bg-surface px-3 py-1.5 text-[13px] text-ink-600 ring-1 ring-ink-200 hover:bg-subtle"
+      >
+        <span className="opacity-70">⬇</span>下载
+      </PressBtn>
+    </div>
+  );
+}
+
+/* 排序 BottomSheet：点哪一项，对勾就移到哪一项 */
+function SortSheetI() {
+  const items = ['综合排序', '价格从低到高', '销量优先'];
+  const [sel, setSel] = useState(0);
+  return (
+    <div className="w-full overflow-hidden rounded-t-2xl bg-surface p-3 shadow-pop ring-1 ring-ink-100 anim-in">
+      <span className="mx-auto block h-1 w-9 rounded-full bg-ink-200" />
+      <div className="mt-2 divide-y divide-ink-50">
+        <div className="py-2 text-[15px] font-semibold text-ink-900">排序方式</div>
+        {items.map((t, i) => (
+          <button
+            key={t}
+            type="button"
+            data-press
+            onClick={() => setSel(i)}
+            className={`flex w-full items-center py-2 text-left text-[15px] transition ${
+              i === sel ? 'text-brand-700' : 'text-ink-700 hover:text-ink-900'
+            }`}
+          >
+            {t}
+            {i === sel && (
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" className="ml-auto text-brand-600">
+                <path d="m5 12.5 4.5 4.5L19 7.5" />
+              </svg>
+            )}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* 明暗两套主题并排：点哪边，哪边就是「当前主题」 */
+function ThemePairI() {
+  const [mode, setMode] = useState<'light' | 'dark'>('light');
+  return (
+    <div className="flex w-full gap-3">
+      <button
+        type="button"
+        data-press
+        onClick={() => {
+          setMode('light');
+          snack('themeMode = ThemeMode.light');
+        }}
+        className={`relative flex-1 overflow-hidden rounded-xl bg-surface p-3 text-left shadow-card transition ${
+          mode === 'light' ? 'ring-2 ring-brand-400' : 'ring-1 ring-ink-100'
+        }`}
+      >
+        <span className="block text-[12.5px] font-medium text-ink-900">浅色</span>
+        <span className="mt-1.5 block h-2 w-3/4 rounded bg-ink-100" />
+        <span className="mt-1 block h-2 w-1/2 rounded bg-ink-100" />
+        <span className="mt-2 inline-block rounded-full bg-solid px-2 py-0.5 text-[11px] text-white">
+          按钮
+        </span>
+        {mode === 'light' && (
+          <span className="absolute right-1.5 top-1.5 rounded bg-brand-500 px-1 py-0.5 text-[9.5px] text-white">
+            当前
+          </span>
+        )}
+      </button>
+      <button
+        type="button"
+        data-press
+        onClick={() => {
+          setMode('dark');
+          snack('themeMode = ThemeMode.dark');
+        }}
+        className={`relative flex-1 overflow-hidden rounded-xl bg-[#1f2328] p-3 text-left transition ${
+          mode === 'dark' ? 'ring-2 ring-brand-400' : 'ring-1 ring-white/10'
+        }`}
+      >
+        <span className="block text-[12.5px] font-medium text-white">深色</span>
+        <span className="mt-1.5 block h-2 w-3/4 rounded bg-white/15" />
+        <span className="mt-1 block h-2 w-1/2 rounded bg-white/15" />
+        <span className="mt-2 inline-block rounded-full bg-brand-400 px-2 py-0.5 text-[11px] text-[#0d1b2a]">
+          按钮
+        </span>
+        {mode === 'dark' && (
+          <span className="absolute right-1.5 top-1.5 rounded bg-brand-500 px-1 py-0.5 text-[9.5px] text-white">
+            当前
+          </span>
+        )}
+      </button>
+    </div>
+  );
+}
+
+/* 可排序表格：点表头「销售额」在升/降序之间切换，行真的会重排 */
+function SortTableI() {
+  const rows = [
+    { a: '云服务器', b: '华南', n: 12800, c: '¥12,800' },
+    { a: 'CDN', b: '华东', n: 5320, c: '¥5,320' },
+    { a: '对象存储', b: '华北', n: 2140, c: '¥2,140' },
+  ];
+  const [asc, setAsc] = useState(false);
+  const sorted = [...rows].sort((x, y) => (asc ? x.n - y.n : y.n - x.n));
+  return (
+    <div className="w-full overflow-hidden rounded-lg bg-surface text-left text-[12px] shadow-card ring-1 ring-ink-100">
+      <div className="flex bg-ink-50 text-ink-600">
+        {/* 与代码一一对应：_sortIndex = 2（销售额）、_ascending 决定箭头朝向 */}
+        <span className="flex flex-1 items-center px-2 py-1.5 font-medium">产品</span>
+        <span className="w-14 px-2 py-1.5 font-medium">区域</span>
+        <button
+          type="button"
+          data-press
+          onClick={() => setAsc((v) => !v)}
+          className="flex w-20 items-center justify-end gap-1 px-2 py-1.5 font-medium transition hover:text-brand-700"
+        >
+          销售额
+          <svg
+            viewBox="0 0 24 24"
+            width="9"
+            height="9"
+            fill="currentColor"
+            className={`text-brand-600 transition-transform ${asc ? 'rotate-180' : ''}`}
+          >
+            <path d="M12 15.5 5.5 9h13L12 15.5Z" />
+          </svg>
+        </button>
+      </div>
+      {sorted.map((r, i) => (
+        <div key={r.a} className={`flex border-t border-ink-100 ${i % 2 ? 'bg-ink-50/40' : ''}`}>
+          <span className="flex-1 px-2 py-1.5 text-ink-800">{r.a}</span>
+          <span className="w-14 px-2 py-1.5 text-ink-600">{r.b}</span>
+          <span className="w-20 px-2 py-1.5 text-right tabular-nums text-ink-800">{r.c}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* 手风琴：同时只展开一个（点开的项会把其他项收起） */
+function AccordionI({ items, init = 0 }: { items: { q: string; a: string }[]; init?: number }) {
+  const [open, setOpen] = useState(init);
+  return (
+    <>
+      {items.map((it, i) => {
+        const on = i === open;
+        return (
+          <div key={it.q} className="rounded-lg bg-surface px-3 py-2 shadow-card ring-1 ring-ink-100">
+            <button
+              type="button"
+              data-press
+              onClick={() => setOpen(on ? -1 : i)}
+              className="flex w-full items-center justify-between text-left text-[14.5px] text-ink-800"
+            >
+              {it.q}
+              <svg
+                viewBox="0 0 24 24"
+                width="14"
+                height="14"
+                className={`text-ink-400 transition-transform ${on ? 'rotate-180' : ''}`}
+                fill="currentColor"
+              >
+                <path d="M12 15.5 5.5 9h13L12 15.5Z" />
+              </svg>
+            </button>
+            {on && <p className="mt-1.5 text-[13.5px] leading-relaxed text-ink-500">{it.a}</p>}
+          </div>
+        );
+      })}
+    </>
+  );
+}
+
+/* 带角标的底部导航：切换会移动选中胶囊，点过带未读的项会清掉角标 */
+function BadgeNavI() {
+  const items = [
+    { d: P.home, t: '首页' },
+    { d: P.inbox, t: '消息' },
+    { d: P.notif, t: '通知' },
+  ];
+  const [sel, setSel] = useState(0);
+  const [unread, setUnread] = useState({ msg: '3', dot: true });
+  return (
+    <div className="flex w-full items-center justify-around rounded-xl bg-brand-50 px-2 py-2">
+      {items.map((it, i) => {
+        const on = i === sel;
+        const num = i === 1 ? unread.msg : '';
+        const dot = i === 2 ? unread.dot : false;
+        return (
+          <button
+            key={it.t}
+            type="button"
+            data-press
+            onClick={() => {
+              setSel(i);
+              if (i === 1) setUnread((u) => ({ ...u, msg: '' }));
+              if (i === 2) setUnread((u) => ({ ...u, dot: false }));
+            }}
+            className="flex flex-col items-center gap-0.5"
+          >
+            <span
+              className={`relative flex h-7 w-14 items-center justify-center rounded-full transition ${
+                on ? 'bg-brand-100' : ''
+              }`}
+            >
+              <MI d={it.d} size={18} className={on ? 'text-brand-700' : 'text-ink-500'} />
+              {dot ? (
+                <span className="absolute right-3.5 top-0.5 h-2 w-2 rounded-full bg-danger ring-2 ring-brand-50" />
+              ) : null}
+              {num ? (
+                <span className="absolute right-2.5 -top-0.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-danger px-0.5 text-[9px] font-medium text-white ring-2 ring-brand-50">
+                  {num}
+                </span>
+              ) : null}
+            </span>
+            <span className={`text-[11.5px] ${on ? 'font-medium text-brand-700' : 'text-ink-500'}`}>
+              {it.t}
+            </span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+/* 标签云：点一个选一个（单选高亮），演示 Wrap 的自动换行 */
+function ChipCloudI({ items, init = 0 }: { items: string[]; init?: number }) {
+  const [sel, setSel] = useState(init);
+  return (
+    <div className="flex flex-wrap gap-2">
+      {items.map((t, i) => (
+        <button
+          key={t}
+          type="button"
+          data-press
+          onClick={() => setSel(i)}
+          className={`rounded-lg px-2.5 py-1 text-[13px] transition ${
+            i === sel
+              ? 'bg-solid text-white'
+              : 'bg-ink-50 text-ink-600 ring-1 ring-ink-200 hover:bg-brand-50'
+          }`}
+        >
+          {t}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+/* 触底加载：点「加载更多」真的会追加两条，并给一次 loading 态 */
+function LoadMoreI() {
+  const [n, setN] = useState(2);
+  const [loading, setLoading] = useState(false);
+  return (
+    <div className="w-full overflow-hidden rounded-xl bg-surface shadow-card ring-1 ring-ink-100">
+      {Array.from({ length: n }, (_, i) => (
+        <div key={i} className="border-b border-ink-50 px-3 py-2 text-[13px] text-ink-700">
+          列表项 {i + 1}
+        </div>
+      ))}
+      {loading ? (
+        <div className="flex items-center justify-center gap-2 py-2.5">
+          <Spinner size={13} cls="border-brand-200 border-t-brand-500" />
+          <span className="text-[12px] text-brand-600">加载更多…</span>
+        </div>
+      ) : (
+        <button
+          type="button"
+          data-press
+          onClick={() => {
+            setLoading(true);
+            setTimeout(() => {
+              setN((v) => v + 2);
+              setLoading(false);
+            }, 700);
+          }}
+          className="w-full py-2 text-center text-[12px] text-brand-600 transition hover:bg-brand-50"
+        >
+          触底了 → 加载更多
+        </button>
+      )}
+    </div>
+  );
+}
+
+/* 可拖拽的 BottomSheet：真的能往上拖，高度在 96~230 之间 */
+function DragSheetI() {
+  const [h, setH] = useState(116);
+  const start = useRef<{ y: number; h: number } | null>(null);
+  return (
+    <div className="w-full">
+      <div
+        className="relative w-full overflow-hidden rounded-t-2xl bg-surface shadow-pop ring-1 ring-ink-100 transition-[height] duration-75"
+        style={{ height: h }}
+      >
+        <div
+          onPointerDown={(e) => {
+            e.currentTarget.setPointerCapture(e.pointerId);
+            start.current = { y: e.clientY, h };
+          }}
+          onPointerMove={(e) => {
+            if (!start.current) return;
+            const next = start.current.h + (start.current.y - e.clientY);
+            setH(Math.min(230, Math.max(96, next)));
+          }}
+          onPointerUp={() => {
+            start.current = null;
+          }}
+          onPointerCancel={() => {
+            start.current = null;
+          }}
+          className="flex cursor-grab touch-none justify-center pt-2 pb-1 active:cursor-grabbing"
+          role="separator"
+          aria-label="拖动调整高度"
+        >
+          <span className="h-1 w-9 rounded-full bg-ink-300" />
+        </div>
+        <div className="space-y-1.5 px-3">
+          {['选项一', '选项二', '选项三', '选项四（往上拖才完全可见）'].map((t, i) => (
+            <div
+              key={t}
+              className={`rounded-lg px-2.5 py-1.5 text-[13px] ${
+                i === 3 ? 'bg-brand-50 text-brand-700' : 'bg-ink-50 text-ink-700'
+              }`}
+            >
+              {t}
+            </div>
+          ))}
+        </div>
+      </div>
+      <span className="mt-1.5 block text-center font-mono text-[10.5px] text-ink-400">
+        拖动顶部小把手 · DraggableScrollableSheet
+      </span>
+    </div>
+  );
+}
 
 /* 步骤条（提到外面，避免与外层 hooks 顺序纠缠） */
 function StepsRow({ steps, cur }: { steps: string[]; cur: number }) {
@@ -158,20 +882,29 @@ export const demoMocks: Record<string, () => ReactNode> = {
   'elevated-button::最基础的用法': () => (
     // 与代码一一对应：确认提交（onPressed 有回调）/ 不可点击（onPressed: null 禁用态）
     <Frame className="gap-3">
-      <span className="inline-flex h-9 items-center justify-center rounded-[18px] bg-brand-50 px-5 text-[15px] font-medium text-brand-600 shadow-sm">
+      <PressBtn
+        toast="已提交"
+        className="inline-flex h-9 items-center justify-center rounded-[18px] bg-brand-50 px-5 text-[15px] font-medium text-brand-600 shadow-sm"
+      >
         确认提交
-      </span>
-      <span className="inline-flex h-9 cursor-not-allowed items-center justify-center rounded-[18px] bg-ink-100 px-5 text-[15px] font-medium text-ink-400">
+      </PressBtn>
+      <PressBtn
+        disabled
+        className="inline-flex h-9 items-center justify-center rounded-[18px] bg-ink-100 px-5 text-[15px] font-medium text-ink-400"
+      >
         不可点击
-      </span>
+      </PressBtn>
     </Frame>
   ),
   'elevated-button::改高度和圆角': () => (
     // 与代码一一对应：minimumSize 48 高、圆角 10、文字「整行宽度」（会撑满可用宽）
     <Frame className="w-full p-4">
-      <span className="inline-flex h-12 w-full items-center justify-center rounded-[10px] bg-brand-50 text-[15px] font-medium text-brand-600 shadow-sm">
+      <PressBtn
+        toast="整行宽度：Size.fromHeight(48)"
+        className="flex h-12 w-full items-center justify-center rounded-[10px] bg-brand-50 text-[15px] font-medium text-brand-600 shadow-sm"
+      >
         整行宽度
-      </span>
+      </PressBtn>
       <span className="mt-2 block font-mono text-[10.5px] text-ink-400">
         minimumSize: Size.fromHeight(48) · borderRadius: 10
       </span>
@@ -180,12 +913,15 @@ export const demoMocks: Record<string, () => ReactNode> = {
   'elevated-button::带图标': () => (
     // 与代码一一对应：单个 ElevatedButton.icon(icon: Icons.download, label: '下载')
     <Frame>
-      <span className="inline-flex h-9 items-center gap-2 rounded-[18px] bg-brand-50 px-4 text-[15px] font-medium text-brand-600 shadow-sm">
+      <PressBtn
+        toast="开始下载"
+        className="inline-flex h-9 items-center gap-2 rounded-[18px] bg-brand-50 px-4 text-[15px] font-medium text-brand-600 shadow-sm"
+      >
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M12 4v11m-5-4 5 5 5-5M5 20h14" />
         </svg>
         下载
-      </span>
+      </PressBtn>
     </Frame>
   ),
   'elevated-button::请求中禁用（最常见的实战需求）': () => (
@@ -193,9 +929,12 @@ export const demoMocks: Record<string, () => ReactNode> = {
     <Frame className="w-full flex-col items-stretch gap-3 p-4">
       <div className="flex items-center gap-3">
         <span className="w-[70px] shrink-0 text-[12.5px] text-ink-400">_loading: false</span>
-        <span className="inline-flex h-9 items-center rounded-[18px] bg-solid px-4 text-[15px] font-medium text-white shadow-sm">
+        <PressBtn
+          toast="提交中…（再点无效）"
+          className="inline-flex h-9 items-center rounded-[18px] bg-solid px-4 text-[15px] font-medium text-white shadow-sm"
+        >
           提交
-        </span>
+        </PressBtn>
       </div>
       <div className="flex items-center gap-3">
         <span className="w-[70px] shrink-0 text-[12.5px] text-brand-600">_loading: true</span>
@@ -209,15 +948,24 @@ export const demoMocks: Record<string, () => ReactNode> = {
   'filled-button::三种强调层级': () => (
     // 与代码一一对应：FilledButton「主要操作」 / FilledButton.tonal「次要操作」 / TextButton「取消」
     <Frame className="w-full max-w-[300px] flex-col gap-2.5">
-      <span className="inline-flex h-9 w-full items-center justify-center rounded-[18px] bg-solid text-[14.5px] font-medium text-white">
+      <PressBtn
+        toast="已执行主要操作"
+        className="flex h-9 w-full items-center justify-center rounded-[18px] bg-solid text-[14.5px] font-medium text-white"
+      >
         主要操作
-      </span>
-      <span className="inline-flex h-9 w-full items-center justify-center rounded-[18px] bg-brand-100 text-[14.5px] font-medium text-brand-800">
+      </PressBtn>
+      <PressBtn
+        toast="已执行次要操作"
+        className="flex h-9 w-full items-center justify-center rounded-[18px] bg-brand-100 text-[14.5px] font-medium text-brand-800"
+      >
         次要操作
-      </span>
-      <span className="inline-flex h-9 w-full items-center justify-center text-[14.5px] font-medium text-brand-600">
+      </PressBtn>
+      <PressBtn
+        toast="已取消"
+        className="flex h-9 w-full items-center justify-center text-[14.5px] font-medium text-brand-600"
+      >
         取消
-      </span>
+      </PressBtn>
     </Frame>
   ),
   'filled-button::在主题里统一配好按钮高度': () => (
@@ -226,17 +974,23 @@ export const demoMocks: Record<string, () => ReactNode> = {
         <span className="block font-mono text-[11.5px] text-brand-600">
           主题默认 → height 40
         </span>
-        <span className="mt-1 inline-flex h-9 w-full items-center justify-center rounded-[18px] bg-solid text-[14.5px] font-medium text-white">
+        <PressBtn
+          toast="默认高度 40"
+          className="mt-1 flex h-9 w-full items-center justify-center rounded-[18px] bg-solid text-[14.5px] font-medium text-white"
+        >
           按钮
-        </span>
+        </PressBtn>
       </div>
       <div className="rounded-lg border border-dashed border-ok/50 bg-ok/5 p-2">
         <span className="block font-mono text-[11.5px] text-ok">
           minimumSize: Size(0, 48)
         </span>
-        <span className="mt-1 inline-flex h-12 w-full items-center justify-center rounded-xl bg-solid text-[15px] font-medium text-white">
+        <PressBtn
+          toast="自定义高度 48"
+          className="mt-1 flex h-12 w-full items-center justify-center rounded-xl bg-solid text-[15px] font-medium text-white"
+        >
           按钮
-        </span>
+        </PressBtn>
       </div>
     </Frame>
   ),
@@ -249,12 +1003,18 @@ export const demoMocks: Record<string, () => ReactNode> = {
           取消用描边降低层级，主操作仍然用实心
         </p>
         <div className="flex justify-end gap-3">
-          <span className="inline-flex h-9 items-center rounded-[18px] border border-ink-300 px-4 text-[14.5px] font-medium text-brand-600">
+          <PressBtn
+            toast="已取消"
+            className="inline-flex h-9 items-center rounded-[18px] border border-ink-300 px-4 text-[14.5px] font-medium text-brand-600"
+          >
             取消
-          </span>
-          <span className="inline-flex h-9 items-center rounded-[18px] bg-solid px-4 text-[14.5px] font-medium text-white">
+          </PressBtn>
+          <PressBtn
+            toast="已保存"
+            className="inline-flex h-9 items-center rounded-[18px] bg-solid px-4 text-[14.5px] font-medium text-white"
+          >
             保存
-          </span>
+          </PressBtn>
         </div>
       </div>
     </Frame>
@@ -269,12 +1029,18 @@ export const demoMocks: Record<string, () => ReactNode> = {
           删除后无法恢复。
         </p>
         <div className="mt-3 flex justify-end gap-1">
-          <span className="rounded px-3 py-1.5 text-[14.5px] font-medium text-brand-600">
+          <PressBtn
+            toast="已取消"
+            className="rounded px-3 py-1.5 text-[14.5px] font-medium text-brand-600"
+          >
             取消
-          </span>
-          <span className="inline-flex items-center rounded-full bg-danger px-4 py-1 text-[14px] font-medium text-white">
+          </PressBtn>
+          <PressBtn
+            toast="已删除这条记录"
+            className="inline-flex items-center rounded-full bg-danger px-4 py-1 text-[14px] font-medium text-white"
+          >
             删除
-          </span>
+          </PressBtn>
         </div>
       </div>
     </Frame>
@@ -477,7 +1243,11 @@ export const demoMocks: Record<string, () => ReactNode> = {
   'card::最常见的商品/文章卡片': () => (
     // 与代码一一对应：顶部图片（blue.shade100）+「商品标题」+ 两行截断的一句话描述
     <Frame className="w-full max-w-[270px]">
-      <div className="w-full overflow-hidden rounded-xl bg-surface shadow-card ring-1 ring-ink-100">
+      <button
+        type="button"
+        data-snack="打开商品详情"
+        className="w-full overflow-hidden rounded-xl bg-surface text-left shadow-card ring-1 ring-ink-100 transition hover:shadow-pop"
+      >
         <div className="h-[81px] bg-brand-100" />
         <div className="p-3">
           <p className="text-[14.5px] font-semibold text-ink-900">商品标题</p>
@@ -485,7 +1255,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
             这是商品的一句话描述，太长的话会截断。
           </p>
         </div>
-      </div>
+      </button>
     </Frame>
   ),
   'card::纯色卡片（无阴影，靠底色区分）': () => (
@@ -638,25 +1408,37 @@ export const demoMocks: Record<string, () => ReactNode> = {
     <Frame className="w-full max-w-[410px] gap-3 p-4">
       <div className="flex-1">
         <span className="mb-1 block text-[11.5px] text-danger">❌ Container 盖住水波</span>
-        <div className="flex items-center gap-2 rounded-lg bg-surface px-3 py-2.5 shadow-card ring-1 ring-ink-100">
+        <button
+          type="button"
+          data-noink
+          data-snack="确实没反应 —— Container 把 InkWell 的水波盖住了"
+          className="flex w-full cursor-pointer items-center gap-2 rounded-lg bg-surface px-3 py-2.5 text-left shadow-card ring-1 ring-ink-100"
+        >
           <span className="text-[13.5px] text-ink-700">点了没有任何反馈</span>
-        </div>
+        </button>
       </div>
       <div className="flex-1">
         <span className="mb-1 block text-[11.5px] text-ok">✅ Ink 铺底 + InkWell 在上</span>
-        <div className="relative flex items-center gap-2 overflow-hidden rounded-lg bg-surface px-3 py-2.5 shadow-card ring-1 ring-ink-100">
-          <span className="absolute left-1/2 top-1/2 h-14 w-14 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-500/20" />
+        <button
+          type="button"
+          data-snack="水波从按下的位置扩散 —— 这才是对的手感"
+          className="relative flex w-full items-center gap-2 overflow-hidden rounded-lg bg-surface px-3 py-2.5 text-left shadow-card ring-1 ring-ink-100"
+        >
           <span className="relative text-[13.5px] text-ink-700">有水波纹了</span>
-        </div>
+        </button>
       </div>
       <div className="flex-1">
         <span className="mb-1 block text-[11.5px] text-ok">✅ InkWell 套在外面 + borderRadius: 12</span>
-        <div className="flex items-center gap-2 rounded-xl border border-ink-200 bg-surface px-3 py-2.5 shadow-card">
+        <button
+          type="button"
+          data-snack="打开产品详情"
+          className="flex w-full items-center gap-2 rounded-xl border border-ink-200 bg-surface px-3 py-2.5 text-left shadow-card"
+        >
           <span className="text-[13.5px] text-ink-700">产品卡片</span>
           <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="ml-auto text-ink-400">
             <path d="m9 5 7 7-7 7" />
           </svg>
-        </div>
+        </button>
       </div>
     </Frame>
   ),
@@ -677,13 +1459,17 @@ export const demoMocks: Record<string, () => ReactNode> = {
           </span>
         </div>
       </div>
-      <div className="w-full rounded-xl bg-surface px-3 py-2.5 shadow-card ring-1 ring-ink-100">
+      <button
+        type="button"
+        data-snack="空白处也响应 —— behavior: opaque 的作用"
+        className="w-full rounded-xl bg-surface px-3 py-2.5 text-left shadow-card ring-1 ring-ink-100"
+      >
         <span className="block text-[14px] text-ink-800">标题</span>
         <span className="my-4 block border-t border-dashed border-ink-200 pt-1 text-center text-[10.5px] text-ink-400">
           这块空白也应该能点（behavior: opaque）
         </span>
         <span className="block text-[13px] text-ink-500">副标题</span>
-      </div>
+      </button>
     </Frame>
   ),
 
@@ -1091,42 +1877,18 @@ export const demoMocks: Record<string, () => ReactNode> = {
   'wrap::标签云（最典型的用法）': () => (
     // 与代码一一对应：手机/数码/家电/图书/服饰/美妆/运动/食品/母婴 的 Chip 标签云
     <Frame className="w-full max-w-[270px] p-4">
-      <div className="flex flex-wrap gap-2">
-        {['手机', '数码', '家电', '图书', '服饰', '美妆', '运动', '食品', '母婴'].map((t, i) => (
-          <span
-            key={t}
-            className={`rounded-lg px-2.5 py-1 text-[13px] ${
-              i < 3
-                ? 'bg-solid text-white'
-                : 'bg-ink-50 text-ink-600 ring-1 ring-ink-200'
-            }`}
-          >
-            {t}
-          </span>
-        ))}
-      </div>
+      <ChipCloudI items={['手机', '数码', '家电', '图书', '服饰', '美妆', '运动', '食品', '母婴']} init={3} />
     </Frame>
   ),
   'wrap::筛选条件标签': () => (
     // 与代码一一对应：FilterChip 包邮(选中)/现货/7天退换/品牌店
     <Frame className="w-full max-w-[270px] flex-col gap-2 p-4">
       <span className="text-[11px] text-ink-400">行放不下就自动换行</span>
-      <div className="flex w-full flex-wrap gap-1.5">
-        <span className="flex items-center gap-1 rounded-lg bg-solid px-2.5 py-1 text-[12.5px] text-white">
-          <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
-            <path d="m5 12.5 4.5 4.5L19 7.5" />
-          </svg>
-          包邮
-        </span>
-        {['现货', '7天退换', '品牌店'].map((t) => (
-          <span
-            key={t}
-            className="rounded-lg bg-ink-50 px-2.5 py-1 text-[12.5px] text-ink-600 ring-1 ring-ink-200"
-          >
-            {t}
-          </span>
-        ))}
-      </div>
+      <FilterBarI
+        options={['包邮', '现货', '7天退换', '品牌店']}
+        init={['包邮']}
+        footer={false}
+      />
     </Frame>
   ),
 
@@ -1135,12 +1897,18 @@ export const demoMocks: Record<string, () => ReactNode> = {
       <span className="font-mono text-[11px] text-ink-400">crossAxisCount: 3 · spacing 8</span>
       <div className="grid w-full max-w-[240px] grid-cols-3 gap-2">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="rounded-md bg-surface p-1 shadow-card ring-1 ring-ink-100">
+          <button
+            key={i}
+            type="button"
+            data-press
+            data-snack={`已选商品 ${i + 1}`}
+            className="rounded-md bg-surface p-1 text-left shadow-card ring-1 ring-ink-100 transition hover:ring-brand-300"
+          >
             <div className="flex aspect-square items-center justify-center rounded bg-brand-50 text-[11px] text-brand-600">
               {i + 1}
             </div>
             <div className="mt-1 h-1.5 w-3/4 rounded bg-ink-100" />
-          </div>
+          </button>
         ))}
       </div>
     </Frame>
@@ -1383,56 +2151,40 @@ export const demoMocks: Record<string, () => ReactNode> = {
     // 与代码一一对应：① labelText「手机号」+ hint「请输入 11 位手机号」+ prefix 手机图标 + 描边
     // ② labelText「备注」+ hint「选填」+ maxLines: 3
     <Frame className="w-full max-w-[260px] flex-col items-stretch gap-2.5 p-4">
-      <div>
-        <span className="mb-0.5 block text-[12px] text-ink-500">手机号</span>
-        <div className="flex items-center gap-2 rounded-lg border border-ink-300 bg-surface px-3 py-1.5">
-          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="text-ink-400">
+      <FieldI
+        label="手机号"
+        placeholder="请输入 11 位手机号"
+        inputMode="tel"
+        trailing={
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="shrink-0 text-ink-400">
             <rect x="7" y="3" width="10" height="18" rx="2" />
             <path d="M11 18h2" />
           </svg>
-          <span className="text-[14px] text-ink-400">请输入 11 位手机号</span>
-        </div>
-      </div>
-      <div>
-        <span className="mb-0.5 block text-[12px] text-ink-500">备注</span>
-        <div className="rounded-lg border border-ink-200 bg-surface px-3 py-1.5 text-[14px] text-ink-400">
-          选填
-        </div>
-      </div>
+        }
+      />
+      <FieldI label="备注" placeholder="选填" />
     </Frame>
   ),
   'text-field::密码框': () => (
     <Frame className="w-full max-w-[260px] p-4">
-      <div className="w-full rounded-lg border-2 border-brand-500 bg-surface px-3 py-1.5 ring-2 ring-brand-500/15">
-        <span className="block text-[11.5px] text-brand-600">密码</span>
-        <div className="mt-0.5 flex items-center">
-          <span className="text-[15px] tracking-[3px] text-ink-900">••••••••</span>
-          <span className="ml-auto text-ink-400">
-            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8">
-              <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z" />
-              <circle cx="12" cy="12" r="2.5" />
-            </svg>
-          </span>
-        </div>
-      </div>
-      <span className="mt-1.5 block w-full font-mono text-[11px] text-ink-400">
-        obscureText: true + 后缀切换图标
-      </span>
+      <FieldI
+        label="密码"
+        type="password"
+        defaultValue="pulse2026"
+        trailing={
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" className="shrink-0 text-ink-400">
+            <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z" />
+            <circle cx="12" cy="12" r="2.5" />
+          </svg>
+        }
+        hint="obscureText: true + 后缀切换图标"
+      />
     </Frame>
   ),
   'text-field::用 controller 读值 + 释放': () => (
     // 与代码一一对应：hint「搜索商品」+ prefix 搜索图标 + suffix 清空按钮
     <Frame className="w-full max-w-[260px] flex-col items-stretch gap-2 p-4">
-      <div className="flex items-center gap-2 rounded-lg border border-ink-300 bg-surface px-3 py-1.5">
-        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="text-ink-400">
-          <circle cx="11" cy="11" r="7" />
-          <path d="m20 20-3.5-3.5" />
-        </svg>
-        <span className="text-[14px] text-ink-400">搜索商品</span>
-        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="ml-auto text-ink-400">
-          <path d="M6 6l12 12M18 6 6 18" />
-        </svg>
-      </div>
+      <SearchBarI hint="搜索商品" />
       <span className="font-mono text-[10.5px] text-ink-400">
         _controller.text 拿值 · dispose() 释放
       </span>
@@ -1441,13 +2193,13 @@ export const demoMocks: Record<string, () => ReactNode> = {
   'text-field::只允许输入数字 + 限长': () => (
     // 与代码一一对应：labelText「验证码」+ digitsOnly + LengthLimiting(6) + counterText ''
     <Frame className="w-full max-w-[260px] flex-col items-stretch gap-2 p-4">
-      <span className="mb-0.5 text-[12px] text-brand-600">验证码</span>
-      <div className="rounded-lg border border-ink-300 bg-surface px-3 py-1.5">
-        <div className="flex items-center">
-          <span className="font-mono text-[14.5px] tracking-[0.2em] text-ink-900">123456</span>
-          <span className="ml-auto font-mono text-[11.5px] text-ink-400">6 位</span>
-        </div>
-      </div>
+      <FieldI
+        label="验证码"
+        defaultValue="123456"
+        maxLength={6}
+        counter
+        inputMode="numeric"
+      />
       <div className="flex flex-wrap gap-1.5">
         {['keyboardType: number', 'LengthLimiting(6)', 'counterText: \'\''].map((t) => (
           <span key={t} className="rounded bg-brand-50 px-1.5 py-0.5 font-mono text-[11px] text-brand-600">
@@ -1460,36 +2212,21 @@ export const demoMocks: Record<string, () => ReactNode> = {
   'text-field::错误提示': () => (
     // 与代码一一对应：labelText「邮箱」+ errorText「邮箱格式不正确」→ 红框 + 红字自动出现
     <Frame className="w-full max-w-[260px] p-4">
-      <div className="w-full">
-        <span className="mb-0.5 block text-[12px] text-danger">邮箱</span>
-        <div className="rounded-lg border-2 border-danger bg-surface px-3 py-1.5 text-[14px] text-ink-900">
-          abc#mail
-        </div>
-        <span className="mt-0.5 block text-[12px] text-danger">
-          邮箱格式不正确
-        </span>
-      </div>
+      <FieldI label="邮箱" defaultValue="abc#mail" error="邮箱格式不正确" />
     </Frame>
   ),
 
   'text-form-field::完整登录表单': () => (
     // 与代码一一对应：手机号 + 密码(obscure) + FilledButton「登录」；validator 见下方错误提示
     <Frame className="w-full max-w-[260px] flex-col items-stretch gap-2 p-4">
-      <div>
-        <span className="mb-0.5 block text-[12px] text-ink-500">手机号</span>
-        <div className="rounded-lg border border-ink-300 bg-surface px-3 py-1.5 text-[14px] text-ink-900">
-          13812345678
-        </div>
-      </div>
-      <div>
-        <span className="mb-0.5 block text-[12px] text-ink-500">密码</span>
-        <div className="rounded-lg border border-ink-300 bg-surface px-3 py-1.5 text-[14px] text-ink-900">
-          ••••••••
-        </div>
-      </div>
-      <span className="mt-0.5 rounded-full bg-solid py-1.5 text-center text-[14px] font-medium text-white">
+      <FieldI label="手机号" defaultValue="13812345678" inputMode="tel" />
+      <FieldI label="密码" type="password" defaultValue="pulse2026" />
+      <PressBtn
+        toast="通过：正在登录…"
+        className="mt-0.5 rounded-full bg-solid py-1.5 text-center text-[14px] font-medium text-white"
+      >
         登录
-      </span>
+      </PressBtn>
     </Frame>
   ),
   'text-form-field::异步校验（比如「手机号是否已注册」）': () => (
@@ -1544,61 +2281,14 @@ export const demoMocks: Record<string, () => ReactNode> = {
   'checkbox::带文字的复选框：用 CheckboxListTile': () => (
     // 与代码一一对应：CheckboxListTile「我已阅读并同意《用户协议》」（框在左）+ 未勾选时禁用的「注册」
     <Frame className="w-full max-w-[270px]">
-      <div className="w-full overflow-hidden rounded-xl bg-surface p-3 shadow-card ring-1 ring-ink-100">
-        <div className="flex items-center gap-3">
-          <span className="flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-[4px] bg-solid text-white">
-            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round">
-              <path d="m5 12.5 4.5 4.5L19 7.5" />
-            </svg>
-          </span>
-          <span className="text-[14px] text-ink-800">
-            我已阅读并同意<span className="text-brand-600">《用户协议》</span>
-          </span>
-        </div>
-        <div className="mt-3 flex items-center gap-2">
-          <span className="inline-flex h-9 flex-1 items-center justify-center rounded-[18px] bg-solid text-[14px] font-medium text-white">
-            注册
-          </span>
-        </div>
-        <span className="mt-1.5 block text-center text-[11px] text-ink-400">
-          不勾选时「注册」是灰的（onPressed: null）
-        </span>
-      </div>
+      <AgreeRegisterI />
     </Frame>
   ),
   'checkbox::全选 / 半选（tristate 的经典用法）': () => (
+    // 与代码一一对应：父级 tristate（全选/半选）+ 4 个子项，勾一个父级变半选
     <Frame className="w-full max-w-[270px] p-4">
       <div className="w-full rounded-xl bg-surface p-3 shadow-card ring-1 ring-ink-100">
-        <div className="flex items-center gap-2.5 border-b border-ink-100 pb-2">
-          <span className="flex h-[18px] w-[18px] items-center justify-center rounded-[4px] bg-brand-500">
-            <span className="h-0.5 w-2.5 rounded bg-surface" />
-          </span>
-          <span className="text-[14px] font-medium text-ink-900">全选</span>
-          <span className="ml-auto text-[11.5px] text-ink-400">已选 2/4</span>
-        </div>
-        <div className="mt-2 space-y-2">
-          {[
-            ['手机', true],
-            ['电脑', true],
-            ['平板', false],
-            ['耳机', false],
-          ].map(([t, on]) => (
-            <div key={String(t)} className="flex items-center gap-2.5">
-              <span
-                className={`flex h-[18px] w-[18px] items-center justify-center rounded-[4px] ${
-                  on ? 'bg-solid text-white' : 'border-2 border-ink-300'
-                }`}
-              >
-                {on ? (
-                  <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round">
-                    <path d="m5 12.5 4.5 4.5L19 7.5" />
-                  </svg>
-                ) : null}
-              </span>
-              <span className="text-[13.5px] text-ink-700">{t}</span>
-            </div>
-          ))}
-        </div>
+        <CheckListI items={['手机', '电脑', '平板', '耳机']} init={[0, 1]} />
       </div>
     </Frame>
   ),
@@ -1657,21 +2347,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
   'slider::价格区间选择': () => (
     // 与代码一一对应：单个 Slider，_max=500（min 0 / max 1000 / divisions 20），label「¥500」
     <Frame className="w-full max-w-[250px] flex-col items-stretch gap-2 p-4">
-      <span className="text-[14px] text-ink-700">
-        最高价：<span className="font-medium text-brand-600">¥500</span>
-      </span>
-      <div className="relative h-1.5 rounded-full bg-ink-100">
-        <span className="absolute left-0 top-0 h-full w-1/2 rounded-full bg-brand-500" />
-        <span className="absolute left-1/2 top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-500 ring-2 ring-surface" />
-      </div>
-      <div className="flex justify-between font-mono text-[11px] text-ink-400">
-        <span>0</span>
-        <span>500</span>
-        <span>1000</span>
-      </div>
-      <span className="font-mono text-[10.5px] text-ink-400">
-        onChangeEnd 松手才发请求 →「筛选：0 ~ 500」
-      </span>
+      <PriceSliderI />
     </Frame>
   ),
   'slider::数值范围超出滑块时的处理': () => (
@@ -1699,17 +2375,12 @@ export const demoMocks: Record<string, () => ReactNode> = {
   'search-bar::基础搜索栏': () => (
     // 与代码一一对应：hintText「搜索商品、品牌、分类」+ leading search + trailing「清空」
     <Frame className="w-full max-w-[270px] flex-col items-stretch gap-2 p-4">
-      <div className="flex h-10 w-full items-center gap-2 rounded-full bg-ink-50 px-3.5 ring-1 ring-ink-200">
-        <MI d={P.search} size={16} className="shrink-0 text-ink-400" />
-        <span className="text-[14px] text-ink-400">搜索商品、品牌、分类</span>
-        <span className="ml-auto flex h-5 w-5 items-center justify-center rounded-full text-ink-400">
-          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-            <path d="M6 6l12 12M18 6 6 18" />
-          </svg>
-        </span>
-      </div>
+      <SearchBarI
+        hint="搜索商品、品牌、分类"
+        onSubmit={(v) => snack(`搜索：${v}`)}
+      />
       <span className="font-mono text-[10.5px] text-ink-400">
-        有输入时右侧才出现「清空」
+        打几个字试试，右侧会出现「清空」
       </span>
     </Frame>
   ),
@@ -1740,52 +2411,36 @@ export const demoMocks: Record<string, () => ReactNode> = {
   'dropdown-button::基础下拉（注意 isExpanded）': () => (
     // 与代码一一对应：labelText「所在城市」，_city='shanghai' → 选中「上海」；items 北京/上海/广州
     <Frame className="w-full max-w-[220px] p-4">
-      <div className="w-full">
-        <span className="mb-0.5 block text-[12px] text-brand-600">所在城市</span>
-        <div className="flex h-10 w-full items-center justify-between rounded-lg border border-brand-500 px-3 text-[14px] text-ink-900">
-          上海
-          <svg viewBox="0 0 24 24" width="16" height="16" className="text-ink-400" fill="currentColor">
-            <path d="M12 15.5 5.5 9h13L12 15.5Z" />
-          </svg>
-        </div>
-        <div className="mt-1 overflow-hidden rounded-lg bg-surface shadow-pop ring-1 ring-ink-100">
-          {['北京', '上海', '广州'].map((t, i) => (
-            <div
-              key={t}
-              className={`flex items-center px-3 py-1.5 text-[13px] ${i === 1 ? 'bg-brand-50 text-brand-600' : 'text-ink-700'}`}
-            >
-              {t}
-            </div>
-          ))}
-        </div>
-        <span className="mt-1 block text-[11px] text-warn">
-          不加 isExpanded，长文字会溢出
-        </span>
-        <span className="mt-0.5 block font-mono text-[10.5px] text-ink-400">
-          hint: 请选择（未选中时显示）
-        </span>
-      </div>
+      <DropI
+        label="所在城市"
+        init={1}
+        items={[{ t: '北京' }, { t: '上海' }, { t: '广州' }]}
+        footer={
+          <>
+            <span className="mt-1 block text-[11px] text-warn">
+              不加 isExpanded，长文字会溢出
+            </span>
+            <span className="mt-0.5 block font-mono text-[10.5px] text-ink-400">
+              hint: 请选择（未选中时显示）
+            </span>
+          </>
+        }
+      />
     </Frame>
   ),
   'dropdown-button::带 null 选项（允许「不限」）': () => (
     // 与代码一一对应：items 不限('') / 全新(new) / 二手(used)
     <Frame className="w-full max-w-[220px] p-4">
-      <div className="w-full">
-        <div className="flex h-10 w-full items-center justify-between rounded-lg border border-ink-300 bg-surface px-3 text-[14px] text-ink-400">
-          不限
-          <svg viewBox="0 0 24 24" width="16" height="16" className="text-ink-400" fill="currentColor">
-            <path d="M12 15.5 5.5 9h13L12 15.5Z" />
-          </svg>
-        </div>
-        <div className="mt-1 overflow-hidden rounded-lg bg-surface shadow-pop ring-1 ring-ink-100">
-          <div className="px-3 py-1.5 text-[13px] text-ink-400">不限</div>
-          {['全新', '二手'].map((t) => (
-            <div key={t} className="px-3 py-1.5 text-[13px] text-ink-700">
-              {t}
-            </div>
-          ))}
-        </div>
-      </div>
+      <DropI
+        muted
+        init={0}
+        items={[{ t: '不限' }, { t: '全新' }, { t: '二手' }]}
+        footer={
+          <span className="mt-1 block font-mono text-[10.5px] text-ink-400">
+            onChanged: (v) =&gt; _filter = v ?? ''
+          </span>
+        }
+      />
     </Frame>
   ),
 
@@ -1794,65 +2449,20 @@ export const demoMocks: Record<string, () => ReactNode> = {
   'radio::一组单选（用 RadioListTile，整行可点）': () => (
     // 与代码一一对应：三个 RadioListTile（微信支付 / 支付宝 / 银行卡），_pay 默认 'wechat'
     <Frame className="w-full max-w-[280px]">
-      <div className="w-full overflow-hidden rounded-xl bg-surface shadow-card ring-1 ring-ink-100">
-        {[
-          ['微信支付', true, 'M4 8h16v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8Zm4-3 1.5-2h5L16 5'],
-          ['支付宝', false, 'M6 4h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Zm3 5h5m-5 3h8'],
-          ['银行卡', false, 'M3 7h18v10H3V7Zm0 4h18'],
-        ].map(([t, on, d], i) => (
-          <div key={String(t)}>
-            {i > 0 && <div className="ml-3 h-px bg-ink-100" />}
-            <div className="flex items-center gap-3 px-3 py-2.5">
-              <span
-                className={`flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full border-2 ${
-                  on ? 'border-brand-500' : 'border-ink-300'
-                }`}
-              >
-                {on ? <span className="h-2 w-2 rounded-full bg-brand-500" /> : null}
-              </span>
-              <span className="text-[14px] text-ink-800">{t}</span>
-              <svg
-                viewBox="0 0 24 24"
-                width="16"
-                height="16"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="ml-auto text-ink-400"
-              >
-                <path d={String(d)} />
-              </svg>
-            </div>
-          </div>
-        ))}
-      </div>
+      <RadioListI
+        items={[
+          { label: '微信支付', icon: 'M4 8h16v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8Zm4-3 1.5-2h5L16 5' },
+          { label: '支付宝', icon: 'M6 4h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Zm3 5h5m-5 3h8' },
+          { label: '银行卡', icon: 'M3 7h18v10H3V7Zm0 4h18' },
+        ]}
+        init={0}
+      />
     </Frame>
   ),
   'radio::选项少的时候用 Chip 更省空间': () => (
     // 与代码一一对应：Wrap + ChoiceChip('S'|'M'|'L'|'XL')，_size 默认 'M'
     <Frame className="flex-wrap gap-2">
-      {['S', 'M', 'L', 'XL'].map((s) => {
-        const on = s === 'M';
-        return (
-          <span
-            key={s}
-            className={`inline-flex items-center gap-1 rounded-lg px-3.5 py-1.5 text-[14px] ${
-              on
-                ? 'bg-solid font-medium text-white'
-                : 'bg-ink-50 text-ink-600 ring-1 ring-ink-200'
-            }`}
-          >
-            {on ? (
-              <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
-                <path d="m5 12.5 4.5 4.5L19 7.5" />
-              </svg>
-            ) : null}
-            {s}
-          </span>
-        );
-      })}
+      <ChoiceChipsI items={['S', 'M', 'L', 'XL']} init={1} />
     </Frame>
   ),
 
@@ -1860,35 +2470,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
     // 与代码一一对应：① Chip（数码 / 新品 / 已选条件+删除） ② FilterChip（包邮，选中）
     // ③ ChoiceChip（M，选中） ④ ActionChip（下载）
     <Frame className="w-full max-w-[340px] flex-wrap gap-2 p-4">
-      {/* ① 纯展示 */}
-      <span className="inline-flex items-center rounded-lg bg-surface px-3 py-1.5 text-[13px] text-ink-700 ring-1 ring-ink-300">
-        数码
-      </span>
-      <span className="inline-flex items-center gap-1.5 rounded-lg bg-surface px-3 py-1.5 text-[13px] text-ink-700 ring-1 ring-ink-300">
-        <span className="opacity-70">#</span>新品
-      </span>
-      <span className="inline-flex items-center gap-1.5 rounded-lg bg-surface px-3 py-1.5 text-[13px] text-ink-700 ring-1 ring-ink-300">
-        已选条件
-        <span className="opacity-60">×</span>
-      </span>
-      {/* ② 筛选（可多选，selected: true） */}
-      <span className="inline-flex items-center gap-1 rounded-lg bg-brand-50 px-3 py-1.5 text-[13px] text-brand-700 ring-1 ring-brand-300">
-        <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
-          <path d="m5 12.5 4.5 4.5L19 7.5" />
-        </svg>
-        包邮
-      </span>
-      {/* ③ 单选（selected: true） */}
-      <span className="inline-flex items-center gap-1 rounded-lg bg-brand-50 px-3 py-1.5 text-[13px] text-brand-700 ring-1 ring-brand-300">
-        <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
-          <path d="m5 12.5 4.5 4.5L19 7.5" />
-        </svg>
-        M
-      </span>
-      {/* ④ 触发动作 */}
-      <span className="inline-flex items-center gap-1.5 rounded-lg bg-surface px-3 py-1.5 text-[13px] text-ink-600 ring-1 ring-ink-200">
-        <span className="opacity-70">⬇</span>下载
-      </span>
+      <ChipVariantsI />
     </Frame>
   ),
   'chip::状态标签（订单状态这类）': () => (
@@ -1912,27 +2494,10 @@ export const demoMocks: Record<string, () => ReactNode> = {
   'filter-chip::多条件筛选（带「重置」）': () => (
     // 与代码一一对应：_options = 包邮/现货/7天退换/品牌店/分期免息/百亿补贴，_selected = {包邮, 现货}
     <Frame className="w-full max-w-[300px] flex-col gap-2 p-4">
-      <div className="flex flex-wrap gap-1.5">
-        {['包邮', '现货'].map((t) => (
-          <span key={t} className="flex items-center gap-1 rounded-lg bg-solid px-2.5 py-1 text-[13px] text-white">
-            <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
-              <path d="m5 12.5 4.5 4.5L19 7.5" />
-            </svg>
-            {t}
-          </span>
-        ))}
-        {['7天退换', '品牌店', '分期免息', '百亿补贴'].map((t) => (
-          <span key={t} className="rounded-lg bg-ink-50 px-2.5 py-1 text-[13px] text-ink-600 ring-1 ring-ink-200">
-            {t}
-          </span>
-        ))}
-      </div>
-      <div className="flex items-center border-t border-ink-100 pt-2">
-        <span className="text-[12px] text-ink-500">已选：包邮 · 现货</span>
-        <span className="ml-auto rounded border border-ink-200 px-2 py-0.5 text-[12px] text-ink-600">
-          重置
-        </span>
-      </div>
+      <FilterBarI
+        options={['包邮', '现货', '7天退换', '品牌店', '分期免息', '百亿补贴']}
+        init={['包邮', '现货']}
+      />
       <span className="font-mono text-[10.5px] text-ink-400">
         一个都没选时这里显示「未筛选」
       </span>
@@ -1942,54 +2507,14 @@ export const demoMocks: Record<string, () => ReactNode> = {
   'segmented-button::视图切换（列表 / 网格）': () => (
     // 与代码一一对应：_view = 'list' → 列表段选中；图标 view_list / grid_view；showSelectedIcon: false
     <Frame className="flex-col gap-3 p-4">
-      <div className="flex overflow-hidden rounded-full border border-ink-300">
-        <span className="flex h-9 items-center gap-1.5 bg-brand-50 px-4 text-[14px] font-medium text-brand-600">
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-            <path d="M4 6h16M4 12h16M4 18h10" />
-          </svg>
-          列表
-        </span>
-        <span className="flex h-9 items-center gap-1.5 border-l border-ink-300 px-4 text-[14px] text-ink-600">
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
-            <rect x="4" y="4" width="7" height="7" rx="1" />
-            <rect x="13" y="4" width="7" height="7" rx="1" />
-            <rect x="4" y="13" width="7" height="7" rx="1" />
-            <rect x="13" y="13" width="7" height="7" rx="1" />
-          </svg>
-          网格
-        </span>
-      </div>
+      <ViewSegI />
       <span className="font-mono text-[11px] text-ink-400">selected: &#123;list&#125;</span>
     </Frame>
   ),
   'segmented-button::时间范围（多选）': () => (
     // 与代码一一对应：三段 周一/周三/周五；multiSelectionEnabled；默认勾选 周一 + 周五
     <Frame className="flex-col gap-3 p-4">
-      <div className="flex overflow-hidden rounded-full border border-ink-300">
-        {[
-          ['周一', 'mon', true],
-          ['周三', 'wed', false],
-          ['周五', 'fri', true],
-        ].map(([t, v, on], i) => (
-          <span
-            key={String(v)}
-            className={`flex h-9 items-center gap-1 px-4 text-[14px] ${
-              i > 0 ? 'border-l border-ink-300' : ''
-            } ${
-              on
-                ? 'bg-brand-50 font-medium text-brand-600'
-                : 'text-ink-600'
-            }`}
-          >
-            {on ? (
-              <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
-                <path d="m5 12.5 4.5 4.5L19 7.5" />
-              </svg>
-            ) : null}
-            {t}
-          </span>
-        ))}
-      </div>
+      <WeekSegI />
       <span className="font-mono text-[11px] text-ink-400">
         multiSelectionEnabled · selected: &#123;mon, fri&#125;
       </span>
@@ -2035,13 +2560,17 @@ export const demoMocks: Record<string, () => ReactNode> = {
         ].map(([a, b], i) => (
           <div key={a}>
             {i > 0 && <div className="ml-[72px] h-px bg-ink-200" />}
-            <div className="flex items-center gap-3 px-3 py-2.5">
+            <button
+              type="button"
+              data-snack={`打开「${a}」`}
+              className="flex w-full items-center gap-3 px-3 py-2.5 text-left transition hover:bg-subtle"
+            >
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-50 text-[12px] text-brand-700">
                 {a[0]}
               </span>
               <span className="text-[14px] text-ink-800">{a}</span>
               <span className="ml-auto text-[13px] text-ink-500">{b}</span>
-            </div>
+            </button>
           </div>
         ))}
       </div>
@@ -2049,17 +2578,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
   ),
   'list-view::触底加载下一页': () => (
     <Frame className="w-full max-w-[270px]">
-      <div className="w-full overflow-hidden rounded-xl bg-surface shadow-card ring-1 ring-ink-100">
-        {[1, 2].map((i) => (
-          <div key={i} className="border-b border-ink-50 px-3 py-2 text-[13px] text-ink-700">
-            列表项 {i}
-          </div>
-        ))}
-        <div className="flex items-center justify-center gap-2 py-2.5">
-          <Spinner size={13} cls="border-brand-200 border-t-brand-500" />
-          <span className="text-[12px] text-brand-600">加载更多…</span>
-        </div>
-      </div>
+      <LoadMoreI />
     </Frame>
   ),
 
@@ -2075,12 +2594,14 @@ export const demoMocks: Record<string, () => ReactNode> = {
           <span className="block truncate text-[13.5px] text-ink-900">推送通知</span>
           <span className="block truncate text-[12px] text-ink-500">仅在工作时间提醒</span>
         </span>
-        <span className="flex h-[18px] w-[32px] shrink-0 items-center rounded-full bg-solid px-[2px]">
-          <span className="ml-auto h-[14px] w-[14px] rounded-full bg-surface" />
-        </span>
+        <SwitchI init />
       </div>
       {/* ② 导航项：头像 + 双行文字 + 箭头 */}
-      <div className="flex items-center gap-3 rounded-lg bg-surface px-3 py-2 shadow-card ring-1 ring-ink-100">
+      <button
+        type="button"
+        onClick={() => snack('打开「项目群」')}
+        className="flex w-full items-center gap-3 rounded-lg bg-surface px-3 py-2 text-left shadow-card ring-1 ring-ink-100 transition hover:bg-ink-50/60"
+      >
         <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-100 text-[13px] font-semibold text-brand-700">
           曹
         </span>
@@ -2088,12 +2609,16 @@ export const demoMocks: Record<string, () => ReactNode> = {
           <span className="block truncate text-[13.5px] text-ink-900">项目群</span>
           <span className="block truncate text-[12px] text-ink-500">最近消息：明天见</span>
         </span>
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="text-ink-300">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="text-ink-400">
           <path d="m9 5 7 7-7 7" />
         </svg>
-      </div>
+      </button>
       {/* ③ 金额项：标题 + 时间 + 右对齐金额与状态 */}
-      <div className="flex items-center gap-3 rounded-lg bg-surface px-3 py-2 shadow-card ring-1 ring-ink-100">
+      <button
+        type="button"
+        onClick={() => snack('查看订单：数码相机（95 新）')}
+        className="flex w-full items-center gap-3 rounded-lg bg-surface px-3 py-2 text-left shadow-card ring-1 ring-ink-100 transition hover:bg-ink-50/60"
+      >
         <span className="min-w-0 flex-1">
           <span className="block truncate text-[13.5px] text-ink-900">数码相机（95 新）</span>
           <span className="block truncate text-[12px] text-ink-500">2026-10-16 20:31</span>
@@ -2102,7 +2627,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
           <span className="block text-[13.5px] font-semibold text-ink-900">¥128.00</span>
           <span className="block text-[12px] text-ok">已完成</span>
         </span>
-      </div>
+      </button>
     </Frame>
   ),
   'list-tile::dense 让密集列表更好看': () => (
@@ -2111,10 +2636,16 @@ export const demoMocks: Record<string, () => ReactNode> = {
         <span className="mb-1 block font-mono text-[11px] text-ink-400">默认</span>
         <div className="overflow-hidden rounded-lg bg-surface shadow-card ring-1 ring-ink-100">
           {['项 A', '项 B', '项 C'].map((t) => (
-            <div key={t} className="flex items-center gap-2.5 border-b border-ink-50 px-3 py-2.5">
+            <button
+              key={t}
+              type="button"
+              data-press
+              onClick={() => snack(`点击了 ${t}`)}
+              className="flex w-full items-center gap-2.5 border-b border-ink-50 px-3 py-2.5 text-left transition hover:bg-subtle last:border-b-0"
+            >
               <span className="h-7 w-7 shrink-0 rounded-full bg-brand-100" />
               <span className="text-[13px] text-ink-800">{t}</span>
-            </div>
+            </button>
           ))}
         </div>
       </div>
@@ -2122,10 +2653,16 @@ export const demoMocks: Record<string, () => ReactNode> = {
         <span className="mb-1 block font-mono text-[11px] text-ok">dense: true</span>
         <div className="overflow-hidden rounded-lg bg-surface shadow-card ring-1 ring-ink-100">
           {['项 A', '项 B', '项 C', '项 D'].map((t) => (
-            <div key={t} className="flex items-center gap-2.5 border-b border-ink-50 px-3 py-1.5">
+            <button
+              key={t}
+              type="button"
+              data-press
+              onClick={() => snack(`点击了 ${t}（dense）`)}
+              className="flex w-full items-center gap-2.5 border-b border-ink-50 px-3 py-1.5 text-left transition hover:bg-subtle last:border-b-0"
+            >
               <span className="h-5 w-5 shrink-0 rounded-full bg-brand-100" />
               <span className="text-[12.5px] text-ink-800">{t}</span>
-            </div>
+            </button>
           ))}
         </div>
       </div>
@@ -2222,38 +2759,20 @@ export const demoMocks: Record<string, () => ReactNode> = {
 
   'data-table::可排序的销售明细表': () => (
     <Frame className="w-full max-w-[320px] p-4">
-      <div className="w-full overflow-hidden rounded-lg bg-surface text-left text-[12px] shadow-card ring-1 ring-ink-100">
-        <div className="flex bg-ink-50 text-ink-600">
-          {/* 与代码一一对应：_sortIndex = 2（销售额）、_ascending = false → 箭头在销售额且向下 */}
-          <span className="flex flex-1 items-center px-2 py-1.5 font-medium">产品</span>
-          <span className="w-14 px-2 py-1.5 font-medium">区域</span>
-          <span className="flex w-20 items-center justify-end gap-1 px-2 py-1.5 font-medium">
-            销售额
-            <svg viewBox="0 0 24 24" width="9" height="9" fill="currentColor" className="text-brand-600">
-              <path d="M12 15.5 5.5 9h13L12 15.5Z" />
-            </svg>
-          </span>
-        </div>
-        {[
-          ['云服务器', '华南', '¥12,800'],
-          ['CDN', '华东', '¥5,320'],
-          ['对象存储', '华北', '¥2,140'],
-        ].map(([a, b, c], i) => (
-          <div key={a} className={`flex border-t border-ink-100 ${i % 2 ? 'bg-ink-50/40' : ''}`}>
-            <span className="flex-1 px-2 py-1.5 text-ink-800">{a}</span>
-            <span className="w-14 px-2 py-1.5 text-ink-600">{b}</span>
-            <span className="w-20 px-2 py-1.5 text-right tabular-nums text-ink-800">{c}</span>
-          </div>
-        ))}
-      </div>
+      <SortTableI />
     </Frame>
   ),
 
   'expansion-tile::手风琴：同时只展开一个': () => (
     <Frame className="w-full max-w-[280px] flex-col items-stretch gap-1.5 p-4">
-      <ExpansionI init q="如何申请退款？" a="展开后，其他项会自动收起 —— 这就是手风琴。" />
-      <ExpansionI q="发票怎么开？" a="下单时填写抬头。" />
-      <ExpansionI q="多久能到？" a="视地区而定。" />
+      <AccordionI
+        items={[
+          { q: '如何申请退款？', a: '展开后，其他项会自动收起 —— 这就是手风琴。' },
+          { q: '发票怎么开？', a: '下单时填写抬头。' },
+          { q: '多久能到？', a: '视地区而定。' },
+        ]}
+        init={0}
+      />
     </Frame>
   ),
 
@@ -2276,18 +2795,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
   'stepper::下单流程 + 中文按钮 + 分步校验': () => (
     <Frame className="w-full max-w-[280px] flex-col gap-3 p-4">
       {/* 与代码一一对应：steps 收货信息/配送方式/确认支付；末步按钮变「提交订单」 */}
-      <StepsRow steps={['收货信息', '配送方式', '确认支付']} cur={1} />
-      <div className="flex gap-1.5">
-        <span className="flex-1 rounded-full border border-ink-300 py-1 text-center text-[12px] text-ink-600">
-          上一步
-        </span>
-        <span className="flex-[2] rounded-full bg-solid py-1 text-center text-[12px] text-white">
-          下一步（末步 → 提交订单）
-        </span>
-      </div>
-      <span className="font-mono text-[10.5px] text-ink-400">
-        每步都先校验再放行
-      </span>
+      <OrderStepperI />
     </Frame>
   ),
 
@@ -2305,6 +2813,20 @@ export const demoMocks: Record<string, () => ReactNode> = {
       <div className="flex w-full items-center rounded-lg bg-[#2c3038] px-3.5 py-2.5">
         <span className="text-[13px] text-white">已保存</span>
         <span className="ml-auto font-mono text-[10px] text-white/50">fixed</span>
+      </div>
+      <div className="mt-0.5 flex gap-1.5">
+        <PressBtn
+          onClick={() => snack('已保存')}
+          className="flex-1 rounded-full border border-ink-300 py-1 text-center text-[12px] text-ink-600 hover:bg-ink-50"
+        >
+          弹 fixed
+        </PressBtn>
+        <PressBtn
+          onClick={() => snack('已添加到购物车')}
+          className="flex-1 rounded-full bg-solid py-1 text-center text-[12px] text-white"
+        >
+          弹 floating
+        </PressBtn>
       </div>
     </Frame>
   ),
@@ -2325,6 +2847,20 @@ export const demoMocks: Record<string, () => ReactNode> = {
         <span className="text-[13px] text-white">网络异常，请重试</span>
         <span className="ml-auto font-mono text-[10px] text-white/60">scheme.error</span>
       </div>
+      <div className="mt-0.5 flex gap-1.5">
+        <PressBtn
+          onClick={() => snack('保存成功')}
+          className="flex-1 rounded-full border border-ink-300 py-1 text-center text-[12px] text-ink-600 hover:bg-ink-50"
+        >
+          成功
+        </PressBtn>
+        <PressBtn
+          onClick={() => snack('网络异常，请重试')}
+          className="flex-1 rounded-full border border-danger/50 py-1 text-center text-[12px] text-danger hover:bg-danger/5"
+        >
+          失败
+        </PressBtn>
+      </div>
     </Frame>
   ),
   'snack-bar::连续弹提示时先清掉上一个': () => (
@@ -2341,6 +2877,12 @@ export const demoMocks: Record<string, () => ReactNode> = {
       <span className="font-mono text-[10.5px] text-ink-400">
         hideCurrentSnackBar() 之后再 show
       </span>
+      <PressBtn
+        onClick={() => snack('新的提示（旧的已被清掉）')}
+        className="rounded-full bg-solid py-1 text-center text-[12px] text-white"
+      >
+        再弹一条
+      </PressBtn>
     </Frame>
   ),
 
@@ -2377,8 +2919,18 @@ export const demoMocks: Record<string, () => ReactNode> = {
             <p className="text-[12.5px] text-ink-400">↓ 再往下就要滚动了（SingleChildScrollView）</p>
           </div>
           <div className="mt-2.5 flex justify-end gap-1.5">
-            <span className="px-2.5 py-1 text-[13px] text-brand-600">取消</span>
-            <span className="px-2.5 py-1 text-[13px] text-brand-600">同意</span>
+            <PressBtn
+              onClick={() => snack('已取消')}
+              className="rounded px-2.5 py-1 text-[13px] text-brand-600 hover:bg-brand-50"
+            >
+              取消
+            </PressBtn>
+            <PressBtn
+              onClick={() => snack('已同意')}
+              className="rounded px-2.5 py-1 text-[13px] text-brand-600 hover:bg-brand-50"
+            >
+              同意
+            </PressBtn>
           </div>
         </div>
         <span className="mt-1.5 block text-center font-mono text-[10.5px] text-ok">
@@ -2390,29 +2942,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
 
   'dialog::带输入框的自定义弹窗（含键盘避让）': () => (
     <Frame className="w-full max-w-[270px] p-4">
-      <div className="w-full">
-        <div className="rounded-xl bg-surface p-3.5 shadow-pop">
-          <p className="text-[15px] font-semibold text-ink-900">添加备注</p>
-          <div className="mt-2 rounded-lg border-2 border-brand-500 px-2.5 py-1.5 ring-2 ring-brand-500/15">
-            <span className="text-[13.5px] text-ink-400">请输入备注内容</span>
-            <span className="ml-0.5 inline-block h-3.5 w-px animate-pulse bg-brand-500 align-middle" />
-          </div>
-          <div className="mt-2 flex justify-end gap-1">
-            <span className="px-2.5 py-1 text-[13px] text-brand-600">取消</span>
-            <span className="rounded-full bg-solid px-3 py-1 text-[13px] font-medium text-white">确定</span>
-          </div>
-          <div className="mt-2 rounded-lg bg-ink-200/70 p-1">
-            <div className="grid grid-cols-6 gap-0.5">
-              {Array.from({ length: 12 }).map((_, i) => (
-                <span key={i} className="h-3 rounded bg-ink-200" />
-              ))}
-            </div>
-          </div>
-        </div>
-        <span className="mt-1.5 block text-center font-mono text-[10.5px] text-ink-400">
-          viewInsets.bottom 把弹窗顶上去
-        </span>
-      </div>
+      <RemarkDialogI />
     </Frame>
   ),
 
@@ -2426,7 +2956,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
         {/* 与代码一一对应：value: 0.65、strokeWidth: 6、backgroundColor: grey.shade200 */}
         <span className="relative flex h-11 w-11 items-center justify-center">
           <svg viewBox="0 0 36 36" className="h-11 w-11 -rotate-90">
-            <circle cx="18" cy="18" r="15" fill="none" className="stroke-ink-100" strokeWidth="6" />
+            <circle cx="18" cy="18" r="15" fill="none" className="stroke-ink-200" strokeWidth="6" />
             <circle
               cx="18"
               cy="18"
@@ -2600,44 +3130,12 @@ export const demoMocks: Record<string, () => ReactNode> = {
   'bottom-sheet::选择器（最典型用法）': () => (
     // 与代码一一对应：showModalBottomSheet 排序方式 —— 标题 + 综合排序(当前选中✓)/价格从低到高/销量优先
     <Frame className="w-full max-w-[280px] p-4">
-      <div className="w-full overflow-hidden rounded-t-2xl bg-surface p-3 shadow-pop ring-1 ring-ink-100 anim-in">
-        <span className="mx-auto block h-1 w-9 rounded-full bg-ink-200" />
-        <div className="mt-2 divide-y divide-ink-50">
-          <div className="py-2 text-[15px] font-semibold text-ink-900">排序方式</div>
-          {['综合排序', '价格从低到高', '销量优先'].map((t, i) => (
-            <div key={t} className="flex items-center py-2 text-[15px] text-ink-700">
-              {t}
-              {i === 0 && (
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" className="ml-auto text-brand-600">
-                  <path d="m5 12.5 4.5 4.5L19 7.5" />
-                </svg>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
+      <SortSheetI />
     </Frame>
   ),
   'bottom-sheet::内容较多：可拖拽调整高度': () => (
     <Frame className="w-full max-w-[280px] p-4">
-      <div className="relative h-[116px] w-full overflow-hidden rounded-t-2xl bg-surface shadow-pop ring-1 ring-ink-100">
-        <div className="flex justify-center pt-2">
-          <span className="h-1 w-9 rounded-full bg-ink-300" />
-        </div>
-        <div className="mt-2 space-y-1.5 px-3">
-          {['选项一', '选项二', '选项三'].map((t) => (
-            <div key={t} className="rounded-lg bg-ink-50 px-2.5 py-1.5 text-[13px] text-ink-700">
-              {t}
-            </div>
-          ))}
-          <div className="rounded-lg bg-brand-50 px-2.5 py-1.5 text-[13px] text-brand-700 opacity-50">
-            选项四（再拖才可见）
-          </div>
-        </div>
-        <span className="absolute bottom-1 right-2 font-mono text-[10.5px] text-ink-400">
-          DraggableScrollableSheet
-        </span>
-      </div>
+      <DragSheetI />
     </Frame>
   ),
 
@@ -2734,84 +3232,19 @@ export const demoMocks: Record<string, () => ReactNode> = {
   'navigation-bar::带未读角标': () => (
     // 与代码一一对应：首页 / 消息（Badge 数字 3）/ 通知（小红点）
     <Frame className="w-full max-w-[310px] p-4">
-      <div className="flex w-full items-center justify-around rounded-xl bg-brand-50 px-2 py-2">
-        {[
-          { d: P.home, t: '首页', on: true, num: '', dot: false },
-          { d: P.inbox, t: '消息', on: false, num: '3', dot: false },
-          { d: P.notif, t: '通知', on: false, num: '', dot: true },
-        ].map((it) => (
-          <div key={it.t} className="flex flex-col items-center gap-0.5">
-            <span
-              className={`relative flex h-7 w-14 items-center justify-center rounded-full ${
-                it.on ? 'bg-brand-100' : ''
-              }`}
-            >
-              <MI d={it.d} size={18} className={it.on ? 'text-brand-700' : 'text-ink-500'} />
-              {it.dot ? (
-                <span className="absolute right-3.5 top-0.5 h-2 w-2 rounded-full bg-danger ring-2 ring-brand-50" />
-              ) : null}
-              {it.num ? (
-                <span className="absolute right-2.5 -top-0.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-danger px-0.5 text-[9px] font-medium text-white ring-2 ring-brand-50">
-                  {it.num}
-                </span>
-              ) : null}
-            </span>
-            <span className={`text-[11.5px] ${it.on ? 'font-medium text-brand-700' : 'text-ink-500'}`}>
-              {it.t}
-            </span>
-          </div>
-        ))}
-      </div>
+      <BadgeNavI />
     </Frame>
   ),
 
   'tab-bar::顶栏 + 标签页（最标准形态）': () => (
     <Frame className="w-full max-w-[330px] p-4">
-      <div className="w-full overflow-hidden rounded-xl bg-surface shadow-card ring-1 ring-ink-100">
-        <div className="flex h-10 items-center bg-solid px-3 text-[14.5px] font-medium text-white">
-          我的订单
-        </div>
-        <div className="px-3 pt-1">
-          <div className="w-full border-b border-ink-100">
-            <div className="flex">
-              {['全部', '待付款', '已完成'].map((t, i) => (
-                <span
-                  key={t}
-                  className={`relative flex-1 pb-2 pt-1 text-center text-[14px] ${
-                    i === 0 ? 'font-medium text-brand-600' : 'text-ink-500'
-                  }`}
-                >
-                  {t}
-                  {i === 0 ? (
-                    <span className="absolute inset-x-4 -bottom-px h-[2.5px] rounded-full bg-brand-500" />
-                  ) : null}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-        <div className="p-3 text-[12.5px] text-ink-500">全部订单</div>
-      </div>
+      <OrderTabsI />
     </Frame>
   ),
   'tab-bar::标签多到放不下：isScrollable': () => (
     <Frame className="w-full max-w-[310px] p-4">
       <div className="w-full overflow-hidden rounded-xl bg-surface p-3 shadow-card ring-1 ring-ink-100">
-        <div className="flex gap-3 overflow-x-auto border-b border-ink-100 pb-2 thin-scroll">
-          {['推荐', '数码', '家电', '美妆', '母婴', '运动', '图书'].map((t, i) => (
-            <span
-              key={t}
-              className={`relative shrink-0 text-[13.5px] ${
-                i === 0 ? 'font-medium text-brand-600' : 'text-ink-500'
-              }`}
-            >
-              {t}
-              {i === 0 ? (
-                <span className="absolute -bottom-2 left-1/2 h-[2.5px] w-4 -translate-x-1/2 rounded-full bg-brand-500" />
-              ) : null}
-            </span>
-          ))}
-        </div>
+        <ScrollTabsI />
         <span className="mt-2 block font-mono text-[10.5px] text-ink-400">
           isScrollable: true → 可横向滚动
         </span>
@@ -2953,23 +3386,8 @@ export const demoMocks: Record<string, () => ReactNode> = {
   ),
 
   'theme::两个页面之间切换明暗主题': () => (
-    <Frame className="gap-3 p-4">
-      <div className="flex-1 overflow-hidden rounded-xl bg-surface p-3 shadow-card ring-1 ring-ink-100">
-        <span className="block text-[12.5px] font-medium text-ink-900">浅色</span>
-        <div className="mt-1.5 h-2 w-3/4 rounded bg-ink-100" />
-        <div className="mt-1 h-2 w-1/2 rounded bg-ink-100" />
-        <div className="mt-2 inline-block rounded-full bg-solid px-2 py-0.5 text-[11px] text-white">
-          按钮
-        </div>
-      </div>
-      <div className="flex-1 overflow-hidden rounded-xl bg-[#1f2328] p-3">
-        <span className="block text-[12.5px] font-medium text-white">深色</span>
-        <div className="mt-1.5 h-2 w-3/4 rounded bg-surface/15" />
-        <div className="mt-1 h-2 w-1/2 rounded bg-surface/15" />
-        <div className="mt-2 inline-block rounded-full bg-brand-400 px-2 py-0.5 text-[11px] text-[#0d1b2a]">
-          按钮
-        </div>
-      </div>
+    <Frame className="w-full max-w-[320px] p-4">
+      <ThemePairI />
     </Frame>
   ),
   'theme::业务代码里正确取颜色': () => (

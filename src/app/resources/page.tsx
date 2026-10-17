@@ -225,7 +225,7 @@ function StepCard({ s }: { s: Step }) {
         <div className="flex shrink-0 items-start gap-3 sm:w-[124px] sm:flex-col sm:gap-2">
           <span
             className={`font-mono text-[33px] font-bold leading-none tracking-tight ${
-              coming ? 'text-ink-400' : s.accent ? 'text-brand-600' : 'text-brand-500'
+              coming ? 'text-ink-400' : 'text-brand-600'
             }`}
           >
             {s.no}

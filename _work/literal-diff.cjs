@@ -9,6 +9,7 @@ const path = require('path');
 
 const DATA_DIR = 'src/data/components';
 const MOCK_FILE = 'src/components/demo-mocks.tsx';
+const KIT_FILE = 'src/components/mock-kit.tsx';
 
 function maskTemplates(s) {
   let out = '';
@@ -62,8 +63,23 @@ function parseData() {
   return out;
 }
 
+/** 取某个组件的定义体（const X = ... 或 function X(...)） */
+function defOf(src, name) {
+  for (const pat of [`const ${name} =`, `function ${name}(`]) {
+    const s = src.indexOf(pat);
+    if (s >= 0) {
+      const rest = src.slice(s);
+      const next = rest.slice(1).search(/\n(?:const|function|export)\s/);
+      return rest.slice(0, next === -1 ? rest.length : next + 1);
+    }
+  }
+  return '';
+}
+
 function parseMocks() {
   const src = fs.readFileSync(MOCK_FILE, 'utf8');
+  // 局部零件可能定义在 demo-mocks.tsx，也可能在 mock-kit.tsx（PressBtn/FilterBarI…）
+  const all = src + '\n' + fs.readFileSync(KIT_FILE, 'utf8');
   const start = src.indexOf('export const demoMocks');
   const body = src.slice(start === -1 ? 0 : start);
   const map = new Map();
@@ -72,18 +88,18 @@ function parseMocks() {
     const s = k.index;
     const e = i + 1 < keys.length ? keys[i + 1].index : body.length;
     let text = body.slice(s, e).trim();
-    const ref = text.match(/=>\s*<([A-Z]\w+)\s*\/>/);
-    if (ref) {
-      for (const pat of [`const ${ref[1]} =`, `function ${ref[1]}(`]) {
-        const defStart = src.indexOf(pat);
-        if (defStart >= 0) {
-          const rest = src.slice(defStart);
-          const nextDef = rest.slice(1).search(/\n(?:const|function|export)\s/);
-          const defEnd = nextDef === -1 ? rest.length : nextDef + 1;
-          text += '\n' + rest.slice(0, defEnd);
-          break;
-        }
-      }
+    // ★ mock 可能只是渲染一个局部组件（<OrderTabsI />），要把组件定义也并入文本，
+    //   否则扫描器看不到里面的中文文案，会误报「图里没有」。
+    const seen = new Set();
+    const queue = [...text.matchAll(/<([A-Z]\w+)/g)].map((m) => m[1]);
+    while (queue.length && seen.size < 24) {
+      const name = queue.shift();
+      if (seen.has(name)) continue;
+      seen.add(name);
+      const def = defOf(all, name);
+      if (!def) continue;
+      text += '\n' + def;
+      for (const m of def.matchAll(/<([A-Z]\w+)/g)) queue.push(m[1]);
     }
     map.set(k[1].replace(/\\'/g, "'"), text);
   });

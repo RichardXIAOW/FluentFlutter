@@ -6,7 +6,7 @@ export default function NotFound() {
       id="main"
       className="mx-auto flex min-h-[calc(100vh-var(--hd-h)-160px)] max-w-page flex-col items-center justify-center px-4 py-20 text-center"
     >
-      {/* 68px 的装饰数字：原先用 text-brand-100，浅色下只有 1.12:1 几乎看不见，
+      {/* 68px 的装饰数字：原先用最浅的一档品牌色，浅色下只有 1.12:1 几乎看不见，
           改成渐变文字既是"科技风"该有的样子，也天然满足大字号 3:1 的下限 */}
       <span className="text-grad font-mono text-[68px] font-bold leading-none tracking-tight">
         404

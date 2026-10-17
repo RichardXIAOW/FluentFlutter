@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import CodeBlock from './CodeBlock';
+import MockRuntime from './MockRuntime';
 
 /**
  * 首页的「代码 → 真实渲染」对照演示
@@ -34,19 +35,27 @@ function M3Card({ children }: { children: React.ReactNode }) {
   );
 }
 
-function M3PrimaryButton({ children }: { children: React.ReactNode }) {
+function M3PrimaryButton({ children, toast }: { children: React.ReactNode; toast?: string }) {
   return (
-    <span className="inline-flex h-10 items-center justify-center rounded-[20px] bg-grad-brand px-6 text-[17px] font-medium tracking-[.01em] text-white">
+    <button
+      type="button"
+      data-snack={toast}
+      className="inline-flex h-10 select-none items-center justify-center rounded-[20px] bg-grad-brand px-6 text-[17px] font-medium tracking-[.01em] text-white transition active:brightness-95"
+    >
       {children}
-    </span>
+    </button>
   );
 }
 
-function M3OutlinedButton({ children }: { children: React.ReactNode }) {
+function M3OutlinedButton({ children, toast }: { children: React.ReactNode; toast?: string }) {
   return (
-    <span className="inline-flex h-10 items-center justify-center rounded-[20px] border border-ink-300 px-6 text-[17px] font-medium text-brand-600">
+    <button
+      type="button"
+      data-snack={toast}
+      className="inline-flex h-10 select-none items-center justify-center rounded-[20px] border border-ink-300 px-6 text-[17px] font-medium text-brand-600 transition hover:bg-brand-50 active:brightness-95"
+    >
       {children}
-    </span>
+    </button>
   );
 }
 
@@ -90,9 +99,13 @@ const SAMPLES: Sample[] = [
             <span className="ml-2 truncate text-[17px] text-ink-900">
               广州市天河区体育西路 1 号
             </span>
-            <span className="ml-auto shrink-0 pl-2 text-[16px] font-medium text-brand-600">
+            <button
+              type="button"
+              data-snack="地址已复制"
+              className="ml-auto shrink-0 pl-2 text-[16px] font-medium text-brand-600 transition hover:text-brand-700"
+            >
               复制
-            </span>
+            </button>
           </div>
         </M3Card>
         <p className="mt-2 text-center text-[13.5px] text-ink-400">
@@ -180,8 +193,8 @@ Column(
           <p className="text-[19px] font-semibold text-ink-900">订单已提交</p>
           <p className="mt-1.5 text-[16px] text-ink-600">预计 3 个工作日内发货</p>
           <div className="mt-4 flex items-center gap-3">
-            <M3PrimaryButton>查看订单</M3PrimaryButton>
-            <M3OutlinedButton>联系客服</M3OutlinedButton>
+            <M3PrimaryButton toast="打开订单详情">查看订单</M3PrimaryButton>
+            <M3OutlinedButton toast="正在接入客服…">联系客服</M3OutlinedButton>
           </div>
         </M3Card>
       </div>
@@ -228,10 +241,14 @@ export default function DemoShowcase() {
 
         {/* 右：渲染 */}
         <div className="flex flex-col justify-center gap-3 bg-ink-50/40 p-5">
-          <span className="text-[13.5px] font-semibold uppercase tracking-wider text-ink-400">
+          <span className="flex items-center gap-2 text-[13.5px] font-semibold uppercase tracking-wider text-ink-400">
             实际渲染效果
+            <span className="flex items-center gap-1 rounded-full bg-surface px-2 py-0.5 text-[11.5px] font-medium normal-case tracking-normal text-brand-700 ring-1 ring-brand-100">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-brand-500" />
+              可点击
+            </span>
           </span>
-          <div className="flex justify-center">{s.render}</div>
+          <MockRuntime className="flex justify-center">{s.render}</MockRuntime>
         </div>
       </div>
 

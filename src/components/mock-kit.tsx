@@ -722,3 +722,495 @@ export function InkWellI() {
     </button>
   );
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   可交互控件（2026-10-17 补）
+   目标：预览区不是一个静态截图 —— 按钮能按、输入框能打、单选多选能切。
+   注意：这些零件只负责「行为」，样式仍由调用方给 className，
+   以保证图形的每个像素依然和示例代码一一对应。
+   ══════════════════════════════════════════════════════════════════ */
+
+/** 通用可按压元素：涟漪 + 按压反馈 + 可选 SnackBar */
+export function PressBtn({
+  children,
+  className = '',
+  onClick,
+  toast,
+  disabled = false,
+  ariaLabel,
+}: {
+  children: ReactNode;
+  className?: string;
+  onClick?: () => void;
+  /** 按下后弹一条材质 SnackBar 的文案（模拟 onPressed 里的提示） */
+  toast?: string;
+  disabled?: boolean;
+  ariaLabel?: string;
+}) {
+  const { add, node } = useRipple();
+  return (
+    <button
+      type="button"
+      disabled={disabled}
+      aria-label={ariaLabel}
+      onClick={() => {
+        if (disabled) return;
+        add();
+        if (toast) window.dispatchEvent(new CustomEvent('mock-snack', { detail: toast }));
+        onClick?.();
+      }}
+      className={`relative select-none overflow-hidden transition active:brightness-95 ${
+        disabled ? 'cursor-not-allowed' : 'cursor-pointer'
+      } ${className}`}
+    >
+      {node}
+      {children}
+    </button>
+  );
+}
+
+/** 真·输入框：能打字、能聚焦、能显示错误 */
+export function FieldI({
+  label,
+  placeholder,
+  defaultValue = '',
+  error,
+  hint,
+  trailing,
+  counter = false,
+  maxLength,
+  inputMode,
+  type = 'text',
+  className = '',
+}: {
+  label?: string;
+  placeholder?: string;
+  defaultValue?: string;
+  error?: string;
+  hint?: string;
+  trailing?: ReactNode;
+  counter?: boolean;
+  maxLength?: number;
+  inputMode?: 'text' | 'numeric' | 'tel' | 'email';
+  type?: string;
+  className?: string;
+}) {
+  const [val, setVal] = useState(defaultValue);
+  const [focus, setFocus] = useState(false);
+  return (
+    <label className={`block ${className}`}>
+      {label && (
+        <span className={`mb-0.5 block text-[12px] ${focus ? 'text-brand-600' : 'text-ink-500'}`}>
+          {label}
+        </span>
+      )}
+      <span
+        className={`flex items-center gap-1.5 rounded-lg border bg-surface px-3 py-1.5 transition ${
+          error
+            ? 'border-danger ring-2 ring-danger/15'
+            : focus
+              ? 'border-brand-500 ring-2 ring-brand-500/15'
+              : 'border-ink-300'
+        }`}
+      >
+        <input
+          type={type}
+          inputMode={inputMode}
+          maxLength={maxLength}
+          value={val}
+          placeholder={placeholder}
+          onChange={(e) => setVal(e.target.value)}
+          onFocus={() => setFocus(true)}
+          onBlur={() => setFocus(false)}
+          className="w-full bg-transparent text-[14px] text-ink-900 outline-none placeholder:text-ink-400"
+        />
+        {counter && maxLength ? (
+          <span className="shrink-0 font-mono text-[11px] text-ink-400">
+            {val.length}/{maxLength}
+          </span>
+        ) : null}
+        {trailing}
+      </span>
+      {error ? (
+        <span className="mt-0.5 block text-[11.5px] text-danger">{error}</span>
+      ) : hint ? (
+        <span className="mt-0.5 block text-[11.5px] text-ink-400">{hint}</span>
+      ) : null}
+    </label>
+  );
+}
+
+/** 单选列表（RadioListTile 那种整行可点） */
+export function RadioListI({
+  items,
+  init = 0,
+  onChange,
+}: {
+  items: { label: string; icon?: string }[];
+  init?: number;
+  onChange?: (label: string) => void;
+}) {
+  const [sel, setSel] = useState(init);
+  return (
+    <div className="w-full overflow-hidden rounded-xl bg-surface shadow-card ring-1 ring-ink-100">
+      {items.map((it, i) => (
+        <div key={it.label}>
+          {i > 0 && <div className="ml-3 h-px bg-ink-100" />}
+          <button
+            type="button"
+            onClick={() => {
+              setSel(i);
+              onChange?.(it.label);
+            }}
+            className="flex w-full items-center gap-3 px-3 py-2.5 text-left transition hover:bg-ink-50/70"
+          >
+            {it.icon && (
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" className="shrink-0 text-ink-500">
+                <path d={it.icon} />
+              </svg>
+            )}
+            <span className={`min-w-0 flex-1 text-[14px] ${sel === i ? 'text-ink-900' : 'text-ink-700'}`}>
+              {it.label}
+            </span>
+            <span
+              className={`flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full border-2 transition ${
+                sel === i ? 'border-brand-500' : 'border-ink-300'
+              }`}
+            >
+              {sel === i && <span className="h-2 w-2 rounded-full bg-brand-500" />}
+            </span>
+          </button>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/** 单选 chips（ChoiceChip） */
+export function ChoiceChipsI({
+  items,
+  init = 0,
+  className = '',
+}: {
+  items: string[];
+  init?: number;
+  className?: string;
+}) {
+  const [sel, setSel] = useState(init);
+  return (
+    <div className={`flex flex-wrap gap-2 ${className}`}>
+      {items.map((t, i) => (
+        <button
+          key={t}
+          type="button"
+          onClick={() => setSel(i)}
+          className={`inline-flex items-center gap-1 rounded-lg px-3.5 py-1.5 text-[14px] transition ${
+            sel === i
+              ? 'bg-solid font-medium text-white shadow-sm'
+              : 'bg-ink-50 text-ink-600 ring-1 ring-ink-200 hover:bg-brand-50'
+          }`}
+        >
+          {sel === i && (
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
+              <path d="m5 12.5 4.5 4.5L19 7.5" />
+            </svg>
+          )}
+          {t}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+/** 复选列表 + 父级全选/半选 */
+export function CheckListI({ items, init = [] as number[] }: { items: string[]; init?: number[] }) {
+  const [on, setOn] = useState<boolean[]>(items.map((_, i) => init.includes(i)));
+  const all = on.every(Boolean);
+  const some = on.some(Boolean) && !all;
+  return (
+    <div className="w-full">
+      <div className="flex items-center gap-2.5 border-b border-ink-100 pb-2">
+        <button
+          type="button"
+          onClick={() => setOn(on.map(() => !all))}
+          className={`flex h-[18px] w-[18px] items-center justify-center rounded-[4px] transition ${
+            all ? 'bg-solid text-white' : some ? 'bg-brand-500' : 'border-2 border-ink-300'
+          }`}
+        >
+          {all && (
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round">
+              <path d="m5 12.5 4.5 4.5L19 7.5" />
+            </svg>
+          )}
+          {some && <span className="h-0.5 w-2.5 rounded bg-surface" />}
+        </button>
+        <span className="text-[14px] font-medium text-ink-900">全选</span>
+        <span className="ml-auto text-[11.5px] text-ink-400">已选 {on.filter(Boolean).length}/4</span>
+      </div>
+      <div className="mt-2 space-y-2">
+        {items.map((t, i) => (
+          <button
+            key={t}
+            type="button"
+            onClick={() => setOn((s) => s.map((v, j) => (j === i ? !v : v)))}
+            className="flex w-full items-center gap-2.5 text-left"
+          >
+            <span
+              className={`flex h-[18px] w-[18px] items-center justify-center rounded-[4px] transition ${
+                on[i] ? 'bg-solid text-white' : 'border-2 border-ink-300'
+              }`}
+            >
+              {on[i] && (
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round">
+                  <path d="m5 12.5 4.5 4.5L19 7.5" />
+                </svg>
+              )}
+            </span>
+            <span className="text-[14px] text-ink-700">{t}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** FilterChip 工具条：多选 + 「已选 …」/「未筛选」提示 + 重置 */
+export function FilterBarI({
+  options,
+  init = [] as string[],
+  footer = true,
+}: {
+  options: string[];
+  init?: string[];
+  footer?: boolean;
+}) {
+  const [sel, setSel] = useState<string[]>(init);
+  const toggle = (o: string) =>
+    setSel((s) => (s.includes(o) ? s.filter((x) => x !== o) : [...s, o]));
+  return (
+    <div className="w-full">
+      <div className="flex flex-wrap gap-1.5">
+        {options.map((o) => {
+          const on = sel.includes(o);
+          return (
+            <button
+              key={o}
+              type="button"
+              onClick={() => toggle(o)}
+              className={`flex items-center gap-1 rounded-lg px-2.5 py-1 text-[13px] transition ${
+                on
+                  ? 'bg-solid text-white shadow-sm'
+                  : 'bg-ink-50 text-ink-600 ring-1 ring-ink-200 hover:bg-brand-50'
+              }`}
+            >
+              {on && (
+                <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
+                  <path d="m5 12.5 4.5 4.5L19 7.5" />
+                </svg>
+              )}
+              {o}
+            </button>
+          );
+        })}
+      </div>
+      {footer && (
+        <div className="mt-2 flex items-center border-t border-ink-100 pt-2">
+          <span className="text-[12px] text-ink-500">
+            {sel.length === 0 ? '未筛选' : `已选：${sel.join(' · ')}`}
+          </span>
+          {sel.length > 0 && (
+            <button
+              type="button"
+              onClick={() => setSel([])}
+              className="ml-auto rounded border border-ink-200 px-2 py-0.5 text-[12px] text-ink-600 transition hover:border-brand-300 hover:text-brand-700"
+            >
+              重置
+            </button>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** 搜索栏：能打字，有输入才出现清除按钮 */
+export function SearchBarI({
+  hint = '搜索商品',
+  defaultValue = '',
+  onSubmit,
+}: {
+  hint?: string;
+  defaultValue?: string;
+  onSubmit?: (v: string) => void;
+}) {
+  const [val, setVal] = useState(defaultValue);
+  const [focus, setFocus] = useState(false);
+  return (
+    <div
+      className={`flex h-10 w-full items-center gap-2 rounded-full bg-ink-50 px-3.5 transition ${
+        focus ? 'ring-2 ring-brand-400' : 'ring-1 ring-ink-200'
+      }`}
+    >
+      <MI d={P.search} size={16} className="shrink-0 text-ink-500" />
+      <input
+        value={val}
+        placeholder={hint}
+        onChange={(e) => setVal(e.target.value)}
+        onFocus={() => setFocus(true)}
+        onBlur={() => setFocus(false)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') onSubmit?.(val);
+        }}
+        className="w-full bg-transparent text-[14px] text-ink-900 outline-none placeholder:text-ink-400"
+      />
+      {val && (
+        <button
+          type="button"
+          aria-label="清空"
+          onClick={() => setVal('')}
+          className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-ink-500 transition hover:bg-ink-200"
+        >
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+            <path d="M6 6l12 12M18 6 6 18" />
+          </svg>
+        </button>
+      )}
+    </div>
+  );
+}
+
+/* ═══════════════ 下拉选择 ═══════════════ */
+
+/**
+ * 下拉选择：点字段开合，点选项即选中。
+ * 初始默认展开，这样图里能同时看到「已选值」和「全部选项」，和代码里的 items 对得上。
+ */
+export function DropI({
+  label,
+  items,
+  init = 0,
+  hint,
+  muted = false,
+  expandable = true,
+  footer,
+  className = '',
+}: {
+  label?: string;
+  items: { t: string }[];
+  init?: number;
+  hint?: string;
+  muted?: boolean;
+  expandable?: boolean;
+  footer?: ReactNode;
+  className?: string;
+}) {
+  const [idx, setIdx] = useState(init);
+  const [open, setOpen] = useState(true);
+  const [hover, setHover] = useState(-1);
+  return (
+    <div className={`w-full ${className}`}>
+      {label && <span className="mb-0.5 block text-[12px] text-brand-600">{label}</span>}
+      <button
+        type="button"
+        data-press
+        aria-label={label ?? hint ?? '下拉选择'}
+        onClick={() => setOpen((o) => !o)}
+        className={`flex h-10 w-full items-center justify-between rounded-lg border bg-surface px-3 text-[14px] transition ${
+          muted ? 'border-ink-300 text-ink-400' : 'border-brand-500 text-ink-900'
+        } hover:bg-subtle`}
+      >
+        <span className="truncate">{items[idx]?.t}</span>
+        <svg
+          viewBox="0 0 24 24"
+          width="16"
+          height="16"
+          className={`shrink-0 text-ink-400 transition-transform ${open ? 'rotate-180' : ''}`}
+          fill="currentColor"
+        >
+          <path d="M12 15.5 5.5 9h13L12 15.5Z" />
+        </svg>
+      </button>
+      {open && (
+        <div className="mt-1 overflow-hidden rounded-lg bg-surface shadow-pop ring-1 ring-ink-100">
+          {items.map((it, i) => (
+            <button
+              key={it.t}
+              type="button"
+              data-press
+              onMouseEnter={() => setHover(i)}
+              onMouseLeave={() => setHover(-1)}
+              onClick={() => {
+                setIdx(i);
+                setOpen(false);
+              }}
+              className={`flex w-full items-center px-3 py-1.5 text-left text-[13px] transition ${
+                i === idx
+                  ? 'bg-brand-50 text-brand-600'
+                  : hover === i
+                    ? 'bg-subtle text-ink-900'
+                    : muted && i === 0
+                      ? 'text-ink-400'
+                      : 'text-ink-700'
+              }`}
+            >
+              {it.t}
+            </button>
+          ))}
+        </div>
+      )}
+      {footer}
+    </div>
+  );
+}
+
+/* ═══════════════ 可点列表 / 宫格 ═══════════════ */
+
+/** 列表项：点一下高亮，再点取消；用于演示 ListTile 的点击反馈 */
+export function TapListI({
+  items,
+  init = -1,
+  onTap,
+  leadingGap = 'gap-3',
+}: {
+  items: { t: string; sub?: string; icon?: string; trailing?: ReactNode }[];
+  init?: number;
+  onTap?: (i: number) => void;
+  leadingGap?: string;
+}) {
+  const [sel, setSel] = useState(init);
+  return (
+    <div className="w-full">
+      {items.map((it, i) => (
+        <button
+          key={it.t}
+          type="button"
+          data-press
+          onClick={() => {
+            setSel(i === sel ? -1 : i);
+            onTap?.(i);
+          }}
+          className={`flex w-full items-center ${leadingGap} rounded-lg px-3 py-2.5 text-left transition ${
+            i === sel ? 'bg-brand-50' : 'hover:bg-subtle'
+          }`}
+        >
+          {it.icon && (
+            <span
+              className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
+                i === sel ? 'bg-brand-500 text-white' : 'bg-ink-100 text-ink-600'
+              }`}
+            >
+              <MI d={it.icon} size={16} />
+            </span>
+          )}
+          <span className="min-w-0 flex-1">
+            <span className={`block truncate text-[14px] ${i === sel ? 'text-brand-700' : 'text-ink-900'}`}>
+              {it.t}
+            </span>
+            {it.sub && <span className="block truncate text-[12px] text-ink-500">{it.sub}</span>}
+          </span>
+          {it.trailing}
+        </button>
+      ))}
+    </div>
+  );
+}

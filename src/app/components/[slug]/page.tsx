@@ -125,14 +125,20 @@ export default function ComponentPage({
         </header>
 
         {/* ── 图形示例：一眼看到这个组件长什么样 ── */}
-        <section className="mt-6 overflow-hidden rounded-xl border border-ink-100 bg-surface shadow-card">
-          <div className="flex items-center gap-2 border-b border-ink-100 bg-ink-50/70 px-4 py-2">
-            <span className="text-[14.5px] font-medium text-ink-500">组件效果</span>
-            <span className="text-[13.5px] text-ink-400">
-              HTML 复刻的典型外观，细节以真实 Flutter 渲染为准
+        <section className="mt-6 overflow-hidden rounded-2xl border border-ink-100 bg-surface shadow-card">
+          <div className="flex flex-wrap items-center gap-2 border-b border-ink-100 bg-ink-50/70 px-4 py-2.5">
+            <span className="flex items-center gap-1.5 text-[14.5px] font-medium text-ink-700">
+              <span className="h-1.5 w-1.5 rounded-full bg-ok" />
+              组件效果
+            </span>
+            <span className="rounded-full bg-brand-50 px-2 py-0.5 text-[12.5px] font-medium text-brand-700 ring-1 ring-brand-100">
+              可交互
+            </span>
+            <span className="ml-auto hidden text-[13.5px] text-ink-400 sm:inline">
+              点一下试试 · HTML 复刻的典型外观，细节以真实 Flutter 渲染为准
             </span>
           </div>
-          {<MockBox slug={c.slug} />}
+          <MockBox slug={c.slug} canvas />
         </section>
 
         {/* ── 什么时候用 / 别用 ── */}

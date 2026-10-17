@@ -304,6 +304,28 @@ svg {
   to { opacity: 0; transform: translate(-50%, -50%) scale(1.6); }
 }
 
+/* MockRuntime 注入的涟漪节点：位置跟随按下的点 */
+.mock-ink {
+  position: absolute;
+  border-radius: 9999px;
+  background: currentColor;
+  opacity: .28;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0);
+  animation: ripple .5s ease-out forwards;
+  will-change: transform, opacity;
+}
+.dark .mock-ink { opacity: .34; }
+
+/* 按下去的那一下：只做轻微亮度变化，不动 transform
+   （控件里有大量 -translate-* 定位，改 transform 会跳位） */
+[data-pressing='1'] { filter: brightness(.94); }
+[data-press] { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+[data-press]:focus-visible {
+  outline: 2px solid rgb(var(--brand-500));
+  outline-offset: 2px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .anim-in { animation: none; }
@@ -311,16 +333,22 @@ svg {
 }
 
 /* ══════════════════════════════════════════════════════════════════════
-   预览区棋盘底（区分透明区域）—— 随主题切换
+   预览台（示例图形 / Flutter 预览）底纹 —— 随主题切换
+   原来是棋盘格，视觉噪音偏大；改成极淡的点阵，更像一块「画布」，
+   也让里面 bg-surface 的卡片/控件浮得起来（FlutterUnit 的观感更接近这个）。
    ══════════════════════════════════════════════════════════════════════ */
 .preview-grid {
-  background-image:
-    linear-gradient(45deg, rgb(var(--grid-cell)) 25%, transparent 25%),
-    linear-gradient(-45deg, rgb(var(--grid-cell)) 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, rgb(var(--grid-cell)) 75%),
-    linear-gradient(-45deg, transparent 75%, rgb(var(--grid-cell)) 75%);
-  background-size: 16px 16px;
-  background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+  background-color: rgb(var(--canvas));
+  background-image: radial-gradient(rgb(var(--grid-cell)) 1.1px, transparent 1.1px);
+  background-size: 14px 14px;
+  background-position: 0 0;
 }
-:root { --grid-cell: 241 245 249; }
-.dark { --grid-cell: 26 33 43; }
+:root { --grid-cell: 203 213 225; }
+.dark { --grid-cell: 30 41 59; }
+
+/* 从侧边栏/目录跳到某个示例时，给卡片一个短暂的聚焦环 */
+section[id^='demo-']:target {
+  border-color: rgb(var(--brand-300));
+  box-shadow: 0 0 0 3px rgb(var(--brand-100));
+}
+
