@@ -216,31 +216,45 @@
 │ )
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'list-tile::三种典型版式': () => (
-│     <Frame className="w-full max-w-[300px] flex-col items-stretch gap-1.5 p-4">
-│       {[
-│         ['单行', ['曹禹']],
-│         ['两行', ['曹禹', '最近消息：明天见']],
-│         ['三行', ['曹禹', '最近消息：明天见', '昨天 22:10']],
-│       ].map(([t, lines]) => (
-│         <div key={String(t)} className="flex items-center gap-3 rounded-lg bg-surface px-3 py-2 shadow-card ring-1 ring-ink-100">
-│           <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-100 text-[13px] font-semibold text-brand-700">
-│             曹
-│           </span>
-│           <span className="min-w-0 flex-1">
-│             {(lines as string[]).map((line, li) => (
-│               <span
-│                 key={line}
-│                 className={`block truncate ${
-│                   li === 0 ? 'text-[13.5px] text-ink-900' : 'text-[12px] text-ink-500'
-│                 }`}
-│               >
-│                 {line}
-│               </span>
-│             ))}
-│           </span>
-│           <span className="shrink-0 rounded bg-ink-50 px-1.5 py-0.5 text-[10.5px] text-ink-400">{t}</span>
-│         </div>
-│       ))}
+│     // 与代码一一对应：① SwitchListTile 设置项 ② 头像+双行+箭头导航项 ③ 标题+时间+右侧金额状态
+│     <Frame className="w-full max-w-[320px] flex-col items-stretch gap-2 p-4">
+│       {/* ① 设置项：图标 + 标题 + 开关 */}
+│       <div className="flex items-center gap-3 rounded-lg bg-surface px-3 py-2 shadow-card ring-1 ring-ink-100">
+│         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-ink-500">
+│           <path d="M12 4a5 5 0 0 0-5 5v3l-1.5 3h13L17 12V9a5 5 0 0 0-5-5ZM10 18a2 2 0 0 0 4 0" />
+│         </svg>
+│         <span className="min-w-0 flex-1">
+│           <span className="block truncate text-[13.5px] text-ink-900">推送通知</span>
+│           <span className="block truncate text-[12px] text-ink-500">仅在工作时间提醒</span>
+│         </span>
+│         <span className="flex h-[18px] w-[32px] shrink-0 items-center rounded-full bg-solid px-[2px]">
+│           <span className="ml-auto h-[14px] w-[14px] rounded-full bg-surface" />
+│         </span>
+│       </div>
+│       {/* ② 导航项：头像 + 双行文字 + 箭头 */}
+│       <div className="flex items-center gap-3 rounded-lg bg-surface px-3 py-2 shadow-card ring-1 ring-ink-100">
+│         <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-100 text-[13px] font-semibold text-brand-700">
+│           曹
+│         </span>
+│         <span className="min-w-0 flex-1">
+│           <span className="block truncate text-[13.5px] text-ink-900">项目群</span>
+│           <span className="block truncate text-[12px] text-ink-500">最近消息：明天见</span>
+│         </span>
+│         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="text-ink-300">
+│           <path d="m9 5 7 7-7 7" />
+│         </svg>
+│       </div>
+│       {/* ③ 金额项：标题 + 时间 + 右对齐金额与状态 */}
+│       <div className="flex items-center gap-3 rounded-lg bg-surface px-3 py-2 shadow-card ring-1 ring-ink-100">
+│         <span className="min-w-0 flex-1">
+│           <span className="block truncate text-[13.5px] text-ink-900">数码相机（95 新）</span>
+│           <span className="block truncate text-[12px] text-ink-500">2026-10-16 20:31</span>
+│         </span>
+│         <span className="shrink-0 text-right">
+│           <span className="block text-[13.5px] font-semibold text-ink-900">¥128.00</span>
+│           <span className="block text-[12px] text-ok">已完成</span>
+│         </span>
+│       </div>
 │     </Frame>
 │   ),
 └──────────────────────────────────────────────────────────────────────
@@ -1131,6 +1145,22 @@
 │           Alignment.bottomLeft
 │         </span>
 │       </div>
+│       {/* 用法 2 —— Alignment(0, 0.4) 按比例定位 */}
+│       <div className="relative h-[52px] w-full rounded-lg border border-dashed border-ok/50 bg-ok/5">
+│         <span className="absolute left-1/2 top-[70%] -translate-x-1/2 -translate-y-1/2 rounded bg-ok px-1.5 py-0.5 text-[10.5px] text-white">
+│           标记位置
+│         </span>
+│         <span className="absolute right-2 top-1.5 font-mono text-[10px] text-ink-400">
+│           Alignment(0, 0.4)
+│         </span>
+│       </div>
+│       {/* 用法 3 —— 空状态：图标中间偏上 + 文字在下面 */}
+│       <div className="flex h-[72px] w-full flex-col items-center justify-center rounded-lg bg-ink-50">
+│         <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="text-ink-300">
+│           <path d="M3 13h5l2 3h4l2-3h5M3 13l3-8h12l3 8v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-6Z" />
+│         </svg>
+│         <span className="mt-1 text-[12px] text-ink-500">还没有数据</span>
+│       </div>
 │     </Frame>
 │   ),
 └──────────────────────────────────────────────────────────────────────
@@ -1468,19 +1498,20 @@
 │ )
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'safe-area::底部操作栏：正确写法': () => (
+│     // 与代码一一对应：AppBar「确认订单」+ body OrderSummary + SafeArea(FilledButton「提交订单」)
 │     <Frame className="w-full max-w-[240px]">
 │       <div className="relative h-[125px] w-full overflow-hidden rounded-xl bg-surface shadow-card ring-1 ring-ink-100">
-│         <div className="space-y-2 p-2.5">
+│         <div className="flex h-7 items-center bg-solid px-2.5 text-[12.5px] font-medium text-white">
+│           确认订单
+│         </div>
+│         <div className="space-y-1.5 p-2.5">
 │           <div className="h-2.5 w-2/3 rounded bg-ink-100" />
 │           <div className="h-2.5 w-1/2 rounded bg-ink-100" />
 │         </div>
 │         <div className="absolute bottom-0 left-0 right-0">
-│           <div className="flex gap-1.5 px-2.5 pb-1.5">
-│             <span className="flex-1 rounded-full border border-ink-300 py-1 text-center text-[12px] text-brand-600">
-│               取消
-│             </span>
-│             <span className="flex-1 rounded-full bg-solid py-1 text-center text-[12px] text-white">
-│               确认
+│           <div className="px-2.5 pb-1.5">
+│             <span className="block rounded-full bg-solid py-1 text-center text-[12px] font-medium text-white">
+│               提交订单
 │             </span>
 │           </div>
 │           <div className="flex h-5 items-center justify-center bg-danger/10 text-[10.5px] text-danger">
@@ -1556,20 +1587,30 @@
 │ }
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'selectable-text::订单号可复制 + 整页可选中': () => (
+│     // 与代码一一对应：① ListTile(订单号 / SelectableText / 复制按钮 → SnackBar「已复制订单号」)
+│     // ② AgreementPage：SelectionArea 让整页「用户协议」可选中
 │     <Frame className="w-full max-w-[280px] flex-col items-stretch gap-2.5 p-4">
-│       <div className="rounded-lg bg-ink-50 px-3 py-2">
-│         <span className="block text-[11.5px] text-ink-400">普通 Text（选了没反应）</span>
-│         <span className="text-[14px] text-ink-600">SN20261015001</span>
+│       <div className="overflow-hidden rounded-xl bg-surface shadow-card ring-1 ring-ink-100">
+│         <div className="flex items-center gap-3 px-3 py-2.5">
+│           <span className="min-w-0 flex-1">
+│             <span className="block text-[13.5px] text-ink-900">订单号</span>
+│             <span className="block font-mono text-[13px] tracking-wide text-ink-600">
+│               SN20261015001
+│             </span>
+│           </span>
+│           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-ink-400">
+│             <path d="M9 9h10v10a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V9Zm2-2V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v10" />
+│           </svg>
+│         </div>
+│         <div className="border-t border-ink-100 bg-ok/5 px-3 py-1.5 text-[11px] text-ok">
+│           点复制 → SnackBar「已复制订单号」
+│         </div>
 │       </div>
 │       <div className="rounded-lg bg-brand-50 px-3 py-2 ring-1 ring-brand-200">
-│         <span className="block text-[11.5px] text-brand-600">SelectableText（可选中复制）</span>
-│         <span className="font-mono text-[14px] text-ink-900 ring-1 ring-brand-500/50 ring-offset-1">
-│           SN20261015001
+│         <span className="block text-[12px] text-brand-700">
+│           协议页用 SelectionArea 包住 →「用户协议」整页文字都能选中
 │         </span>
 │       </div>
-│       <span className="text-center font-mono text-[11px] text-ink-400">
-│         SelectionArea 可让整页可选中
-│       </span>
 │     </Frame>
 │   ),
 └──────────────────────────────────────────────────────────────────────
@@ -1693,19 +1734,27 @@
 │         <span className="text-[15px] font-medium text-danger">¥</span>
 │         <span className="text-[28px] font-bold leading-none text-danger">1299</span>
 │         <span className="text-[15px] font-semibold text-danger">.00</span>
-│         <span className="ml-2 rounded bg-ok/10 px-1.5 py-0.5 text-[12px] font-medium text-ok">
-│           官方旗舰店
+│       </div>
+│       <div className="flex items-start gap-1.5">
+│         <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-[3px] bg-solid text-white">
+│           <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round">
+│             <path d="m5 12.5 4.5 4.5L19 7.5" />
+│           </svg>
+│         </span>
+│         <span className="text-[13px] leading-relaxed text-ink-500">
+│           我已阅读并同意
+│           <span className="text-brand-600 underline decoration-dotted">《用户协议》</span>
+│           与
+│           <span className="text-brand-600 underline decoration-dotted">《隐私政策》</span>
 │         </span>
 │       </div>
-│       <span className="text-[13px] leading-relaxed text-ink-500">
-│         下单即表示同意
-│         <span className="text-brand-600 underline decoration-dotted">《用户协议》</span>
-│         与
-│         <span className="text-brand-600 underline decoration-dotted">《隐私政策》</span>
-│       </span>
-│       <span className="flex items-center gap-1 text-[13px] text-brand-600">
-│         <MI d={P.person} size={12} />
-│         WidgetSpan 插图标
+│       <span className="flex items-center gap-1 text-[13px] text-ink-700">
+│         <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-ok text-white">
+│           <svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round">
+│             <path d="m5 12.5 4.5 4.5L19 7.5" />
+│           </svg>
+│         </span>
+│         官方旗舰店
 │       </span>
 │     </Frame>
 │   ),
@@ -1766,20 +1815,28 @@
 │ )
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'ink-well::水波纹被盖住的经典 bug 与修法': () => (
+│     // 与代码一一对应：❌「点了没有任何反馈」 / ✅「有水波纹了」 / ✅ Ink+圆角「产品卡片」
 │     <Frame className="w-full max-w-[410px] gap-3 p-4">
 │       <div className="flex-1">
 │         <span className="mb-1 block text-[11.5px] text-danger">❌ Container 盖住水波</span>
 │         <div className="flex items-center gap-2 rounded-lg bg-surface px-3 py-2.5 shadow-card ring-1 ring-ink-100">
-│           <span className="text-[13.5px] text-ink-700">点我</span>
-│           <span className="ml-auto text-[11px] text-ink-400">无反馈</span>
+│           <span className="text-[13.5px] text-ink-700">点了没有任何反馈</span>
 │         </div>
 │       </div>
 │       <div className="flex-1">
 │         <span className="mb-1 block text-[11.5px] text-ok">✅ Ink 铺底 + InkWell 在上</span>
 │         <div className="relative flex items-center gap-2 overflow-hidden rounded-lg bg-surface px-3 py-2.5 shadow-card ring-1 ring-ink-100">
 │           <span className="absolute left-1/2 top-1/2 h-14 w-14 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-500/20" />
-│           <span className="relative text-[13.5px] text-ink-700">点我</span>
-│           <span className="relative ml-auto text-[11px] text-brand-600">有涟漪</span>
+│           <span className="relative text-[13.5px] text-ink-700">有水波纹了</span>
+│         </div>
+│       </div>
+│       <div className="flex-1">
+│         <span className="mb-1 block text-[11.5px] text-ok">✅ InkWell 套在外面 + borderRadius: 12</span>
+│         <div className="flex items-center gap-2 rounded-xl border border-ink-200 bg-surface px-3 py-2.5 shadow-card">
+│           <span className="text-[13.5px] text-ink-700">产品卡片</span>
+│           <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="ml-auto text-ink-400">
+│             <path d="m9 5 7 7-7 7" />
+│           </svg>
 │         </div>
 │       </div>
 │     </Frame>
@@ -1827,20 +1884,28 @@
 │ )
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'ink-well::GestureDetector 做滑动删除 + 全区域可点': () => (
-│     <Frame className="w-full max-w-[290px] p-4">
+│     // 与代码一一对应：① Dismissible 左滑出「删除」（confirmDismiss 先确认）
+│     // ② GestureDetector(opaque) 包 标题 + 40 空白 + 副标题，空白也能点
+│     <Frame className="w-full max-w-[290px] flex-col gap-2.5 p-4">
 │       <div className="relative w-full overflow-hidden rounded-xl">
 │         <span className="absolute inset-y-0 right-0 flex w-14 items-center justify-center bg-danger text-[12.5px] font-medium text-white">
-│           删除
+│           <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+│             <path d="M4 7h16M9 7V5h6v2m-8 0 1 13h8l1-13M10 11v6m4-6v6" />
+│           </svg>
 │         </span>
 │         <div className="relative -translate-x-[52px] rounded-xl bg-surface px-3 py-2.5 shadow-card ring-1 ring-ink-100">
-│           <span className="flex items-center gap-2">
-│             <span className="text-[14px] text-ink-800">滑动整行都可触发</span>
-│             <MI d={P.chevR} size={15} className="ml-auto text-ink-400" />
-│           </span>
-│           <span className="mt-1 block text-[11.5px] text-ink-400">
-│             InkWell 的 onTap 全区域可点
+│           <span className="block text-[14px] text-ink-800">这条记录的标题</span>
+│           <span className="mt-0.5 block text-[11.5px] text-ink-400">
+│             左滑 → 确认框「确定删除这条记录？」
 │           </span>
 │         </div>
+│       </div>
+│       <div className="w-full rounded-xl bg-surface px-3 py-2.5 shadow-card ring-1 ring-ink-100">
+│         <span className="block text-[14px] text-ink-800">标题</span>
+│         <span className="my-4 block border-t border-dashed border-ink-200 pt-1 text-center text-[10.5px] text-ink-300">
+│           这块空白也应该能点（behavior: opaque）
+│         </span>
+│         <span className="block text-[13px] text-ink-500">副标题</span>
 │       </div>
 │     </Frame>
 │   ),
@@ -1910,9 +1975,11 @@
 │ 'banner::离线横幅：只显示一条 + 恢复后自动关闭': () => (
 │     <Frame className="w-full max-w-[320px] flex-col gap-2 p-4">
 │       <div className="flex w-full items-center gap-2 rounded-lg bg-warn/10 px-3 py-2 ring-1 ring-warn/40">
-│         <MI d={P.notif} size={15} className="shrink-0 text-warn" />
-│         <span className="text-[13px] text-ink-700">当前离线（只显示这一条）</span>
-│         <span className="ml-auto text-[12.5px] font-medium text-warn">详情</span>
+│         <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 text-warn">
+│           <path d="M12 3l9 16H3l9-16Zm0 7v4m0 3v.5" />
+│         </svg>
+│         <span className="text-[13px] text-ink-700">当前无网络连接，部分内容可能无法加载</span>
+│         <span className="ml-auto shrink-0 text-[12.5px] font-medium text-warn">重试</span>
 │       </div>
 │       <div className="flex items-center gap-2 rounded-lg bg-ok/10 px-3 py-2 ring-1 ring-ok/40">
 │         <svg viewBox="0 0 24 24" width="13" height="13" fill="none" className="stroke-ok" strokeWidth="2.6" strokeLinecap="round">
@@ -2013,8 +2080,12 @@
 │         <div className="rounded-xl bg-surface p-3.5 shadow-pop">
 │           <p className="text-[15px] font-semibold text-ink-900">添加备注</p>
 │           <div className="mt-2 rounded-lg border-2 border-brand-500 px-2.5 py-1.5 ring-2 ring-brand-500/15">
-│             <span className="text-[13.5px] text-ink-900">尽快发货</span>
+│             <span className="text-[13.5px] text-ink-400">请输入备注内容</span>
 │             <span className="ml-0.5 inline-block h-3.5 w-px animate-pulse bg-brand-500 align-middle" />
+│           </div>
+│           <div className="mt-2 flex justify-end gap-1">
+│             <span className="px-2.5 py-1 text-[13px] text-brand-600">取消</span>
+│             <span className="rounded-full bg-solid px-3 py-1 text-[13px] font-medium text-white">确定</span>
 │           </div>
 │           <div className="mt-2 rounded-lg bg-ink-200/70 p-1">
 │             <div className="grid grid-cols-6 gap-0.5">
@@ -2054,16 +2125,17 @@
 │ )
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'snack-bar::基础用法与两种行为': () => (
+│     // 与代码一一对应：fixed「已保存」贴底 / floating「已添加到购物车」浮起带 margin
 │     <Frame className="w-full max-w-[300px] flex-col gap-2 p-4">
-│       <div className="flex w-full items-center rounded-lg bg-[#2c3038] px-3.5 py-2.5 shadow-pop">
-│         <span className="text-[13px] text-white">
-│           SnackBarBehavior.floating（浮起）
-│         </span>
+│       <div className="px-2 pt-1">
+│         <div className="flex w-full items-center rounded-lg bg-[#2c3038] px-3.5 py-2.5 shadow-pop">
+│           <span className="text-[13px] text-white">已添加到购物车</span>
+│           <span className="ml-auto font-mono text-[10px] text-white/50">floating</span>
+│         </div>
 │       </div>
 │       <div className="flex w-full items-center rounded-lg bg-[#2c3038] px-3.5 py-2.5">
-│         <span className="text-[13px] text-white">
-│           SnackBarBehavior.fixed（贴底）
-│         </span>
+│         <span className="text-[13px] text-white">已保存</span>
+│         <span className="ml-auto font-mono text-[10px] text-white/50">fixed</span>
 │       </div>
 │     </Frame>
 │   ),
@@ -2150,7 +2222,7 @@
 │           <span className="text-[13px] text-white/60">上一条（即将消失）</span>
 │         </div>
 │         <div className="absolute inset-x-0 top-8 flex items-center rounded-lg bg-[#2c3038] px-3.5 py-2.5 shadow-pop">
-│           <span className="text-[13px] text-white">最新一条</span>
+│           <span className="text-[13px] text-white">新的提示</span>
 │           <span className="ml-auto text-[13px] text-brand-400">撤销</span>
 │         </div>
 │       </div>
@@ -2204,6 +2276,7 @@
 │       <DialogI
 │         title="删除这条记录？"
 │         body="删除后无法恢复，该记录的所有附件也会一并删除。"
+│         cancelLabel="取消"
 │         okLabel="删除"
 │         okDanger
 │       />
@@ -2464,10 +2537,7 @@
 │         <div className="h-[3px] w-full bg-brand-100">
 │           <div className="h-full w-2/3 bg-brand-500" />
 │         </div>
-│         <div className="space-y-1.5 p-2.5">
-│           <div className="h-2.5 w-3/4 rounded bg-ink-100" />
-│           <div className="h-2.5 w-1/2 rounded bg-ink-100" />
-│         </div>
+│         <div className="flex h-5 items-center px-2.5 text-[13px] text-ink-700">页面内容</div>
 │       </div>
 │       <span className="mt-1.5 block text-center font-mono text-[10.5px] text-ink-400">
 │         页面加载时置顶，不占布局
@@ -2504,7 +2574,7 @@
 │         <div className="h-full w-[68%] rounded-full bg-brand-500" />
 │       </div>
 │       <div className="flex items-baseline justify-between">
-│         <span className="text-[12px] text-ink-500">正在下载资源包</span>
+│         <span className="text-[12px] text-ink-500">正在上传</span>
 │         <span className="font-mono text-[13px] font-medium text-brand-600">68%</span>
 │       </div>
 │       <span className="font-mono text-[11px] text-ink-400">value: 0.68</span>
@@ -2535,17 +2605,36 @@
 │ )
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'tooltip::基础用法': () => (
-│     <Frame className="w-full max-w-[270px] flex-col items-center gap-2 p-4">
-│       <span className="relative">
-│         <span className="rounded-md bg-[#2c3038] px-2.5 py-1 text-[13px] text-white shadow-pop">
-│           分享给好友
+│     // 与代码一一对应：① 删除按钮 + message「这是删除按钮，点了之后无法恢复」
+│     // ② 导出图标 + message「导出数据」（waitDuration 500ms）
+│     <Frame className="w-full max-w-[270px] flex-col items-center gap-3 p-4">
+│       <div className="flex flex-col items-center">
+│         <span className="relative">
+│           <span className="rounded-md bg-[#2c3038] px-2.5 py-1 text-[12.5px] text-white shadow-pop">
+│             这是删除按钮，点了之后无法恢复
+│           </span>
+│           <span className="absolute left-1/2 top-full h-2 w-2 -translate-x-1/2 -translate-y-1 rotate-45 bg-[#2c3038]" />
 │         </span>
-│         <span className="absolute left-1/2 top-full h-2 w-2 -translate-x-1/2 -translate-y-1 rotate-45 bg-[#2c3038]" />
-│       </span>
-│       <span className="mt-2 flex h-9 w-9 items-center justify-center rounded-full text-ink-600 ring-1 ring-ink-200">
-│         <MI d={P.share} size={19} />
-│       </span>
-│       <span className="text-[11px] text-ink-400">长按 / 悬停触发</span>
+│         <span className="mt-2 flex h-9 w-9 items-center justify-center rounded-full text-ink-600 ring-1 ring-ink-200">
+│           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+│             <path d="M4 7h16M9 7V5h6v2m-8 0 1 13h8l1-13M10 11v6m4-6v6" />
+│           </svg>
+│         </span>
+│       </div>
+│       <div className="flex flex-col items-center">
+│         <span className="relative">
+│           <span className="rounded-md bg-[#2c3038] px-2.5 py-1 text-[12.5px] text-white shadow-pop">
+│             导出数据
+│           </span>
+│           <span className="absolute left-1/2 top-full h-2 w-2 -translate-x-1/2 -translate-y-1 rotate-45 bg-[#2c3038]" />
+│         </span>
+│         <span className="mt-2 flex h-9 w-9 items-center justify-center rounded-full text-ink-600 ring-1 ring-ink-200">
+│           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+│             <path d="M12 4v11m-5-4 5 5 5-5M5 20h14" />
+│           </svg>
+│         </span>
+│       </div>
+│       <span className="text-[11px] text-ink-400">长按 / 悬停 500ms 触发</span>
 │     </Frame>
 │   ),
 └──────────────────────────────────────────────────────────────────────
@@ -2564,14 +2653,20 @@
 │ )
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'tooltip::自定义外观': () => (
+│     // 与代码一一对应：message「自定义样式的提示」，decoration 色 #2c3038、圆角 8
 │     <Frame className="w-full max-w-[290px] flex-col items-center gap-2 p-4">
-│       <span className="relative rounded-lg bg-solid px-3 py-1.5 text-[13px] text-white shadow-pop">
-│         自定义气泡
-│         <span className="absolute left-1/2 top-full h-2 w-2 -translate-x-1/2 -translate-y-1 rotate-45 bg-brand-500" />
+│       <span className="relative rounded-lg bg-[#2c3038] px-3 py-1.5 text-[13px] text-white shadow-pop">
+│         自定义样式的提示
+│         <span className="absolute left-1/2 top-full h-2 w-2 -translate-x-1/2 -translate-y-1 rotate-45 bg-[#2c3038]" />
 │       </span>
-│       <span className="mt-2 text-[12.5px] text-ink-600">悬停目标</span>
+│       <span className="mt-2 flex h-9 w-9 items-center justify-center rounded-full text-ink-600 ring-1 ring-ink-200">
+│         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+│           <circle cx="12" cy="12" r="9" />
+│           <path d="M12 11v5m0-8v.5" />
+│         </svg>
+│       </span>
 │       <span className="font-mono text-[10.5px] text-ink-400">
-│         decoration / textStyle / waitDuration
+│         decoration / textStyle / padding
 │       </span>
 │     </Frame>
 │   ),
@@ -2733,8 +2828,24 @@
 │ }
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'bottom-sheet::选择器（最典型用法）': () => (
+│     // 与代码一一对应：showModalBottomSheet 排序方式 —— 标题 + 综合排序(当前选中✓)/价格从低到高/销量优先
 │     <Frame className="w-full max-w-[280px] p-4">
-│       <SheetI items={['拍照上传', '从相册选择', '取消']} />
+│       <div className="w-full overflow-hidden rounded-t-2xl bg-surface p-3 shadow-pop ring-1 ring-ink-100 anim-in">
+│         <span className="mx-auto block h-1 w-9 rounded-full bg-ink-200" />
+│         <div className="mt-2 divide-y divide-ink-50">
+│           <div className="py-2 text-[15px] font-semibold text-ink-900">排序方式</div>
+│           {['综合排序', '价格从低到高', '销量优先'].map((t, i) => (
+│             <div key={t} className="flex items-center py-2 text-[15px] text-ink-700">
+│               {t}
+│               {i === 0 && (
+│                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" className="ml-auto text-brand-600">
+│                   <path d="m5 12.5 4.5 4.5L19 7.5" />
+│                 </svg>
+│               )}
+│             </div>
+│           ))}
+│         </div>
+│       </div>
 │     </Frame>
 │   ),
 └──────────────────────────────────────────────────────────────────────
@@ -2802,9 +2913,13 @@
 │ )
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'elevated-button::最基础的用法': () => (
-│     <Frame>
+│     // 与代码一一对应：确认提交（onPressed 有回调）/ 不可点击（onPressed: null 禁用态）
+│     <Frame className="gap-3">
 │       <span className="inline-flex h-9 items-center justify-center rounded-[18px] bg-brand-50 px-5 text-[15px] font-medium text-brand-600 shadow-sm">
-│         提交
+│         确认提交
+│       </span>
+│       <span className="inline-flex h-9 cursor-not-allowed items-center justify-center rounded-[18px] bg-ink-100 px-5 text-[15px] font-medium text-ink-400">
+│         不可点击
 │       </span>
 │     </Frame>
 │   ),
@@ -2826,21 +2941,14 @@
 │ )
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'elevated-button::改高度和圆角': () => (
-│     <Frame className="flex-col gap-2.5">
-│       {[
-│         ['默认 40 / 圆角 20', 'h-9 rounded-[18px] px-4'],
-│         ['高 48 / 圆角 10', 'h-12 rounded-[10px] px-5'],
-│         ['高 36 / 直角', 'h-9 rounded-none px-4'],
-│       ].map(([t, cls]) => (
-│         <div key={t} className="flex items-center gap-3">
-│           <span className="w-[120px] shrink-0 text-[12.5px] text-ink-400">{t}</span>
-│           <span
-│             className={`inline-flex items-center justify-center bg-brand-50 text-[14.5px] font-medium text-brand-600 shadow-sm ${cls}`}
-│           >
-│             按钮
-│           </span>
-│         </div>
-│       ))}
+│     // 与代码一一对应：minimumSize 48 高、圆角 10、文字「整行宽度」（会撑满可用宽）
+│     <Frame className="w-full p-4">
+│       <span className="inline-flex h-12 w-full items-center justify-center rounded-[10px] bg-brand-50 text-[15px] font-medium text-brand-600 shadow-sm">
+│         整行宽度
+│       </span>
+│       <span className="mt-2 block font-mono text-[10.5px] text-ink-400">
+│         minimumSize: Size.fromHeight(48) · borderRadius: 10
+│       </span>
 │     </Frame>
 │   ),
 └──────────────────────────────────────────────────────────────────────
@@ -2855,16 +2963,13 @@
 │ )
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'elevated-button::带图标': () => (
-│     <Frame className="gap-3">
-│       <span className="inline-flex h-9 items-center gap-1.5 rounded-[18px] bg-brand-50 px-4 text-[15px] font-medium text-brand-600 shadow-sm">
-│         <span className="text-[17px] leading-none">＋</span>新建
-│       </span>
-│       <span className="inline-flex h-9 items-center gap-1.5 rounded-[18px] bg-brand-50 px-4 text-[15px] font-medium text-brand-600 shadow-sm">
-│         <span className="text-[17px] leading-none">↓</span>下载
-│       </span>
-│       <span className="inline-flex h-9 items-center gap-1.5 rounded-[18px] bg-brand-50 px-4 text-[15px] font-medium text-brand-600 shadow-sm">
-│         下一步
-│         <MI d={P.chevR} size={15} />
+│     // 与代码一一对应：单个 ElevatedButton.icon(icon: Icons.download, label: '下载')
+│     <Frame>
+│       <span className="inline-flex h-9 items-center gap-2 rounded-[18px] bg-brand-50 px-4 text-[15px] font-medium text-brand-600 shadow-sm">
+│         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+│           <path d="M12 4v11m-5-4 5 5 5-5M5 20h14" />
+│         </svg>
+│         下载
 │       </span>
 │     </Frame>
 │   ),
@@ -2907,24 +3012,18 @@
 │ }
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'elevated-button::请求中禁用（最常见的实战需求）': () => (
+│     // 与代码一一对应：空闲态 child「提交」；_loading=true 时 onPressed 变 null（变灰）、child 变 18×18 spinner
 │     <Frame className="w-full flex-col items-stretch gap-3 p-4">
 │       <div className="flex items-center gap-3">
-│         <span className="w-[70px] shrink-0 text-[12.5px] text-ink-400">空闲</span>
+│         <span className="w-[70px] shrink-0 text-[12.5px] text-ink-400">_loading: false</span>
 │         <span className="inline-flex h-9 items-center rounded-[18px] bg-solid px-4 text-[15px] font-medium text-white shadow-sm">
 │           提交
 │         </span>
 │       </div>
 │       <div className="flex items-center gap-3">
-│         <span className="w-[70px] shrink-0 text-[12.5px] text-brand-600">请求中</span>
-│         <span className="inline-flex h-9 min-w-[104px] items-center justify-center gap-2 rounded-[18px] bg-solid/45 px-4 text-[15px] font-medium text-white">
-│           <Spinner />
-│           提交中…
-│         </span>
-│       </div>
-│       <div className="flex items-center gap-3">
-│         <span className="w-[70px] shrink-0 text-[12.5px] text-ink-400">禁用</span>
-│         <span className="inline-flex h-9 items-center rounded-[18px] bg-brand-50 px-4 text-[15px] font-medium text-ink-400 shadow-sm">
-│           不可用
+│         <span className="w-[70px] shrink-0 text-[12.5px] text-brand-600">_loading: true</span>
+│         <span className="inline-flex h-9 min-w-[104px] items-center justify-center rounded-[18px] bg-solid/45 px-4 shadow-sm">
+│           <Spinner size={16} cls="border-white/60 border-t-white" />
 │         </span>
 │       </div>
 │     </Frame>
@@ -2951,21 +3050,17 @@
 │ )
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'filled-button::三种强调层级': () => (
+│     // 与代码一一对应：FilledButton「主要操作」 / FilledButton.tonal「次要操作」 / TextButton「取消」
 │     <Frame className="w-full max-w-[300px] flex-col gap-2.5">
-│       {[
-│         ['high', 'bg-solid text-white', '主操作'],
-│         ['medium', 'bg-brand-100 text-brand-800', '次操作'],
-│         ['low', 'bg-brand-50 text-brand-700', '弱操作'],
-│       ].map(([lv, cls, t]) => (
-│         <div key={lv} className="flex w-full items-center gap-3">
-│           <span className="w-12 shrink-0 font-mono text-[12px] text-ink-400">{lv}</span>
-│           <span
-│             className={`inline-flex h-9 flex-1 items-center justify-center rounded-[18px] text-[14.5px] font-medium ${cls}`}
-│           >
-│             {t}
-│           </span>
-│         </div>
-│       ))}
+│       <span className="inline-flex h-9 w-full items-center justify-center rounded-[18px] bg-solid text-[14.5px] font-medium text-white">
+│         主要操作
+│       </span>
+│       <span className="inline-flex h-9 w-full items-center justify-center rounded-[18px] bg-brand-100 text-[14.5px] font-medium text-brand-800">
+│         次要操作
+│       </span>
+│       <span className="inline-flex h-9 w-full items-center justify-center text-[14.5px] font-medium text-brand-600">
+│         取消
+│       </span>
 │     </Frame>
 │   ),
 └──────────────────────────────────────────────────────────────────────
@@ -3065,18 +3160,19 @@
 │ )
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'text-button::对话框里的标准排布': () => (
+│     // 与代码一一对应：AlertDialog 删除这条记录？/ 删除后无法恢复。/ 取消(TextButton) + 删除(FilledButton)
 │     <Frame className="p-4">
 │       <div className="w-full max-w-[290px] rounded-xl bg-surface p-4 shadow-pop ring-1 ring-ink-100">
-│         <p className="text-[15.5px] font-semibold text-ink-900">放弃编辑？</p>
+│         <p className="text-[15.5px] font-semibold text-ink-900">删除这条记录？</p>
 │         <p className="mt-1 text-[13.5px] leading-relaxed text-ink-500">
-│           未保存的内容会丢失。
+│           删除后无法恢复。
 │         </p>
 │         <div className="mt-3 flex justify-end gap-1">
 │           <span className="rounded px-3 py-1.5 text-[14.5px] font-medium text-brand-600">
 │             取消
 │           </span>
-│           <span className="rounded px-3 py-1.5 text-[14.5px] font-medium text-danger">
-│             放弃
+│           <span className="inline-flex items-center rounded-full bg-danger px-4 py-1 text-[14px] font-medium text-white">
+│             删除
 │           </span>
 │         </div>
 │       </div>
@@ -3108,6 +3204,7 @@
 │ )
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'icon-button::AppBar 上的标准用法': () => (
+│     // 与代码一一对应：AppBar「订单详情」+ actions 分享(ios_share) / 更多(more_vert)，都带 tooltip
 │     <Frame className="p-4">
 │       <div className="flex h-12 w-full max-w-[330px] items-center gap-1 rounded-xl bg-solid px-1.5 text-white">
 │         <IconBtn className="text-white">
@@ -3115,19 +3212,25 @@
 │             <path d="M19 12H5m6-6-6 6 6 6" />
 │           </svg>
 │         </IconBtn>
-│         <span className="text-[15.5px] font-medium">商品详情</span>
+│         <span className="text-[15.5px] font-medium">订单详情</span>
 │         <span className="ml-auto flex items-center">
 │           <IconBtn className="text-white">
-│             <MI d={P.fav} size={18} />
+│             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+│               <path d="M12 4v11m-5-4 5 5 5-5M5 20h14" />
+│             </svg>
 │           </IconBtn>
 │           <IconBtn className="text-white">
-│             <MI d={P.share} size={18} />
-│           </IconBtn>
-│           <IconBtn className="text-white">
-│             <MI d={P.cart} size={18} />
+│             <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+│               <circle cx="12" cy="5" r="1.8" />
+│               <circle cx="12" cy="12" r="1.8" />
+│               <circle cx="12" cy="19" r="1.8" />
+│             </svg>
 │           </IconBtn>
 │         </span>
 │       </div>
+│       <span className="mt-2 block text-center text-[11px] text-ink-400">
+│         两个图标各带 tooltip「分享」「更多」
+│       </span>
 │     </Frame>
 │   ),
 └──────────────────────────────────────────────────────────────────────
@@ -3146,19 +3249,15 @@
 │ )
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'icon-button::带圆形底的图标按钮': () => (
-│     <Frame className="gap-5">
-│       {[
-│         ['filled', 'bg-solid text-white'],
-│         ['tonal', 'bg-brand-50 text-brand-600'],
-│         ['outlined', 'border border-ink-300 text-brand-600'],
-│       ].map(([t, cls]) => (
-│         <div key={t} className="flex flex-col items-center gap-1.5">
-│           <span className={`flex h-10 w-10 items-center justify-center rounded-full ${cls}`}>
-│             <MI d={P.fav} size={19} />
-│           </span>
-│           <span className="text-[12px] text-ink-400">{t}</span>
-│         </div>
-│       ))}
+│     // 与代码一一对应：Icons.favorite_border + tooltip「收藏」+ surfaceContainerHighest 圆形底
+│     <Frame className="gap-4">
+│       <div className="flex flex-col items-center gap-1.5">
+│         <span className="flex h-11 w-11 items-center justify-center rounded-full bg-ink-100 text-ink-600">
+│           <MI d={P.fav} size={20} />
+│         </span>
+│         <span className="text-[11.5px] text-ink-500">tooltip：收藏</span>
+│       </div>
+│       <span className="font-mono text-[10.5px] text-ink-400">surfaceContainerHighest</span>
 │     </Frame>
 │   ),
 └──────────────────────────────────────────────────────────────────────
@@ -3173,18 +3272,25 @@
 │ )
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'icon-button::禁用态': () => (
+│     // 与代码一一对应：onPressed: null → 图标自动变灰；tooltip「已提交，不能重复操作」；图标 lock_outline
 │     <Frame className="gap-6">
 │       <div className="flex flex-col items-center gap-1.5">
 │         <span className="flex h-9 w-9 items-center justify-center rounded-full text-ink-600">
-│           <MI d={P.share} size={20} />
+│           <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+│             <path d="m22 2-7 20-4-9-9-4Z" />
+│           </svg>
 │         </span>
 │         <span className="text-[12px] text-ok">可点</span>
 │       </div>
 │       <div className="flex flex-col items-center gap-1.5">
-│         <span className="flex h-9 w-9 items-center justify-center rounded-full text-ink-400">
-│           <MI d={P.share} size={20} />
+│         <span className="flex h-9 w-9 items-center justify-center rounded-full text-ink-300">
+│           <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+│             <rect x="5" y="11" width="14" height="9" rx="2" />
+│             <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+│           </svg>
 │         </span>
 │         <span className="text-[12px] text-ink-400">onPressed: null</span>
+│         <span className="text-[11px] text-ink-400">已提交，不能重复操作</span>
 │       </div>
 │     </Frame>
 │   ),
@@ -3207,20 +3313,21 @@
 │ )
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'icon::基本用法与尺寸': () => (
+│     // 与代码一一对应：Icons.star，size 16 / 24（默认）/ 36，最后一个 36 加 Colors.amber
 │     <Frame className="items-end gap-4">
 │       {[
 │         [16, '16'],
 │         [24, '24 默认'],
-│         [32, '32'],
+│         [36, '36'],
 │       ].map(([s, t]) => (
 │         <div key={String(t)} className="flex flex-col items-center gap-1.5">
-│           <MI d={P.star} size={Number(s)} className="text-warn" />
+│           <MI d={P.star} size={Number(s)} className="text-ink-600" />
 │           <span className="text-[12px] text-ink-400">{t}</span>
 │         </div>
 │       ))}
 │       <div className="flex flex-col items-center gap-1.5">
-│         <MI d={P.star} size={26} className="text-brand-600" />
-│         <span className="text-[12px] text-ink-400">color</span>
+│         <MI d={P.star} size={36} className="text-warn" />
+│         <span className="text-[12px] text-ink-400">amber</span>
 │       </div>
 │     </Frame>
 │   ),
@@ -3245,18 +3352,18 @@
 │ )
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'icon::纯装饰图标要标记为无需朗读': () => (
-│     <Frame className="gap-6">
-│       <div className="flex flex-col items-center gap-1.5">
-│         <span className="flex h-9 w-9 items-center justify-center rounded-full bg-ok/15">
-│           <MI d={P.person} size={18} className="text-ok" />
-│         </span>
-│         <span className="text-[12px] text-ink-400">会被读屏读到</span>
+│     // 与代码一一对应：Row(绿色 8px 圆点 + Text('在线')) / ExcludeSemantics(Icon(star, amber))
+│     <Frame className="w-full max-w-[270px] flex-col gap-3 p-4">
+│       <div className="flex items-center gap-2">
+│         <span className="h-2 w-2 shrink-0 rounded-full bg-ok" />
+│         <span className="text-[14px] text-ink-700">在线</span>
 │       </div>
-│       <div className="flex flex-col items-center gap-1.5">
-│         <span className="flex h-9 w-9 items-center justify-center rounded-full bg-ink-100">
-│           <MI d={P.person} size={18} className="text-ink-400" />
-│         </span>
-│         <span className="text-[12px] text-ink-400">silent: true</span>
+│       <span className="font-mono text-[10.5px] text-ink-400">
+│         excludeFromSemantics: true → 读屏只读「在线」
+│       </span>
+│       <div className="flex items-center gap-2 border-t border-ink-100 pt-2">
+│         <span className="text-[14px] text-ink-700">ExcludeSemantics 包一层</span>
+│         <MI d={P.star} size={16} className="text-warn" />
 │       </div>
 │     </Frame>
 │   ),
@@ -3284,19 +3391,19 @@
 │ )
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'text::用主题的字号阶梯，而不是自己写 fontSize': () => (
+│     // 与代码一一对应：headlineSmall「页面大标题」/ titleMedium「区块标题」/ bodyMedium 正文
+│     // / bodySmall「辅助说明文字」/ bodySmall + colorScheme.error「错误提示」
 │     <Frame className="w-full max-w-[330px] flex-col items-start gap-2 p-4">
-│       {[
-│         ['displaySmall', 'text-[26px]'],
-│         ['headlineSmall', 'text-[21px]'],
-│         ['titleMedium', 'text-[18px] font-medium'],
-│         ['bodyMedium', 'text-[16px]'],
-│         ['labelSmall', 'text-[13px] font-medium'],
-│       ].map(([n, cls]) => (
-│         <div key={n} className="flex w-full items-baseline gap-3">
-│           <span className="w-[84px] shrink-0 font-mono text-[11px] text-ink-400">{n}</span>
-│           <span className={`text-ink-900 ${cls}`}>示例文字</span>
-│         </div>
-│       ))}
+│       <span className="text-[22px] font-semibold leading-tight text-ink-900">页面大标题</span>
+│       <span className="text-[16px] font-medium text-ink-900">区块标题</span>
+│       <span className="text-[14.5px] leading-relaxed text-ink-700">
+│         正文内容，这是用户读得最多的部分。
+│       </span>
+│       <span className="text-[12.5px] text-ink-500">辅助说明文字</span>
+│       <span className="text-[12.5px] text-danger">错误提示</span>
+│       <span className="mt-1 font-mono text-[10.5px] text-ink-400">
+│         headlineSmall · titleMedium · bodyMedium · bodySmall · error
+│       </span>
 │     </Frame>
 │   ),
 └──────────────────────────────────────────────────────────────────────
@@ -3321,19 +3428,20 @@
 │ )
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'text::单行截断（列表项必备）': () => (
+│     // 与代码一一对应：maxLines:1 省略 / maxLines:2 打点，文案取代码原文
 │     <Frame className="w-full max-w-[290px] flex-col items-stretch gap-2.5 p-4">
 │       <div>
 │         <span className="mb-1 block font-mono text-[11.5px] text-danger">
 │           maxLines: 1 → 单行省略
 │         </span>
 │         <p className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-[14.5px] text-ink-700">
-│           这是一段特别长的商品标题用于演示单行截断的效果
+│           这是一个非常长的商品标题，长到一行放不下，需要截断
 │         </p>
 │       </div>
 │       <div>
-│         <span className="mb-1 block font-mono text-[11.5px] text-ok">maxLines: 2 → 换行</span>
+│         <span className="mb-1 block font-mono text-[11.5px] text-ok">maxLines: 2 → 两行打点</span>
 │         <p className="line-clamp-2 text-[14.5px] leading-snug text-ink-700">
-│           这是一段特别长的商品标题用于演示两行截断的效果
+│           这是两行描述的示例，超出两行之后会打点。适合列表里的摘要。
 │         </p>
 │       </div>
 │     </Frame>
@@ -3360,14 +3468,11 @@
 │ )
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'text::富文本：只让一部分变样式': () => (
-│     <Frame className="w-full flex-col items-start gap-2.5 p-4">
+│     // 与代码一一对应：Text.rich = 「支付金额 」+「¥128.00」(红·加粗) +「，确认后不可撤销。」
+│     <Frame className="w-full flex-col items-start p-4">
 │       <span className="text-[15.5px] leading-relaxed text-ink-700">
-│         订单 <b className="font-semibold text-brand-600">#2026</b> 已发货，实付{' '}
-│         <span className="font-bold text-danger">¥1,299.00</span>
-│       </span>
-│       <span className="text-[14px] leading-relaxed text-ink-500">
-│         超时未取件将自动退回（
-│         <span className="underline decoration-dotted">查看规则</span>）
+│         支付金额 <span className="font-semibold text-danger">¥128.00</span>
+│         ，确认后不可撤销。
 │       </span>
 │     </Frame>
 │   ),
@@ -3492,18 +3597,15 @@
 │ )
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'card::最常见的商品/文章卡片': () => (
+│     // 与代码一一对应：顶部图片（blue.shade100）+「商品标题」+ 两行截断的一句话描述
 │     <Frame className="w-full max-w-[270px]">
 │       <div className="w-full overflow-hidden rounded-xl bg-surface shadow-card ring-1 ring-ink-100">
-│         <div className="h-[81px] bg-gradient-to-br from-brand-100 to-brand-200" />
+│         <div className="h-[81px] bg-brand-100" />
 │         <div className="p-3">
-│           <p className="text-[14.5px] font-semibold text-ink-900">PulseShop 会员年卡</p>
+│           <p className="text-[14.5px] font-semibold text-ink-900">商品标题</p>
 │           <p className="mt-1 line-clamp-2 text-[13px] leading-relaxed text-ink-500">
-│             全年免运费，专属客服，生日双倍积分。
+│             这是商品的一句话描述，太长的话会截断。
 │           </p>
-│           <div className="mt-2.5 flex items-center justify-between">
-│             <span className="text-[17px] font-bold text-danger">¥199</span>
-│             <span className="text-[12px] text-ink-400">1.2 万人已购</span>
-│           </div>
 │         </div>
 │       </div>
 │     </Frame>
@@ -3523,17 +3625,14 @@
 │ )
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'card::纯色卡片（无阴影，靠底色区分）': () => (
-│     <Frame className="w-full max-w-[400px] gap-2.5">
-│       {[
-│         ['elevated', 'bg-surface shadow-card ring-1 ring-ink-100', '阴影 + 白底'],
-│         ['filled', 'bg-ink-50', '纯色底，无阴影'],
-│         ['outlined', 'border border-ink-200 bg-surface', '只有描边'],
-│       ].map(([t, cls, d]) => (
-│         <div key={t} className={`flex-1 rounded-xl p-2.5 ${cls}`}>
-│           <p className="text-[13.5px] font-semibold text-ink-900">{t}</p>
-│           <p className="mt-1 text-[12px] text-ink-500">{d}</p>
-│         </div>
-│       ))}
+│     // 与代码一一对应：elevation: 0 + surfaceContainerHighest 底 +「这是一块提示区域」
+│     <Frame className="w-full max-w-[300px]">
+│       <div className="rounded-xl bg-ink-50 p-4">
+│         <p className="text-[14.5px] text-ink-700">这是一块提示区域</p>
+│       </div>
+│       <span className="mt-2 block font-mono text-[10.5px] text-ink-400">
+│         elevation: 0 · color: surfaceContainerHighest
+│       </span>
 │     </Frame>
 │   ),
 └──────────────────────────────────────────────────────────────────────
@@ -3556,11 +3655,10 @@
 │ )
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'container::基础：一只有样式的盒子': () => (
+│     // 与代码一一对应：padding 16 + margin 8 + 白底 + 圆角 12 + black12 描边 + child「内容」
 │     <Frame>
-│       <div className="rounded-xl bg-brand-50 px-5 py-4 ring-1 ring-brand-200">
-│         <span className="text-[14.5px] text-brand-700">
-│           color + borderRadius + padding 一次写完
-│         </span>
+│       <div className="my-2 rounded-xl border border-ink-200 bg-surface px-5 py-4">
+│         <span className="text-[14.5px] text-ink-700">内容</span>
 │       </div>
 │     </Frame>
 │   ),
@@ -3629,7 +3727,7 @@
 │ 'container::渐变背景': () => (
 │     <Frame>
 │       <div className="flex h-[86px] w-[232px] items-center justify-center rounded-xl bg-gradient-to-br from-brand-400 to-brand-700">
-│         <span className="text-[14px] font-medium text-white">BoxDecoration(gradient: …)</span>
+│         <span className="text-[14px] font-medium text-white">渐变卡片</span>
 │       </div>
 │     </Frame>
 │   ),
@@ -3662,20 +3760,24 @@
 │ )
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'sized-box::替代「写死间距」的几种写法': () => (
-│     <Frame className="w-full max-w-[300px] flex-col items-stretch gap-2 p-4">
-│       {[
-│         ['SizedBox(height: 16)', '固定间距'],
-│         ['SizedBox.shrink()', '不占位（条件显示）'],
-│         ['SizedBox.expand()', '撑满父级'],
-│       ].map(([code, t]) => (
-│         <div
-│           key={code}
-│           className="flex items-center gap-2 rounded border border-dashed border-brand-200 bg-brand-50/40 px-2 py-1.5"
-│         >
-│           <span className="font-mono text-[11.5px] text-brand-600">{code}</span>
-│           <span className="ml-auto text-[12px] text-ink-500">{t}</span>
+│     // 与代码一一对应：① Column(spacing: 12) 均匀 ② 手动 SizedBox(height: 24) 个别加大
+│     <Frame className="w-full max-w-[300px] gap-3 p-4">
+│       <div className="flex-1">
+│         <span className="mb-1 block font-mono text-[11px] text-ok">✅ Column(spacing: 12)</span>
+│         <div className="flex flex-col gap-3 rounded-lg bg-surface p-2.5 shadow-card ring-1 ring-ink-100">
+│           {['第一行', '第二行', '第三行'].map((t) => (
+│             <span key={t} className="text-[13.5px] text-ink-700">{t}</span>
+│           ))}
 │         </div>
-│       ))}
+│       </div>
+│       <div className="flex-1">
+│         <span className="mb-1 block font-mono text-[11px] text-ink-400">SizedBox(height: 24)</span>
+│         <div className="flex flex-col rounded-lg bg-surface p-2.5 shadow-card ring-1 ring-ink-100">
+│           <span className="text-[13.5px] text-ink-700">第一行</span>
+│           <span className="h-6" />
+│           <span className="text-[13.5px] text-ink-700">第二行</span>
+│         </div>
+│       </div>
 │     </Frame>
 │   ),
 └──────────────────────────────────────────────────────────────────────
@@ -3743,15 +3845,18 @@
 │ )
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'text-field::基础：带标签和提示': () => (
+│     // 与代码一一对应：① labelText「手机号」+ hint「请输入 11 位手机号」+ prefix 手机图标 + 描边
+│     // ② labelText「备注」+ hint「选填」+ maxLines: 3
 │     <Frame className="w-full max-w-[260px] flex-col items-stretch gap-2.5 p-4">
 │       <div>
-│         <span className="mb-0.5 block text-[12px] text-ink-500">收件人</span>
-│         <div className="rounded-lg border border-ink-300 bg-surface px-3 py-1.5 text-[14px] text-ink-900">
-│           曹禹
+│         <span className="mb-0.5 block text-[12px] text-ink-500">手机号</span>
+│         <div className="flex items-center gap-2 rounded-lg border border-ink-300 bg-surface px-3 py-1.5">
+│           <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="text-ink-400">
+│             <rect x="7" y="3" width="10" height="18" rx="2" />
+│             <path d="M11 18h2" />
+│           </svg>
+│           <span className="text-[14px] text-ink-400">请输入 11 位手机号</span>
 │         </div>
-│         <span className="mt-0.5 block text-[11.5px] text-ink-400">
-│           helperText：请与身份证保持一致
-│         </span>
 │       </div>
 │       <div>
 │         <span className="mb-0.5 block text-[12px] text-ink-500">备注</span>
@@ -3872,19 +3977,20 @@
 │ }
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'text-field::用 controller 读值 + 释放': () => (
+│     // 与代码一一对应：hint「搜索商品」+ prefix 搜索图标 + suffix 清空按钮
 │     <Frame className="w-full max-w-[260px] flex-col items-stretch gap-2 p-4">
-│       <div className="rounded-lg border border-ink-300 bg-surface px-3 py-1.5">
-│         <span className="text-[14px] text-ink-900">pulse_dev</span>
-│         <span className="ml-0.5 inline-block h-3.5 w-px animate-pulse bg-brand-500 align-middle" />
+│       <div className="flex items-center gap-2 rounded-lg border border-ink-300 bg-surface px-3 py-1.5">
+│         <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="text-ink-400">
+│           <circle cx="11" cy="11" r="7" />
+│           <path d="m20 20-3.5-3.5" />
+│         </svg>
+│         <span className="text-[14px] text-ink-400">搜索商品</span>
+│         <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="ml-auto text-ink-400">
+│           <path d="M6 6l12 12M18 6 6 18" />
+│         </svg>
 │       </div>
-│       <div className="flex items-center gap-2">
-│         <span className="rounded bg-ink-50 px-1.5 py-0.5 font-mono text-[11px] text-ink-500">
-│           controller.text
-│         </span>
-│         <span className="text-[12px] text-brand-600">→ &quot;pulse_dev&quot;</span>
-│       </div>
-│       <span className="rounded bg-danger/10 px-1.5 py-0.5 font-mono text-[11px] text-danger">
-│         dispose() 里必须 controller.dispose()
+│       <span className="font-mono text-[10.5px] text-ink-400">
+│         _controller.text 拿值 · dispose() 释放
 │       </span>
 │     </Frame>
 │   ),
@@ -3930,15 +4036,17 @@
 │ }
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'text-field::只允许输入数字 + 限长': () => (
+│     // 与代码一一对应：labelText「验证码」+ digitsOnly + LengthLimiting(6) + counterText ''
 │     <Frame className="w-full max-w-[260px] flex-col items-stretch gap-2 p-4">
+│       <span className="mb-0.5 text-[12px] text-brand-600">验证码</span>
 │       <div className="rounded-lg border border-ink-300 bg-surface px-3 py-1.5">
 │         <div className="flex items-center">
-│           <span className="font-mono text-[14.5px] tracking-wide text-ink-900">13800138000</span>
-│           <span className="ml-auto font-mono text-[11.5px] text-ink-400">11/11</span>
+│           <span className="font-mono text-[14.5px] tracking-[0.2em] text-ink-900">123456</span>
+│           <span className="ml-auto font-mono text-[11.5px] text-ink-400">6 位</span>
 │         </div>
 │       </div>
 │       <div className="flex flex-wrap gap-1.5">
-│         {['keyboardType: number', 'maxLength: 11', 'inputFormatters'].map((t) => (
+│         {['keyboardType: number', 'LengthLimiting(6)', 'counterText: \'\''].map((t) => (
 │           <span key={t} className="rounded bg-brand-50 px-1.5 py-0.5 font-mono text-[11px] text-brand-600">
 │             {t}
 │           </span>
@@ -3960,14 +4068,15 @@
 │ )
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'text-field::错误提示': () => (
+│     // 与代码一一对应：labelText「邮箱」+ errorText「邮箱格式不正确」→ 红框 + 红字自动出现
 │     <Frame className="w-full max-w-[260px] p-4">
 │       <div className="w-full">
-│         <span className="mb-0.5 block text-[12px] text-danger">手机号</span>
+│         <span className="mb-0.5 block text-[12px] text-danger">邮箱</span>
 │         <div className="rounded-lg border-2 border-danger bg-surface px-3 py-1.5 text-[14px] text-ink-900">
-│           abc123
+│           abc#mail
 │         </div>
 │         <span className="mt-0.5 block text-[12px] text-danger">
-│           errorText：只能输入 11 位数字
+│           邮箱格式不正确
 │         </span>
 │       </div>
 │     </Frame>
@@ -4054,18 +4163,20 @@
 │ }
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'text-form-field::完整登录表单': () => (
+│     // 与代码一一对应：手机号 + 密码(obscure) + FilledButton「登录」；validator 见下方错误提示
 │     <Frame className="w-full max-w-[260px] flex-col items-stretch gap-2 p-4">
-│       {[
-│         ['邮箱', 'dev@pulseshop.cn'],
-│         ['密码', '••••••••'],
-│       ].map(([l, v]) => (
-│         <div key={l}>
-│           <span className="mb-0.5 block text-[12px] text-ink-500">{l}</span>
-│           <div className="rounded-lg border border-ink-300 bg-surface px-3 py-1.5 text-[14px] text-ink-900">
-│             {v}
-│           </div>
+│       <div>
+│         <span className="mb-0.5 block text-[12px] text-ink-500">手机号</span>
+│         <div className="rounded-lg border border-ink-300 bg-surface px-3 py-1.5 text-[14px] text-ink-900">
+│           13812345678
 │         </div>
-│       ))}
+│       </div>
+│       <div>
+│         <span className="mb-0.5 block text-[12px] text-ink-500">密码</span>
+│         <div className="rounded-lg border border-ink-300 bg-surface px-3 py-1.5 text-[14px] text-ink-900">
+│           ••••••••
+│         </div>
+│       </div>
 │       <span className="mt-0.5 rounded-full bg-solid py-1.5 text-center text-[14px] font-medium text-white">
 │         登录
 │       </span>
@@ -4179,18 +4290,22 @@
 │ }
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'form::提交时先校验、提交中禁用按钮': () => (
+│     // 与代码一一对应：① validate() 不通过 → 红框 return；② 通过 → 提交中禁用；③ SnackBar「提交成功/提交失败」
 │     <Frame className="w-full max-w-[260px] flex-col items-stretch gap-2 p-4">
 │       <div className="rounded-lg border-2 border-danger bg-surface px-3 py-1.5 text-[14px] text-ink-900">
 │         abc
 │       </div>
-│       <span className="text-[11.5px] text-danger">手机号格式不正确</span>
+│       <span className="-mt-1 text-[11.5px] text-danger">
+│         ① validate() 不通过 →「手机号格式不正确」→ return
+│       </span>
 │       <span className="flex items-center justify-center gap-2 rounded-full bg-solid/45 py-1.5 text-[14px] font-medium text-white">
 │         <Spinner size={13} />
-│         提交中…
+│         ② 提交中（onPressed: null）
 │       </span>
-│       <span className="font-mono text-[10.5px] text-ink-400">
-│         _submitting ? null : _submit
-│       </span>
+│       <div className="flex flex-col gap-1">
+│         <span className="rounded bg-[#2c3038] px-2.5 py-1 text-[12px] text-white">③ 提交成功</span>
+│         <span className="rounded bg-danger px-2.5 py-1 text-[12px] text-white">③ 提交失败：TimeoutException</span>
+│       </div>
 │     </Frame>
 │   ),
 └──────────────────────────────────────────────────────────────────────
@@ -4386,22 +4501,32 @@
 │ }
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'switch::设置页标准写法': () => (
+│     // 与代码一一对应：① 接收推送通知 + subtitle「关闭后你将不会收到订单和活动提醒」+ 铃铛图标（默认开）
+│     // ② 深色模式（默认关）
 │     <Frame className="w-full max-w-[280px]">
 │       <div className="w-full overflow-hidden rounded-xl bg-surface shadow-card ring-1 ring-ink-100">
-│         {[
-│           ['消息推送', true],
-│           ['深色模式', false],
-│         ].map(([t, on], i) => (
-│           <div key={String(t)}>
-│             {i > 0 && <div className="ml-3 h-px bg-ink-100" />}
-│             <div className="flex items-center px-3.5 py-2.5">
-│               <span className="text-[14px] text-ink-800">{t}</span>
-│               <span className="ml-auto">
-│                 <SwitchI init={Boolean(on)} />
-│               </span>
-│             </div>
-│           </div>
-│         ))}
+│         <div className="flex items-center gap-3 px-3.5 py-2.5">
+│           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-ink-500">
+│             <path d="M12 4a5 5 0 0 0-5 5v3l-1.5 3h13L17 12V9a5 5 0 0 0-5-5ZM10 18a2 2 0 0 0 4 0" />
+│           </svg>
+│           <span className="min-w-0 flex-1">
+│             <span className="block text-[14px] text-ink-800">接收推送通知</span>
+│             <span className="block text-[12px] text-ink-500">
+│               关闭后你将不会收到订单和活动提醒
+│             </span>
+│           </span>
+│           <SwitchI init={true} />
+│         </div>
+│         <div className="ml-3 h-px bg-ink-100" />
+│         <div className="flex items-center gap-3 px-3.5 py-2.5">
+│           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-ink-500">
+│             <path d="M20 13A8 8 0 1 1 11 4a6.5 6.5 0 0 0 9 9Z" />
+│           </svg>
+│           <span className="text-[14px] text-ink-800">深色模式</span>
+│           <span className="ml-auto">
+│             <SwitchI init={false} />
+│           </span>
+│         </div>
 │       </div>
 │     </Frame>
 │   ),
@@ -4424,9 +4549,10 @@
 │ }
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'switch::切换时发请求（注意别卡住 UI）': () => (
+│     // 与代码一一对应：_toggle 先乐观更新 UI，await api.updateNotification；失败回滚 + SnackBar「设置失败，请重试」
 │     <Frame className="w-full max-w-[280px] flex-col items-stretch gap-2.5 p-4">
 │       <div className="flex items-center rounded-lg bg-surface px-3.5 py-2.5 shadow-card ring-1 ring-ink-100">
-│         <span className="text-[14px] text-ink-800">同步到云端</span>
+│         <span className="text-[14px] text-ink-800">接收推送通知</span>
 │         <span className="ml-auto flex items-center gap-2">
 │           <Spinner size={13} cls="border-brand-200 border-t-brand-500" />
 │           <span className="relative flex h-[22px] w-[40px] items-center rounded-full bg-brand-500/50 px-0.5">
@@ -4434,8 +4560,11 @@
 │           </span>
 │         </span>
 │       </div>
+│       <span className="rounded bg-[#2c3038] px-2.5 py-1 text-[12px] text-white">
+│         失败回滚 + SnackBar「设置失败，请重试」
+│       </span>
 │       <span className="text-[11px] leading-snug text-ink-400">
-│         乐观更新：先切 UI，等请求；失败再回滚，别把整个页面卡住
+│         乐观更新：先切 UI，等请求；别把整个页面卡住
 │       </span>
 │     </Frame>
 │   ),
@@ -4481,21 +4610,23 @@
 │ }
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'slider::价格区间选择': () => (
-│     <Frame className="w-full max-w-[250px] flex-col items-stretch gap-3 p-4">
-│       <div className="flex items-baseline justify-between">
-│         <span className="text-[12px] text-ink-400">价格区间</span>
-│         <span className="text-[14px] font-medium text-brand-600">¥250 - ¥750</span>
-│       </div>
+│     // 与代码一一对应：单个 Slider，_max=500（min 0 / max 1000 / divisions 20），label「¥500」
+│     <Frame className="w-full max-w-[250px] flex-col items-stretch gap-2 p-4">
+│       <span className="text-[14px] text-ink-700">
+│         最高价：<span className="font-medium text-brand-600">¥500</span>
+│       </span>
 │       <div className="relative h-1.5 rounded-full bg-ink-100">
-│         <span className="absolute left-[25%] right-[25%] top-0 h-full rounded-full bg-brand-500" />
-│         <span className="absolute left-[25%] top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-500 ring-2 ring-surface" />
-│         <span className="absolute left-[75%] top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-500 ring-2 ring-surface" />
+│         <span className="absolute left-0 top-0 h-full w-1/2 rounded-full bg-brand-500" />
+│         <span className="absolute left-1/2 top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-500 ring-2 ring-surface" />
 │       </div>
 │       <div className="flex justify-between font-mono text-[11px] text-ink-400">
 │         <span>0</span>
 │         <span>500</span>
 │         <span>1000</span>
 │       </div>
+│       <span className="font-mono text-[10.5px] text-ink-400">
+│         onChangeEnd 松手才发请求 →「筛选：0 ~ 500」
+│       </span>
 │     </Frame>
 │   ),
 └──────────────────────────────────────────────────────────────────────
@@ -4579,11 +4710,20 @@
 │ }
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'search-bar::基础搜索栏': () => (
-│     <Frame className="w-full max-w-[270px] p-4">
+│     // 与代码一一对应：hintText「搜索商品、品牌、分类」+ leading search + trailing「清空」
+│     <Frame className="w-full max-w-[270px] flex-col items-stretch gap-2 p-4">
 │       <div className="flex h-10 w-full items-center gap-2 rounded-full bg-ink-50 px-3.5 ring-1 ring-ink-200">
 │         <MI d={P.search} size={16} className="shrink-0 text-ink-400" />
-│         <span className="text-[14px] text-ink-400">搜索商品…</span>
+│         <span className="text-[14px] text-ink-400">搜索商品、品牌、分类</span>
+│         <span className="ml-auto flex h-5 w-5 items-center justify-center rounded-full text-ink-400">
+│           <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+│             <path d="M6 6l12 12M18 6 6 18" />
+│           </svg>
+│         </span>
 │       </div>
+│       <span className="font-mono text-[10.5px] text-ink-400">
+│         有输入时右侧才出现「清空」
+│       </span>
 │     </Frame>
 │   ),
 └──────────────────────────────────────────────────────────────────────
@@ -4612,25 +4752,24 @@
 │ )
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'search-bar::带搜索建议（SearchAnchor）': () => (
+│     // 与代码一一对应：suggestionsBuilder 返回两条 —— 搜索「keyword」+ 历史记录
 │     <Frame className="w-full max-w-[270px] p-4">
 │       <div className="w-full">
 │         <div className="flex h-10 w-full items-center gap-2 rounded-t-full bg-surface px-3.5 ring-1 ring-brand-300">
 │           <MI d={P.search} size={16} className="shrink-0 text-brand-600" />
 │           <span className="text-[14px] text-ink-900">无线</span>
-│           <span className="ml-auto h-3.5 w-px bg-ink-300" />
 │         </div>
 │         <div className="overflow-hidden rounded-b-lg bg-surface shadow-pop ring-1 ring-ink-100">
-│           {['无线耳机', '无线充电器', '无线鼠标'].map((t, i) => (
-│             <div
-│               key={t}
-│               className={`flex items-center gap-2 px-3 py-1.5 text-[13px] ${
-│                 i === 0 ? 'bg-brand-50 text-brand-600' : 'text-ink-700'
-│               }`}
-│             >
-│               <MI d={P.search} size={11} className="text-ink-400" />
-│               {t}
-│             </div>
-│           ))}
+│           <div className="flex items-center gap-2 bg-brand-50 px-3 py-1.5 text-[13px] text-brand-600">
+│             <MI d={P.search} size={11} />
+│             搜索「无线」
+│           </div>
+│           <div className="flex items-center gap-2 px-3 py-1.5 text-[13px] text-ink-700">
+│             <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+│               <path d="M12 7v5l3.5 2M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z" />
+│             </svg>
+│             历史记录
+│           </div>
 │         </div>
 │       </div>
 │     </Frame>
@@ -4674,26 +4813,28 @@
 │ }
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'dropdown-button::基础下拉（注意 isExpanded）': () => (
+│     // 与代码一一对应：labelText「所在城市」，_city='shanghai' → 选中「上海」；items 北京/上海/广州
 │     <Frame className="w-full max-w-[220px] p-4">
 │       <div className="w-full">
-│         <div className="flex h-10 w-full items-center justify-between rounded-lg border border-ink-300 px-3 text-[14px] text-ink-900">
-│           广东省
+│         <span className="mb-0.5 block text-[12px] text-brand-600">所在城市</span>
+│         <div className="flex h-10 w-full items-center justify-between rounded-lg border border-brand-500 px-3 text-[14px] text-ink-900">
+│           上海
 │           <svg viewBox="0 0 24 24" width="16" height="16" className="text-ink-400" fill="currentColor">
 │             <path d="M12 15.5 5.5 9h13L12 15.5Z" />
 │           </svg>
 │         </div>
 │         <div className="mt-1 overflow-hidden rounded-lg bg-surface shadow-pop ring-1 ring-ink-100">
-│           {['广东省', '湖南省', '浙江省'].map((t, i) => (
+│           {['北京', '上海', '广州'].map((t, i) => (
 │             <div
 │               key={t}
-│               className={`px-3 py-1.5 text-[13px] ${i === 0 ? 'bg-brand-50 text-brand-600' : 'text-ink-700'}`}
+│               className={`flex items-center px-3 py-1.5 text-[13px] ${i === 1 ? 'bg-brand-50 text-brand-600' : 'text-ink-700'}`}
 │             >
 │               {t}
 │             </div>
 │           ))}
 │         </div>
 │         <span className="mt-1 block text-[11px] text-warn">
-│           不加 isExpanded，按钮会缩成「广」
+│           不加 isExpanded，长文字会溢出
 │         </span>
 │       </div>
 │     </Frame>
@@ -4715,6 +4856,7 @@
 │ )
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'dropdown-button::带 null 选项（允许「不限」）': () => (
+│     // 与代码一一对应：items 不限('') / 全新(new) / 二手(used)
 │     <Frame className="w-full max-w-[220px] p-4">
 │       <div className="w-full">
 │         <div className="flex h-10 w-full items-center justify-between rounded-lg border border-ink-300 bg-surface px-3 text-[14px] text-ink-400">
@@ -4724,8 +4866,8 @@
 │           </svg>
 │         </div>
 │         <div className="mt-1 overflow-hidden rounded-lg bg-surface shadow-pop ring-1 ring-ink-100">
-│           <div className="px-3 py-1.5 text-[13px] text-ink-400">不限（value: null）</div>
-│           {['广东省', '湖南省'].map((t) => (
+│           <div className="px-3 py-1.5 text-[13px] text-ink-400">不限</div>
+│           {['全新', '二手'].map((t) => (
 │             <div key={t} className="px-3 py-1.5 text-[13px] text-ink-700">
 │               {t}
 │             </div>
@@ -4770,16 +4912,16 @@
 │           MainAxisAlignment.spaceBetween
 │         </span>
 │         <div className="flex w-full items-center justify-between rounded border border-dashed border-brand-200 bg-brand-50/40 p-1.5">
-│           <Box className="h-6 w-12 bg-solid !text-white">左侧</Box>
-│           <Box className="h-6 w-12 bg-brand-100 !text-brand-800">右侧</Box>
+│           <span className="text-[13px] text-ink-800">订单总额</span>
+│           <span className="text-[13px] font-semibold text-ink-900">¥128.00</span>
 │         </div>
 │       </div>
 │       <div>
 │         <span className="mb-1 block font-mono text-[11px] text-ink-400">Spacer() 撑开</span>
 │         <div className="flex w-full items-center rounded border border-dashed border-brand-200 bg-brand-50/40 p-1.5">
-│           <Box className="h-6 w-12 bg-solid !text-white">左侧</Box>
+│           <span className="text-[13px] text-ink-800">订单总额</span>
 │           <span className="mx-1 flex-1 border-t border-dotted border-brand-400" />
-│           <Box className="h-6 w-12 bg-brand-100 !text-brand-800">右侧</Box>
+│           <span className="text-[13px] font-semibold text-ink-900">¥128.00</span>
 │         </div>
 │       </div>
 │     </Frame>
@@ -4814,23 +4956,30 @@
 │ )
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'row::让 Row 里的文字可伸缩（避免溢出）': () => (
+│     // 与代码一一对应：Icon 40 + Expanded(标题一行省略 + 副标题) + 箭头；标题「一个很长很长的标题会撑破布局」
 │     <Frame className="w-full flex-col gap-2 p-4">
 │       <div>
 │         <span className="mb-1 block text-[11.5px] text-danger">❌ 不用 Expanded → 溢出</span>
 │         <div className="flex w-full gap-1.5 overflow-hidden rounded border border-danger/40 bg-danger/5 p-1.5">
 │           <Box className="h-6 w-9 shrink-0 bg-ink-200 !text-ink-600">图标</Box>
 │           <span className="shrink-0 whitespace-nowrap rounded bg-danger/15 px-2 py-1 text-[12px] text-danger">
-│             很长的标题文字被挤出边界 →
+│             一个很长很长的标题会撑破布局 →
 │           </span>
 │         </div>
 │       </div>
 │       <div>
-│         <span className="mb-1 block text-[11.5px] text-ok">✅ 用 Expanded → 自动换行</span>
-│         <div className="flex w-full gap-1.5 rounded border border-ok/40 bg-ok/5 p-1.5">
-│           <Box className="h-6 w-9 shrink-0 bg-ink-200 !text-ink-600">图标</Box>
-│           <span className="min-w-0 flex-1 rounded bg-solid px-2 py-1 text-[12px] leading-tight text-white">
-│             很长的标题文字自动换行不溢出
+│         <span className="mb-1 block text-[11.5px] text-ok">✅ 用 Expanded → 一行省略不溢出</span>
+│         <div className="flex w-full items-center gap-1.5 rounded border border-ok/40 bg-ok/5 p-1.5">
+│           <Box className="h-9 w-9 shrink-0 bg-ink-200 !text-ink-600">图</Box>
+│           <span className="min-w-0 flex-1">
+│             <span className="block truncate text-[13px] text-ink-800">
+│               一个很长很长的标题会撑破布局
+│             </span>
+│             <span className="block text-[11.5px] text-ink-500">副标题</span>
 │           </span>
+│           <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="text-ink-400">
+│             <path d="m9 5 7 7-7 7" />
+│           </svg>
 │         </div>
 │       </div>
 │     </Frame>
@@ -4865,8 +5014,10 @@
 │         <div key={t}>
 │           <span className="mb-1 block font-mono text-[11px] text-ink-400">{t}</span>
 │           <div className={`flex h-11 w-full gap-1.5 rounded border border-dashed border-brand-200 p-1.5 ${cls}`}>
-│             <Box className="h-9 w-9 bg-solid !text-white">小</Box>
-│             <Box className="h-5 w-9 bg-brand-100 !text-brand-800">中</Box>
+│             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded bg-solid text-[11px] text-white">
+│               图标
+│             </span>
+│             <span className="text-[12.5px] leading-tight text-ink-800">这一行文字比较短</span>
 │           </div>
 │         </div>
 │       ))}
@@ -4910,8 +5061,7 @@
 │           mainAxisSize.max（默认）→ 没有多余空间，center 无效
 │         </span>
 │         <div className="flex flex-1 flex-col items-center justify-center gap-1 rounded border border-dashed border-danger/40 bg-danger/5 p-2">
-│           <Box className="h-5 w-14 bg-ink-200 !text-ink-600">子项</Box>
-│           <Box className="h-5 w-14 bg-ink-200 !text-ink-600">子项</Box>
+│           <Box className="h-5 w-20 bg-ink-200 !text-ink-600">我在中间吗？</Box>
 │         </div>
 │       </div>
 │       <div className="flex flex-1 flex-col">
@@ -4920,8 +5070,7 @@
 │         </span>
 │         <div className="flex flex-1 flex-col items-center justify-center rounded border border-dashed border-ok/50 bg-ok/5 p-2">
 │           <div className="flex flex-col items-center gap-1">
-│             <Box className="h-5 w-14 bg-solid !text-white">子项</Box>
-│             <Box className="h-5 w-14 bg-solid !text-white">子项</Box>
+│             <Box className="h-5 w-20 bg-solid !text-white">我在中间了</Box>
 │           </div>
 │         </div>
 │       </div>
@@ -4946,18 +5095,23 @@
 │ )
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'column::表单：标签在上、输入在下': () => (
+│     // 与代码一一对应：stretch 拉满宽度 + 手机号 / 验证码 / FilledButton「登录」
 │     <Frame className="w-full max-w-[260px] flex-col items-stretch gap-2.5 p-4">
-│       {[
-│         ['收件人', '曹禹'],
-│         ['手机号', '138****8000'],
-│       ].map(([l, v]) => (
-│         <div key={l}>
-│           <span className="mb-0.5 block text-[12px] text-ink-500">{l}</span>
-│           <div className="rounded-lg border border-ink-200 bg-surface px-3 py-1.5 text-[14px] text-ink-900">
-│             {v}
-│           </div>
+│       <div>
+│         <span className="mb-0.5 block text-[12px] text-ink-500">手机号</span>
+│         <div className="rounded-lg border border-ink-200 bg-surface px-3 py-1.5 text-[14px] text-ink-900">
+│           138****8000
 │         </div>
-│       ))}
+│       </div>
+│       <div>
+│         <span className="mb-0.5 block text-[12px] text-ink-500">验证码</span>
+│         <div className="rounded-lg border border-ink-200 bg-surface px-3 py-1.5 text-[14px] text-ink-400">
+│           请输入验证码
+│         </div>
+│       </div>
+│       <span className="rounded-full bg-solid py-1.5 text-center text-[14px] font-medium text-white">
+│         登录
+│       </span>
 │       <span className="font-mono text-[11px] text-ink-400">
 │         crossAxisAlignment: stretch 让输入框同宽
 │       </span>
@@ -4989,7 +5143,7 @@
 │ 'column::Column 太长怎么办': () => (
 │     <Frame className="w-full max-w-[260px] flex-col gap-2 p-4">
 │       <div>
-│         <span className="mb-1 block text-[11px] text-danger">❌ 直接塞 → 溢出黄黑条</span>
+│         <span className="mb-1 block text-[11px] text-danger">❌ 很多内容直接塞 → 溢出黄黑条</span>
 │         <div className="overflow-hidden rounded border border-dashed border-danger/40">
 │           <div className="flex flex-col gap-1 bg-danger/5 p-1.5">
 │             {[1, 2, 3].map((i) => (
@@ -5140,17 +5294,20 @@
 │ )
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'stack::加载遮罩：内容之上盖一层半透明': () => (
-│     <Frame className="w-full max-w-[270px]">
+│     <Frame className="w-full max-w-[270px] flex-col gap-2">
 │       <div className="relative w-full overflow-hidden rounded-xl bg-surface shadow-card ring-1 ring-ink-100">
 │         <span className="absolute inset-0 z-10 flex items-center justify-center bg-surface/70">
 │           <Spinner size={22} cls="border-brand-200 border-t-brand-500" />
 │         </span>
-│         <div className="space-y-2 p-3">
-│           <div className="h-2.5 w-2/3 rounded bg-ink-100" />
-│           <div className="h-2.5 w-full rounded bg-ink-100" />
-│           <div className="h-2.5 w-1/2 rounded bg-ink-100" />
+│         <div className="p-3">
+│           <span className="block text-[13px] text-ink-700">
+│             下面这块内容在加载时会被遮住
+│           </span>
 │         </div>
 │       </div>
+│       <span className="font-mono text-[10.5px] text-ink-400">
+│         Positioned.fill + Colors.black26
+│       </span>
 │     </Frame>
 │   ),
 └──────────────────────────────────────────────────────────────────────
@@ -5217,16 +5374,25 @@
 │ )
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'padding::列表项的标准内边距': () => (
+│     // 与代码一一对应：Icon(settings) + SizedBox(12) + Text('设置') + Icon(chevron_right)
 │     <Frame className="w-full max-w-[290px]">
 │       <div className="w-full overflow-hidden rounded-xl bg-surface shadow-card ring-1 ring-ink-100">
 │         <div className="flex items-center gap-3 px-4 py-3">
-│           <span className="h-9 w-9 shrink-0 rounded-lg bg-brand-50" />
+│           <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
+│             <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+│               <circle cx="12" cy="12" r="3" />
+│               <path d="M12 3v2.5M12 18.5V21M4.2 7.5l2.2 1.3M17.6 15.2l2.2 1.3M4.2 16.5l2.2-1.3M17.6 8.8l2.2-1.3" />
+│             </svg>
+│           </span>
 │           <span className="min-w-0 flex-1">
-│             <span className="block truncate text-[14px] text-ink-900">标准列表项</span>
+│             <span className="block truncate text-[14px] text-ink-900">设置</span>
 │             <span className="block truncate font-mono text-[11px] text-ink-400">
 │               horizontal: 16, vertical: 12
 │             </span>
 │           </span>
+│           <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="shrink-0 text-ink-400">
+│             <path d="m9 5 7 7-7 7" />
+│           </svg>
 │         </div>
 │       </div>
 │     </Frame>
@@ -5256,15 +5422,35 @@
 │ )
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'center::居中 vs 单方向对齐': () => (
-│     <Frame className="gap-5">
+│     // 与代码一一对应：Center 完全居中「我是居中的」 / Align topCenter「水平居中，贴着顶部」
+│     // / Align centerLeft「垂直居中，贴着左边」
+│     <Frame className="gap-4">
 │       {[
-│         ['Center', 'left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2', 'border-brand-300'],
-│         ['Align(topRight)', 'right-2 top-2', 'border-warn/60'],
-│       ].map(([t, pos, bd]) => (
-│         <div key={t} className="flex flex-col items-center gap-1.5">
-│           <div className={`relative h-[84px] w-[102px] rounded-lg border border-dashed ${bd}`}>
-│             <span className={`absolute ${pos} rounded bg-brand-50 px-1.5 py-0.5 text-[11.5px] text-brand-700`}>
-│               {t}
+│         [
+│           'Center',
+│           'left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2',
+│           'border-brand-300',
+│           '我是居中的',
+│         ],
+│         [
+│           'Align(topCenter)',
+│           'left-1/2 top-1.5 -translate-x-1/2',
+│           'border-warn/60',
+│           '水平居中，贴着顶部',
+│         ],
+│         [
+│           'Align(centerLeft)',
+│           'left-1.5 top-1/2 -translate-y-1/2',
+│           'border-warn/60',
+│           '垂直居中，贴着左边',
+│         ],
+│       ].map(([t, pos, bd, label]) => (
+│         <div key={String(t)} className="flex flex-col items-center gap-1.5">
+│           <div className={`relative h-[84px] w-[132px] rounded-lg border border-dashed ${bd}`}>
+│             <span
+│               className={`absolute whitespace-nowrap rounded bg-brand-50 px-1.5 py-0.5 text-[11px] text-brand-700 ${pos}`}
+│             >
+│               {label}
 │             </span>
 │           </div>
 │           <span className="font-mono text-[11px] text-ink-400">{t}</span>
@@ -5350,10 +5536,11 @@
 │         <span className="mb-1 block font-mono text-[11px] text-ink-400">
 │           Flexible → 内容小就只占内容大小
 │         </span>
-│         <div className="flex w-full gap-1.5">
+│         <div className="flex w-full items-center gap-1.5">
 │           <Box className="h-7 w-10 shrink-0 bg-ink-100 !text-ink-500">固定</Box>
-│           <Box className="h-7 w-[52px] bg-ok/20 !text-ok">Flexible</Box>
-│           <Box className="h-7 flex-1 bg-ink-50 !text-ink-400">空</Box>
+│           <Box className="h-7 w-[52px] shrink-0 bg-brand-200 !text-brand-800">容器 60</Box>
+│           <span className="shrink-0 text-[12.5px] text-ink-700">文字很短</span>
+│           <span className="flex-1 border-t border-dotted border-ink-300" />
 │         </div>
 │       </div>
 │     </Frame>
@@ -5407,13 +5594,16 @@
 │ )
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'wrap::标签云（最典型的用法）': () => (
+│     // 与代码一一对应：手机/数码/家电/图书/服饰/美妆/运动/食品/母婴 的 Chip 标签云
 │     <Frame className="w-full max-w-[270px] p-4">
-│       <div className="flex flex-wrap gap-1.5">
-│         {['热门', '数码', '服饰', '食品生鲜', '美妆个护', '家居', '运动'].map((t, i) => (
+│       <div className="flex flex-wrap gap-2">
+│         {['手机', '数码', '家电', '图书', '服饰', '美妆', '运动', '食品', '母婴'].map((t, i) => (
 │           <span
 │             key={t}
-│             className={`rounded-full px-2.5 py-1 text-[13px] ${
-│               i < 3 ? 'bg-solid text-white' : 'bg-ink-50 text-ink-600 ring-1 ring-ink-200'
+│             className={`rounded-lg px-2.5 py-1 text-[13px] ${
+│               i < 3
+│                 ? 'bg-solid text-white'
+│                 : 'bg-ink-50 text-ink-600 ring-1 ring-ink-200'
 │             }`}
 │           >
 │             {t}
@@ -5455,22 +5645,24 @@
 │ }
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'wrap::筛选条件标签': () => (
+│     // 与代码一一对应：FilterChip 包邮(选中)/现货/7天退换/品牌店
 │     <Frame className="w-full max-w-[270px] flex-col gap-2 p-4">
 │       <span className="text-[11px] text-ink-400">行放不下就自动换行</span>
 │       <div className="flex w-full flex-wrap gap-1.5">
-│         {['包邮', '七天无理由', '现货', '官方旗舰', '支持分期'].map((t) => (
+│         <span className="flex items-center gap-1 rounded-lg bg-solid px-2.5 py-1 text-[12.5px] text-white">
+│           <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
+│             <path d="m5 12.5 4.5 4.5L19 7.5" />
+│           </svg>
+│           包邮
+│         </span>
+│         {['现货', '7天退换', '品牌店'].map((t) => (
 │           <span
 │             key={t}
-│             className="flex items-center gap-1 rounded bg-brand-50 px-2 py-0.5 text-[12.5px] text-brand-700 ring-1 ring-brand-200"
+│             className="rounded-lg bg-ink-50 px-2.5 py-1 text-[12.5px] text-ink-600 ring-1 ring-ink-200"
 │           >
 │             {t}
-│             <span className="text-[11.5px] text-brand-600">×</span>
 │           </span>
 │         ))}
-│       </div>
-│       <div className="flex items-center border-t border-ink-100 pt-2">
-│         <span className="text-[12px] text-ink-400">共 5 个条件</span>
-│         <span className="ml-auto text-[12px] text-brand-600">重置</span>
 │       </div>
 │     </Frame>
 │   ),
@@ -5543,7 +5735,12 @@
 │             style={{ gridTemplateColumns: `repeat(${n}, minmax(0,1fr))` }}
 │           >
 │             {Array.from({ length: Number(n) * 2 }).map((_, i) => (
-│               <div key={i} className="aspect-square rounded bg-brand-100" />
+│               <div
+│                 key={i}
+│                 className="flex aspect-square items-center justify-center rounded bg-brand-100 text-[11px] text-brand-700"
+│               >
+│                 项目 {i + 1}
+│               </div>
 │             ))}
 │           </div>
 │         </div>
@@ -5581,9 +5778,12 @@
 │         <span className="block font-mono text-[11px] text-ok">
 │           ✅ shrinkWrap: true + physics: NeverScrollable
 │         </span>
-│         <div className="mt-1.5 grid grid-cols-3 gap-1.5">
+│         <span className="mt-1 block text-[13px] text-ink-800">上面的标题</span>
+│         <div className="mt-1 grid grid-cols-3 gap-1.5">
 │           {Array.from({ length: 3 }).map((_, i) => (
-│             <div key={i} className="aspect-square rounded bg-brand-100" />
+│             <div key={i} className="flex aspect-square items-center justify-center rounded bg-brand-100 text-[11px] text-brand-700">
+│               项目 {i + 1}
+│             </div>
 │           ))}
 │         </div>
 │       </div>
@@ -5615,14 +5815,22 @@
 │ )
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'single-child-scroll-view::表单页面（最常用场景）': () => (
+│     // 与代码一一对应：收货人 / 手机号 / 详细地址（maxLines: 3）+ FilledButton「提交」
 │     <Frame className="w-full max-w-[240px]">
 │       <div className="h-[123px] w-full overflow-y-auto rounded-xl bg-surface p-2.5 shadow-card ring-1 ring-ink-100 thin-scroll">
-│         {['收货人', '手机号', '所在地区', '详细地址'].map((t) => (
+│         {['收货人', '手机号'].map((t) => (
 │           <div key={t} className="mb-2">
 │             <span className="mb-0.5 block text-[11px] text-ink-400">{t}</span>
 │             <div className="h-5 rounded border border-ink-200 bg-ink-50/50" />
 │           </div>
 │         ))}
+│         <div className="mb-2">
+│           <span className="mb-0.5 block text-[11px] text-ink-400">详细地址</span>
+│           <div className="h-11 rounded border border-ink-200 bg-ink-50/50" />
+│         </div>
+│         <span className="block rounded-full bg-solid py-1 text-center text-[12.5px] font-medium text-white">
+│           提交
+│         </span>
 │       </div>
 │     </Frame>
 │   ),
@@ -5647,7 +5855,7 @@
 │         </div>
 │         <div className="px-2.5">
 │           <div className="flex h-12 items-center justify-center rounded bg-ink-50 text-[12px] text-ink-400">
-│             内容很少，但也能下拉
+│             内容不够高，但也能下拉
 │           </div>
 │         </div>
 │         <span className="absolute bottom-1 left-1/2 -translate-x-1/2 font-mono text-[10.5px] text-ink-400">
@@ -5676,22 +5884,32 @@
 │ )
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'app-bar::标准顶栏': () => (
+│     // 与代码一一对应：title「订单详情」+ actions 分享(ios_share) / 更多(more_vert) + body「页面内容」
 │     <Frame className="w-full max-w-[330px] p-4">
-│       <div className="flex h-12 w-full items-center gap-1 rounded-xl bg-solid px-1.5 text-white">
-│         <IconBtn className="text-white">
-│           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-│             <path d="M19 12H5m6-6-6 6 6 6" />
-│           </svg>
-│         </IconBtn>
-│         <span className="text-[15px] font-medium">商品详情</span>
-│         <span className="ml-auto flex items-center">
+│       <div className="w-full overflow-hidden rounded-xl ring-1 ring-ink-100">
+│         <div className="flex h-12 w-full items-center gap-1 bg-solid px-1.5 text-white">
 │           <IconBtn className="text-white">
-│             <MI d={P.share} size={18} />
+│             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+│               <path d="M19 12H5m6-6-6 6 6 6" />
+│             </svg>
 │           </IconBtn>
-│           <IconBtn className="text-white">
-│             <MI d={P.cart} size={18} />
-│           </IconBtn>
-│         </span>
+│           <span className="text-[15px] font-medium">订单详情</span>
+│           <span className="ml-auto flex items-center">
+│             <IconBtn className="text-white">
+│               <MI d={P.share} size={18} />
+│             </IconBtn>
+│             <IconBtn className="text-white">
+│               <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+│                 <circle cx="12" cy="5" r="1.7" />
+│                 <circle cx="12" cy="12" r="1.7" />
+│                 <circle cx="12" cy="19" r="1.7" />
+│               </svg>
+│             </IconBtn>
+│           </span>
+│         </div>
+│         <div className="flex h-12 items-center justify-center bg-surface text-[12.5px] text-ink-500">
+│           页面内容
+│         </div>
 │       </div>
 │     </Frame>
 │   ),
@@ -5715,6 +5933,7 @@
 │ )
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'app-bar::标题 + 副标题（两行）': () => (
+│     // 与代码一一对应：Text('订单 #12345', 17) + Text('2026-10-15 创建', 12)
 │     <Frame className="w-full max-w-[330px] p-4">
 │       <div className="flex h-14 w-full items-center gap-1.5 rounded-xl bg-solid px-1.5 text-white">
 │         <IconBtn className="text-white">
@@ -5723,8 +5942,8 @@
 │           </svg>
 │         </IconBtn>
 │         <span className="flex flex-col leading-tight">
-│           <span className="text-[14.5px] font-medium">订单详情</span>
-│           <span className="text-[11.5px] text-white/70">#20261015</span>
+│           <span className="text-[15px] font-medium">订单 #12345</span>
+│           <span className="text-[11.5px] text-white/70">2026-10-15 创建</span>
 │         </span>
 │       </div>
 │     </Frame>
@@ -5754,13 +5973,14 @@
 │ )
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'app-bar::搜索框直接放在顶栏里': () => (
+│     // 与代码一一对应：title 是搜索框（hint「搜索商品」）+ actions 购物车
 │     <Frame className="w-full max-w-[330px] p-4">
 │       <div className="flex h-14 w-full items-center gap-2 rounded-xl bg-brand-500 px-2.5">
 │         <span className="flex h-8 flex-1 items-center gap-1.5 rounded-full bg-surface/95 px-3">
 │           <MI d={P.search} size={14} className="text-ink-400" />
 │           <span className="text-[13px] text-ink-400">搜索商品</span>
 │         </span>
-│         <MI d={P.person} size={19} className="shrink-0 text-white" />
+│         <MI d={P.cart} size={19} className="shrink-0 text-white" />
 │       </div>
 │     </Frame>
 │   ),
@@ -5826,10 +6046,11 @@
 │ }
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'navigation-bar::用 IndexedStack 保住各页状态': () => (
+│     // 与代码一一对应：_pages = 首页 / 分类 / 购物车 / 我的，IndexedStack 保留各页 State
 │     <Frame className="w-full max-w-[310px] p-4">
 │       <div className="w-full rounded-xl bg-brand-50 p-2">
 │         <div className="mb-2 flex h-9 items-center justify-center rounded-lg bg-surface text-[12.5px] text-ink-600 shadow-sm">
-│           各页状态被保留（滚动位置 / 输入内容）
+│           首页（切走再回来，滚动位置还在）
 │         </div>
 │         <NavBarGBlock />
 │       </div>
@@ -5862,13 +6083,13 @@
 │ )
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'navigation-bar::带未读角标': () => (
+│     // 与代码一一对应：首页 / 消息（Badge 数字 3）/ 通知（小红点）
 │     <Frame className="w-full max-w-[310px] p-4">
 │       <div className="flex w-full items-center justify-around rounded-xl bg-brand-50 px-2 py-2">
 │         {[
-│           { d: P.home, t: '首页', on: true, badge: false },
-│           { d: P.cart, t: '购物车', on: false, badge: false },
-│           { d: P.notif, t: '消息', on: false, badge: true },
-│           { d: P.person, t: '我的', on: false, badge: false },
+│           { d: P.home, t: '首页', on: true, num: '', dot: false },
+│           { d: P.inbox, t: '消息', on: false, num: '3', dot: false },
+│           { d: P.notif, t: '通知', on: false, num: '', dot: true },
 │         ].map((it) => (
 │           <div key={it.t} className="flex flex-col items-center gap-0.5">
 │             <span
@@ -5877,8 +6098,13 @@
 │               }`}
 │             >
 │               <MI d={it.d} size={18} className={it.on ? 'text-brand-700' : 'text-ink-500'} />
-│               {it.badge ? (
-│                 <span className="absolute right-3 top-0 h-2 w-2 rounded-full bg-danger ring-2 ring-brand-50" />
+│               {it.dot ? (
+│                 <span className="absolute right-3.5 top-0.5 h-2 w-2 rounded-full bg-danger ring-2 ring-brand-50" />
+│               ) : null}
+│               {it.num ? (
+│                 <span className="absolute right-2.5 -top-0.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-danger px-0.5 text-[9px] font-medium text-white ring-2 ring-brand-50">
+│                   {it.num}
+│                 </span>
 │               ) : null}
 │             </span>
 │             <span className={`text-[11.5px] ${it.on ? 'font-medium text-brand-700' : 'text-ink-500'}`}>
@@ -5930,7 +6156,7 @@
 │         <div className="px-3 pt-1">
 │           <div className="w-full border-b border-ink-100">
 │             <div className="flex">
-│               {['全部', '待付款', '待发货'].map((t, i) => (
+│               {['全部', '待付款', '已完成'].map((t, i) => (
 │                 <span
 │                   key={t}
 │                   className={`relative flex-1 pb-2 pt-1 text-center text-[14px] ${
@@ -5946,7 +6172,7 @@
 │             </div>
 │           </div>
 │         </div>
-│         <div className="p-3 text-[12.5px] text-ink-400">标签页内容区</div>
+│         <div className="p-3 text-[12.5px] text-ink-500">全部订单</div>
 │       </div>
 │     </Frame>
 │   ),
@@ -5972,7 +6198,7 @@
 │     <Frame className="w-full max-w-[310px] p-4">
 │       <div className="w-full overflow-hidden rounded-xl bg-surface p-3 shadow-card ring-1 ring-ink-100">
 │         <div className="flex gap-3 overflow-x-auto border-b border-ink-100 pb-2 thin-scroll">
-│           {['推荐', '数码', '服饰', '生鲜', '美妆', '家居'].map((t, i) => (
+│           {['推荐', '数码', '家电', '美妆', '母婴', '运动', '图书'].map((t, i) => (
 │             <span
 │               key={t}
 │               className={`relative shrink-0 text-[13.5px] ${
@@ -6044,32 +6270,43 @@
 │ )
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'drawer::标准侧边菜单': () => (
-│     <Frame className="w-full max-w-[310px] p-4">
-│       <div className="flex h-[130px] w-full overflow-hidden rounded-xl shadow-card ring-1 ring-ink-100">
-│         <div className="w-[62%] bg-surface">
-│           <div className="bg-brand-500 px-3 pb-2.5 pt-3.5">
-│             <span className="flex h-8 w-8 items-center justify-center rounded-full bg-surface/25 text-[13.5px] font-semibold text-white">
-│               曹
+│     // 与代码一一对应：AppBar「首页」+ UserAccountsDrawerHeader(张三 / zhangsan@example.com)
+│     // + ListTile 首页(selected) / 设置 / Divider / 退出登录(红)
+│     <Frame className="w-full max-w-[310px] flex-col gap-1.5 p-4">
+│       <div className="flex h-[152px] w-full overflow-hidden rounded-xl shadow-card ring-1 ring-ink-100">
+│         <div className="w-[64%] bg-surface">
+│           <div className="bg-brand-500 px-3 pb-2 pt-3">
+│             <span className="flex h-7 w-7 items-center justify-center rounded-full bg-surface/25 text-[12.5px] font-semibold text-white">
+│               张
 │             </span>
-│             <p className="mt-1.5 text-[13.5px] font-medium text-white">曹禹</p>
-│             <p className="font-mono text-[10.5px] text-white/70">dev@pulseshop.cn</p>
+│             <p className="mt-1 text-[13px] font-medium text-white">张三</p>
+│             <p className="font-mono text-[10px] text-white/75">zhangsan@example.com</p>
 │           </div>
-│           <div className="py-1">
-│             {['我的订单', '收货地址', '设置'].map((t, i) => (
+│           <div>
+│             {[
+│               { t: '首页', selected: true },
+│               { t: '设置', selected: false },
+│             ].map((it) => (
 │               <div
-│                 key={t}
+│                 key={it.t}
 │                 className={`flex items-center gap-2 px-3 py-1.5 text-[12.5px] ${
-│                   i === 0 ? 'bg-brand-50 font-medium text-brand-600' : 'text-ink-700'
+│                   it.selected ? 'bg-brand-50 font-medium text-brand-700' : 'text-ink-700'
 │                 }`}
 │               >
 │                 <span className="h-3 w-3 rounded-sm bg-current opacity-40" />
-│                 {t}
+│                 {it.t}
 │               </div>
 │             ))}
+│           </div>
+│           <div className="my-1 h-px bg-ink-100" />
+│           <div className="flex items-center gap-2 px-3 py-1.5 text-[12.5px] text-danger">
+│             <span className="h-3 w-3 rounded-sm bg-current opacity-50" />
+│             退出登录
 │           </div>
 │         </div>
 │         <div className="flex-1 bg-scrim/40" />
 │       </div>
+│       <span className="font-mono text-[10.5px] text-ink-400">点左上角汉堡图标打开抽屉</span>
 │     </Frame>
 │   ),
 └──────────────────────────────────────────────────────────────────────
@@ -6266,22 +6503,24 @@
 │ )
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'scaffold::每个页面包一层 ScaffoldMessenger 隔离提示': () => (
+│     // 与代码一一对应：页面里是 Scaffold(appBar「商品」+ ProductListView)，SnackBar 只在自己页面出现
 │     <Frame className="w-full max-w-[290px] flex-col gap-2 p-4">
-│       {[
-│         ['页面 A', true],
-│         ['页面 B', false],
-│       ].map(([t, on]) => (
-│         <div key={String(t)} className="rounded-lg bg-surface p-2 shadow-card ring-1 ring-ink-100">
-│           <span className="block text-[12px] text-ink-700">{t}</span>
-│           <div
-│             className={`mt-1.5 flex items-center rounded px-2 py-1 text-[11.5px] ${
-│               on ? 'bg-[#2c3038] text-white' : 'bg-ink-100 text-ink-400'
-│             }`}
-│           >
-│             {on ? 'SnackBar 只在自己页面显示' : '不受影响'}
+│       <div className="overflow-hidden rounded-lg bg-surface shadow-card ring-1 ring-ink-100">
+│         <div className="flex h-7 items-center bg-solid px-2.5 text-[12px] font-medium text-white">
+│           商品
+│         </div>
+│         <div className="p-2">
+│           <div className="flex items-center rounded bg-[#2c3038] px-2 py-1 text-[11.5px] text-white">
+│             已加入购物车
 │           </div>
 │         </div>
-│       ))}
+│       </div>
+│       <div className="rounded-lg bg-surface p-2 shadow-card ring-1 ring-ink-100">
+│         <span className="block text-[12px] text-ink-700">另一个页面（没有自己的 ScaffoldMessenger）</span>
+│         <div className="mt-1.5 flex items-center rounded bg-ink-100 px-2 py-1 text-[11.5px] text-ink-400">
+│           不受影响
+│         </div>
+│       </div>
 │     </Frame>
 │   ),
 └──────────────────────────────────────────────────────────────────────
@@ -6376,22 +6615,24 @@
 │ )
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'theme::业务代码里正确取颜色': () => (
-│     // 与代码一一对应：✅ 从 colorScheme 取（随主题变） / ❌ 写死 Color(0xFF...)
+│     // 与代码一一对应：✅ Container(color: scheme.surface) + Text('标题', titleMedium)
+│     // ❌ Container(color: Color(0xFFFFFFFF)) + 写死 Color(0xFF2C3038)
 │     <Frame className="w-full max-w-[310px] flex-col gap-2 p-4">
 │       <div className="rounded-lg border border-ok/40 bg-ok/5 p-2.5">
 │         <span className="block font-mono text-[11px] text-ok">
-│           ✅ Theme.of(context).colorScheme.primary —— 跟着主题走
+│           ✅ colorScheme.surface + textTheme.titleMedium
 │         </span>
-│         <div className="mt-1.5 flex gap-1.5">
-│           <span className="h-6 flex-1 rounded bg-solid" />
-│           <span className="h-6 flex-1 rounded bg-brand-400" />
-│           <span className="h-6 flex-1 rounded bg-brand-100" />
+│         <div className="mt-1.5 flex items-center rounded bg-surface px-2 py-1.5 ring-1 ring-ink-100">
+│           <span className="text-[14px] font-medium text-ink-900">标题</span>
 │         </div>
 │       </div>
 │       <div className="rounded-lg border border-danger/40 bg-danger/5 p-2.5">
 │         <span className="block font-mono text-[11px] text-danger">
-│           ❌ Color(0xFF409EFF) 写死
+│           ❌ Color(0xFFFFFFFF) + Color(0xFF2C3038) 写死
 │         </span>
+│         <div className="mt-1.5 flex items-center rounded bg-white px-2 py-1.5 ring-1 ring-ink-200">
+│           <span className="text-[14px] font-medium text-[#2C3038]">标题</span>
+│         </div>
 │         <span className="mt-1 block text-[11.5px] text-ink-500">换主题时不会跟着变</span>
 │       </div>
 │     </Frame>
@@ -6514,13 +6755,15 @@
 │ /** indexed-stack 用的导航块（可点） */
 │ function NavBarGBlock() {
 │   const [sel, setSel] = useState(0);
+│   const items = [
+│     { d: P.home, t: '首页' },
+│     { d: P.inbox, t: '分类' },
+│     { d: P.cart, t: '购物车' },
+│     { d: P.person, t: '我的' },
+│   ];
 │   return (
-│     <div className="flex w-full items-center justify-around rounded-xl bg-brand-100 px-2 py-2">
-│       {[
-│         { d: P.home, t: '首页' },
-│         { d: P.cart, t: '购物车' },
-│         { d: P.person, t: '我的' },
-│       ].map((it, i) => (
+│     <div className="flex w-full items-center justify-around rounded-xl bg-surface px-1 py-1.5 ring-1 ring-ink-100">
+│       {items.map((it, i) => (
 │         <button
 │           key={it.t}
 │           type="button"
@@ -6528,7 +6771,7 @@
 │           className="flex flex-col items-center gap-0.5"
 │         >
 │           <span
-│             className={`flex h-7 w-14 items-center justify-center rounded-full ${
+│             className={`flex h-7 w-14 items-center justify-center rounded-full transition ${
 │               sel === i ? 'bg-brand-100' : ''
 │             }`}
 │           >
@@ -6555,8 +6798,6 @@
 │           type="button"
 │           onClick={() => setSel(i)}
 │           className={`flex flex-1 flex-col items-center gap-0.5 py-1 ${
-│             sel === i ? 'text-brand-600' : 'text-ink-400'
-│           }`}
 └──────────────────────────────────────────────────────────────────────
 
 ████████████████████████████████████████████████████████████████████████████████
@@ -6876,7 +7117,7 @@
 │ }
 ├─ 图形 JSX ─────────────────────────────────────────────
 │ 'filter-chip::多条件筛选（带「重置」）': () => (
-│     // 与代码一一对应：_options 前 4 项；_selected = {包邮, 现货}；提示「已选：包邮 · 现货」
+│     // 与代码一一对应：_options = 包邮/现货/7天退换/品牌店/分期免息/百亿补贴，_selected = {包邮, 现货}
 │     <Frame className="w-full max-w-[300px] flex-col gap-2 p-4">
 │       <div className="flex flex-wrap gap-1.5">
 │         {['包邮', '现货'].map((t) => (
@@ -6887,18 +7128,21 @@
 │             {t}
 │           </span>
 │         ))}
-│         {['7天退换', '品牌店', '分期免息'].map((t) => (
+│         {['7天退换', '品牌店', '分期免息', '百亿补贴'].map((t) => (
 │           <span key={t} className="rounded-lg bg-ink-50 px-2.5 py-1 text-[13px] text-ink-600 ring-1 ring-ink-200">
 │             {t}
 │           </span>
 │         ))}
 │       </div>
 │       <div className="flex items-center border-t border-ink-100 pt-2">
-│         <span className="text-[12px] text-ink-400">已选：包邮 · 现货</span>
+│         <span className="text-[12px] text-ink-500">已选：包邮 · 现货</span>
 │         <span className="ml-auto rounded border border-ink-200 px-2 py-0.5 text-[12px] text-ink-600">
 │           重置
 │         </span>
 │       </div>
+│       <span className="font-mono text-[10.5px] text-ink-400">
+│         一个都没选时这里显示「未筛选」
+│       </span>
 │     </Frame>
 │   ),
 └──────────────────────────────────────────────────────────────────────

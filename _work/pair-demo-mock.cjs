@@ -73,8 +73,11 @@ function parseData() {
         const seg = demosSeg.slice(s, e);
         const title = t[1];
         const noteM = seg.match(/note: '((?:[^'\\]|\\.)*)'/);
-        // code 用模板跨度取，避免 /\`[\s\S]*?\`/ 在「代码里带转义反引号」时提前截断
-        const codeSpan = segSpans.find((sp) => sp.start >= s && sp.start < e);
+        // code 用模板跨度取，避免 /`[\s\S]*?`/ 在「代码里带转义反引号」时提前截断
+        // ★ 一定要从 `code:` 之后开始找：有的示例 note 写在 code 前面，直接取第一个模板会误把 note 当代码
+        const codeKey = segMasked.indexOf('code:', s);
+        const lower = codeKey >= 0 && codeKey < e ? codeKey : s;
+        const codeSpan = segSpans.find((sp) => sp.start >= lower && sp.start < e);
         const code = codeSpan ? demosSeg.slice(codeSpan.start + 1, codeSpan.end - 1) : '';
         demos.push({
           title,

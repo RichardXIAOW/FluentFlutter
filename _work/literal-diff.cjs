@@ -49,7 +49,10 @@ function parseData() {
       titles.forEach((t, j) => {
         const s = t.index;
         const e = j + 1 < titles.length ? titles[j + 1].index : demosSeg.length;
-        const sp = segSpans.find((x) => x.start >= s && x.start < e);
+        // ★ 从 `code:` 之后开始找模板：note 可能写在 code 前面，否则会把 note 当代码
+        const codeKey = segMasked.indexOf('code:', s);
+        const lower = codeKey >= 0 && codeKey < e ? codeKey : s;
+        const sp = segSpans.find((x) => x.start >= lower && x.start < e);
         const code = sp ? demosSeg.slice(sp.start + 1, sp.end - 1) : '';
         demos.push({ title: t[1], code: unescapeTpl(code) });
       });
@@ -87,8 +90,18 @@ function parseMocks() {
   return map;
 }
 
-/** 抽中文串（长度 >= 2），去掉模板/变量拼接带来的噪声 */
-function hanzi(s) {
+/** 抽中文串（长度 >= 2）。
+ *  code 里这些不属于「渲染出来的 UI 文案」，先剔掉再看：
+ *   1) // 行注释（含行尾）、/* *\/ 块注释
+ *   2) print('…') / debugPrint('…') 的参数（只在控制台，用户看不到）
+ *   3) hint / counterText 之类 ?  —— 不特殊处理，宁可多报不漏报
+ */
+function hanzi(s, isCode = false) {
+  if (isCode) {
+    s = s.replace(/\/\*[\s\S]*?\*\//g, ' '); // 块注释
+    s = s.replace(/(^|[^:])\/\/[^\n]*/g, '$1'); // 行注释（保留 http://）
+    s = s.replace(/\b(?:debugPrint|print)\s*\(([^()]*)\)/g, ' '); // 控制台输出
+  }
   const set = new Set();
   for (const m of s.matchAll(/[\u4e00-\u9fa5][\u4e00-\u9fa5A-Za-z0-9+\-·%（）()：:，,。、→\s]*/g)) {
     const t = m[0].replace(/\s+/g, '').trim();
@@ -109,7 +122,9 @@ function core(s) {
 const data = parseData();
 const mocks = parseMocks();
 const lines = [];
-const TH = Number(process.argv[2] || 3);
+/* 只盯「代码有、图里没有」：图的说明性文字允许比代码多，
+ * 但代码里出现的 UI 文案（按钮字、标签、标题）图形必须原样呈现 */
+const TH = Number(process.argv[2] || 1);
 let flagged = 0;
 const missingMock = [];
 
@@ -118,16 +133,14 @@ for (const c of data) {
     const key = `${c.slug}::${d.title}`;
     const mk = mocks.get(key);
     if (!mk) { missingMock.push(key); continue; }
-    const codeCore = core(hanzi(d.code));
+    const codeCore = core(hanzi(d.code, true));
     const mockCore = core(hanzi(mk));
     const onlyCode = [...codeCore].filter((x) => ![...mockCore].some((y) => y.includes(x) || x.includes(y)));
-    const onlyMock = [...mockCore].filter((x) => ![...codeCore].some((y) => y.includes(x) || x.includes(y)));
-    if (onlyCode.length + onlyMock.length >= TH) {
+    if (onlyCode.length >= TH) {
       flagged += 1;
       lines.push(`\n${'─'.repeat(76)}`);
       lines.push(`《${key}》`);
       lines.push(`  代码有、图里没有：${onlyCode.join(' | ') || '（无）'}`);
-      lines.push(`  图里有、代码没有：${onlyMock.join(' | ') || '（无）'}`);
     }
   }
 }

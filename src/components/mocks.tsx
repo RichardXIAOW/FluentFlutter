@@ -679,7 +679,7 @@ export const mocks: Record<string, () => ReactNode> = {
   ),
   'tab-bar': () => (
     <MockFrame className="w-full max-w-[300px]">
-      <TabsG items={['全部', '待付款', '待发货']} />
+      <TabsG items={['全部', '待付款', '已完成']} />
     </MockFrame>
   ),
   drawer: () => (
@@ -687,11 +687,11 @@ export const mocks: Record<string, () => ReactNode> = {
       <div className="flex w-full gap-1.5">
         <div className="w-36 overflow-hidden rounded-r-xl bg-surface shadow-pop ring-1 ring-ink-100">
           <div className="bg-brand-500 px-3 pb-3 pt-4">
-            <p className="text-[15px] font-medium text-white">曹禹</p>
-            <p className="text-[12.5px] text-white/70">dev@pulseshop.cn</p>
+            <p className="text-[15px] font-medium text-white">张三</p>
+            <p className="text-[12.5px] text-white/70">zhangsan@example.com</p>
           </div>
           <div className="py-1.5">
-            {['我的订单', '收货地址', '设置'].map((t, i) => (
+            {['首页', '设置'].map((t, i) => (
               <button
                 key={t}
                 type="button"
@@ -703,6 +703,13 @@ export const mocks: Record<string, () => ReactNode> = {
               </button>
             ))}
           </div>
+          <div className="my-1 h-px bg-ink-100" />
+          <button
+            type="button"
+            className="block w-full px-3 py-1.5 text-left text-[14px] text-danger transition hover:bg-danger/5"
+          >
+            退出登录
+          </button>
         </div>
         <div className="w-20 rounded-lg bg-ink-50" />
       </div>
