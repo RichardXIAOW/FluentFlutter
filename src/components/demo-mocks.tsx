@@ -104,7 +104,6 @@ function AgreeRegisterI() {
       <div className="mt-3 flex items-center gap-2">
         <PressBtn
           disabled={!ok}
-          toast="注册成功"
           className={`inline-flex h-9 flex-1 items-center justify-center rounded-[18px] text-[14px] font-medium ${
             ok ? 'bg-solid text-white' : 'bg-ink-100 text-ink-400'
           }`}
@@ -146,7 +145,6 @@ function RemarkDialogI() {
               </PressBtn>
               <PressBtn
                 onClick={() => setOpen(false)}
-                toast={val ? `已保存备注：${val}` : '已确定'}
                 className="rounded-full bg-solid px-3 py-1 text-[13px] font-medium text-white"
               >
                 确定
@@ -370,7 +368,8 @@ function OrderStepperI() {
         </PressBtn>
         <PressBtn
           onClick={() => {
-            if (last) snack('已提交订单');
+            // 与代码一致：onStepContinue 里先校验，不通过就弹 SnackBar 并停在当前步
+            if (last) snack('请先填写完整收货信息');
             else setCur((c) => Math.min(steps.length - 1, c + 1));
           }}
           className="flex-[2] rounded-full bg-solid py-1 text-center text-[12px] text-white"
@@ -450,7 +449,6 @@ function ChipVariantsI() {
         M
       </PressBtn>
       <PressBtn
-        onClick={() => snack('开始下载…')}
         className="inline-flex items-center gap-1.5 rounded-lg bg-surface px-3 py-1.5 text-[13px] text-ink-600 ring-1 ring-ink-200 hover:bg-subtle"
       >
         <span className="opacity-70">⬇</span>下载
@@ -491,57 +489,26 @@ function SortSheetI() {
   );
 }
 
-/* 明暗两套主题并排：点哪边，哪边就是「当前主题」 */
+/* 明暗两套主题并排：同一份种子色生成的两套方案，纯展示（代码里没有手动切换） */
 function ThemePairI() {
-  const [mode, setMode] = useState<'light' | 'dark'>('light');
   return (
     <div className="flex w-full gap-3">
-      <button
-        type="button"
-        data-press
-        onClick={() => {
-          setMode('light');
-          snack('themeMode = ThemeMode.light');
-        }}
-        className={`relative flex-1 overflow-hidden rounded-xl bg-surface p-3 text-left shadow-card transition ${
-          mode === 'light' ? 'ring-2 ring-brand-400' : 'ring-1 ring-ink-100'
-        }`}
-      >
+      <div className="flex-1 overflow-hidden rounded-xl bg-surface p-3 text-left shadow-card ring-1 ring-ink-100">
         <span className="block text-[12.5px] font-medium text-ink-900">浅色</span>
         <span className="mt-1.5 block h-2 w-3/4 rounded bg-ink-100" />
         <span className="mt-1 block h-2 w-1/2 rounded bg-ink-100" />
         <span className="mt-2 inline-block rounded-full bg-solid px-2 py-0.5 text-[11px] text-white">
           按钮
         </span>
-        {mode === 'light' && (
-          <span className="absolute right-1.5 top-1.5 rounded bg-brand-500 px-1 py-0.5 text-[9.5px] text-white">
-            当前
-          </span>
-        )}
-      </button>
-      <button
-        type="button"
-        data-press
-        onClick={() => {
-          setMode('dark');
-          snack('themeMode = ThemeMode.dark');
-        }}
-        className={`relative flex-1 overflow-hidden rounded-xl bg-[#1f2328] p-3 text-left transition ${
-          mode === 'dark' ? 'ring-2 ring-brand-400' : 'ring-1 ring-white/10'
-        }`}
-      >
+      </div>
+      <div className="flex-1 overflow-hidden rounded-xl bg-[#1f2328] p-3 text-left ring-1 ring-white/10">
         <span className="block text-[12.5px] font-medium text-white">深色</span>
         <span className="mt-1.5 block h-2 w-3/4 rounded bg-white/15" />
         <span className="mt-1 block h-2 w-1/2 rounded bg-white/15" />
         <span className="mt-2 inline-block rounded-full bg-brand-400 px-2 py-0.5 text-[11px] text-[#0d1b2a]">
           按钮
         </span>
-        {mode === 'dark' && (
-          <span className="absolute right-1.5 top-1.5 rounded bg-brand-500 px-1 py-0.5 text-[9.5px] text-white">
-            当前
-          </span>
-        )}
-      </button>
+      </div>
     </div>
   );
 }
@@ -883,7 +850,6 @@ export const demoMocks: Record<string, () => ReactNode> = {
     // 与代码一一对应：确认提交（onPressed 有回调）/ 不可点击（onPressed: null 禁用态）
     <Frame className="gap-3">
       <PressBtn
-        toast="已提交"
         className="inline-flex h-9 items-center justify-center rounded-[18px] bg-brand-50 px-5 text-[15px] font-medium text-brand-600 shadow-sm"
       >
         确认提交
@@ -900,7 +866,6 @@ export const demoMocks: Record<string, () => ReactNode> = {
     // 与代码一一对应：minimumSize 48 高、圆角 10、文字「整行宽度」（会撑满可用宽）
     <Frame className="w-full p-4">
       <PressBtn
-        toast="整行宽度：Size.fromHeight(48)"
         className="flex h-12 w-full items-center justify-center rounded-[10px] bg-brand-50 text-[15px] font-medium text-brand-600 shadow-sm"
       >
         整行宽度
@@ -914,7 +879,6 @@ export const demoMocks: Record<string, () => ReactNode> = {
     // 与代码一一对应：单个 ElevatedButton.icon(icon: Icons.download, label: '下载')
     <Frame>
       <PressBtn
-        toast="开始下载"
         className="inline-flex h-9 items-center gap-2 rounded-[18px] bg-brand-50 px-4 text-[15px] font-medium text-brand-600 shadow-sm"
       >
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -930,7 +894,6 @@ export const demoMocks: Record<string, () => ReactNode> = {
       <div className="flex items-center gap-3">
         <span className="w-[70px] shrink-0 text-[12.5px] text-ink-400">_loading: false</span>
         <PressBtn
-          toast="提交中…（再点无效）"
           className="inline-flex h-9 items-center rounded-[18px] bg-solid px-4 text-[15px] font-medium text-white shadow-sm"
         >
           提交
@@ -949,19 +912,16 @@ export const demoMocks: Record<string, () => ReactNode> = {
     // 与代码一一对应：FilledButton「主要操作」 / FilledButton.tonal「次要操作」 / TextButton「取消」
     <Frame className="w-full max-w-[300px] flex-col gap-2.5">
       <PressBtn
-        toast="已执行主要操作"
         className="flex h-9 w-full items-center justify-center rounded-[18px] bg-solid text-[14.5px] font-medium text-white"
       >
         主要操作
       </PressBtn>
       <PressBtn
-        toast="已执行次要操作"
         className="flex h-9 w-full items-center justify-center rounded-[18px] bg-brand-100 text-[14.5px] font-medium text-brand-800"
       >
         次要操作
       </PressBtn>
       <PressBtn
-        toast="已取消"
         className="flex h-9 w-full items-center justify-center text-[14.5px] font-medium text-brand-600"
       >
         取消
@@ -975,7 +935,6 @@ export const demoMocks: Record<string, () => ReactNode> = {
           主题默认 → height 40
         </span>
         <PressBtn
-          toast="默认高度 40"
           className="mt-1 flex h-9 w-full items-center justify-center rounded-[18px] bg-solid text-[14.5px] font-medium text-white"
         >
           按钮
@@ -986,7 +945,6 @@ export const demoMocks: Record<string, () => ReactNode> = {
           minimumSize: Size(0, 48)
         </span>
         <PressBtn
-          toast="自定义高度 48"
           className="mt-1 flex h-12 w-full items-center justify-center rounded-xl bg-solid text-[15px] font-medium text-white"
         >
           按钮
@@ -1004,13 +962,11 @@ export const demoMocks: Record<string, () => ReactNode> = {
         </p>
         <div className="flex justify-end gap-3">
           <PressBtn
-            toast="已取消"
             className="inline-flex h-9 items-center rounded-[18px] border border-ink-300 px-4 text-[14.5px] font-medium text-brand-600"
           >
             取消
           </PressBtn>
           <PressBtn
-            toast="已保存"
             className="inline-flex h-9 items-center rounded-[18px] bg-solid px-4 text-[14.5px] font-medium text-white"
           >
             保存
@@ -1030,13 +986,11 @@ export const demoMocks: Record<string, () => ReactNode> = {
         </p>
         <div className="mt-3 flex justify-end gap-1">
           <PressBtn
-            toast="已取消"
             className="rounded px-3 py-1.5 text-[14.5px] font-medium text-brand-600"
           >
             取消
           </PressBtn>
           <PressBtn
-            toast="已删除这条记录"
             className="inline-flex items-center rounded-full bg-danger px-4 py-1 text-[14px] font-medium text-white"
           >
             删除
@@ -1242,12 +1196,9 @@ export const demoMocks: Record<string, () => ReactNode> = {
 
   'card::最常见的商品/文章卡片': () => (
     // 与代码一一对应：顶部图片（blue.shade100）+「商品标题」+ 两行截断的一句话描述
+    // 代码里的 Card 没有 onTap，所以这里就是纯展示，不做成可点控件
     <Frame className="w-full max-w-[270px]">
-      <button
-        type="button"
-        data-snack="打开商品详情"
-        className="w-full overflow-hidden rounded-xl bg-surface text-left shadow-card ring-1 ring-ink-100 transition hover:shadow-pop"
-      >
+      <div className="w-full overflow-hidden rounded-xl bg-surface text-left shadow-card ring-1 ring-ink-100">
         <div className="h-[81px] bg-brand-100" />
         <div className="p-3">
           <p className="text-[14.5px] font-semibold text-ink-900">商品标题</p>
@@ -1255,7 +1206,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
             这是商品的一句话描述，太长的话会截断。
           </p>
         </div>
-      </button>
+      </div>
     </Frame>
   ),
   'card::纯色卡片（无阴影，靠底色区分）': () => (
@@ -1411,7 +1362,6 @@ export const demoMocks: Record<string, () => ReactNode> = {
         <button
           type="button"
           data-noink
-          data-snack="确实没反应 —— Container 把 InkWell 的水波盖住了"
           className="flex w-full cursor-pointer items-center gap-2 rounded-lg bg-surface px-3 py-2.5 text-left shadow-card ring-1 ring-ink-100"
         >
           <span className="text-[13.5px] text-ink-700">点了没有任何反馈</span>
@@ -1421,7 +1371,6 @@ export const demoMocks: Record<string, () => ReactNode> = {
         <span className="mb-1 block text-[11.5px] text-ok">✅ Ink 铺底 + InkWell 在上</span>
         <button
           type="button"
-          data-snack="水波从按下的位置扩散 —— 这才是对的手感"
           className="relative flex w-full items-center gap-2 overflow-hidden rounded-lg bg-surface px-3 py-2.5 text-left shadow-card ring-1 ring-ink-100"
         >
           <span className="relative text-[13.5px] text-ink-700">有水波纹了</span>
@@ -1431,7 +1380,6 @@ export const demoMocks: Record<string, () => ReactNode> = {
         <span className="mb-1 block text-[11.5px] text-ok">✅ InkWell 套在外面 + borderRadius: 12</span>
         <button
           type="button"
-          data-snack="打开产品详情"
           className="flex w-full items-center gap-2 rounded-xl border border-ink-200 bg-surface px-3 py-2.5 text-left shadow-card"
         >
           <span className="text-[13.5px] text-ink-700">产品卡片</span>
@@ -1461,7 +1409,6 @@ export const demoMocks: Record<string, () => ReactNode> = {
       </div>
       <button
         type="button"
-        data-snack="空白处也响应 —— behavior: opaque 的作用"
         className="w-full rounded-xl bg-surface px-3 py-2.5 text-left shadow-card ring-1 ring-ink-100"
       >
         <span className="block text-[14px] text-ink-800">标题</span>
@@ -1897,18 +1844,15 @@ export const demoMocks: Record<string, () => ReactNode> = {
       <span className="font-mono text-[11px] text-ink-400">crossAxisCount: 3 · spacing 8</span>
       <div className="grid w-full max-w-[240px] grid-cols-3 gap-2">
         {Array.from({ length: 6 }).map((_, i) => (
-          <button
+          <div
             key={i}
-            type="button"
-            data-press
-            data-snack={`已选商品 ${i + 1}`}
-            className="rounded-md bg-surface p-1 text-left shadow-card ring-1 ring-ink-100 transition hover:ring-brand-300"
+            className="rounded-md bg-surface p-1 text-left shadow-card ring-1 ring-ink-100"
           >
             <div className="flex aspect-square items-center justify-center rounded bg-brand-50 text-[11px] text-brand-600">
               {i + 1}
             </div>
             <div className="mt-1 h-1.5 w-3/4 rounded bg-ink-100" />
-          </button>
+          </div>
         ))}
       </div>
     </Frame>
@@ -2222,7 +2166,6 @@ export const demoMocks: Record<string, () => ReactNode> = {
       <FieldI label="手机号" defaultValue="13812345678" inputMode="tel" />
       <FieldI label="密码" type="password" defaultValue="pulse2026" />
       <PressBtn
-        toast="通过：正在登录…"
         className="mt-0.5 rounded-full bg-solid py-1.5 text-center text-[14px] font-medium text-white"
       >
         登录
@@ -2375,10 +2318,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
   'search-bar::基础搜索栏': () => (
     // 与代码一一对应：hintText「搜索商品、品牌、分类」+ leading search + trailing「清空」
     <Frame className="w-full max-w-[270px] flex-col items-stretch gap-2 p-4">
-      <SearchBarI
-        hint="搜索商品、品牌、分类"
-        onSubmit={(v) => snack(`搜索：${v}`)}
-      />
+      <SearchBarI hint="搜索商品、品牌、分类" />
       <span className="font-mono text-[10.5px] text-ink-400">
         打几个字试试，右侧会出现「清空」
       </span>
@@ -2560,17 +2500,13 @@ export const demoMocks: Record<string, () => ReactNode> = {
         ].map(([a, b], i) => (
           <div key={a}>
             {i > 0 && <div className="ml-[72px] h-px bg-ink-200" />}
-            <button
-              type="button"
-              data-snack={`打开「${a}」`}
-              className="flex w-full items-center gap-3 px-3 py-2.5 text-left transition hover:bg-subtle"
-            >
+            <div className="flex w-full items-center gap-3 px-3 py-2.5 text-left">
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-50 text-[12px] text-brand-700">
                 {a[0]}
               </span>
               <span className="text-[14px] text-ink-800">{a}</span>
               <span className="ml-auto text-[13px] text-ink-500">{b}</span>
-            </button>
+            </div>
           </div>
         ))}
       </div>
@@ -2596,10 +2532,9 @@ export const demoMocks: Record<string, () => ReactNode> = {
         </span>
         <SwitchI init />
       </div>
-      {/* ② 导航项：头像 + 双行文字 + 箭头 */}
+      {/* ② 导航项：头像 + 双行文字 + 箭头（代码里 onTap 是 Navigator.push，不是弹提示） */}
       <button
         type="button"
-        onClick={() => snack('打开「项目群」')}
         className="flex w-full items-center gap-3 rounded-lg bg-surface px-3 py-2 text-left shadow-card ring-1 ring-ink-100 transition hover:bg-ink-50/60"
       >
         <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-100 text-[13px] font-semibold text-brand-700">
@@ -2613,12 +2548,8 @@ export const demoMocks: Record<string, () => ReactNode> = {
           <path d="m9 5 7 7-7 7" />
         </svg>
       </button>
-      {/* ③ 金额项：标题 + 时间 + 右对齐金额与状态 */}
-      <button
-        type="button"
-        onClick={() => snack('查看订单：数码相机（95 新）')}
-        className="flex w-full items-center gap-3 rounded-lg bg-surface px-3 py-2 text-left shadow-card ring-1 ring-ink-100 transition hover:bg-ink-50/60"
-      >
+      {/* ③ 金额项：标题 + 时间 + 右对齐金额与状态（代码里没有 onTap） */}
+      <div className="flex w-full items-center gap-3 rounded-lg bg-surface px-3 py-2 text-left shadow-card ring-1 ring-ink-100">
         <span className="min-w-0 flex-1">
           <span className="block truncate text-[13.5px] text-ink-900">数码相机（95 新）</span>
           <span className="block truncate text-[12px] text-ink-500">2026-10-16 20:31</span>
@@ -2627,7 +2558,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
           <span className="block text-[13.5px] font-semibold text-ink-900">¥128.00</span>
           <span className="block text-[12px] text-ok">已完成</span>
         </span>
-      </button>
+      </div>
     </Frame>
   ),
   'list-tile::dense 让密集列表更好看': () => (
@@ -2636,16 +2567,13 @@ export const demoMocks: Record<string, () => ReactNode> = {
         <span className="mb-1 block font-mono text-[11px] text-ink-400">默认</span>
         <div className="overflow-hidden rounded-lg bg-surface shadow-card ring-1 ring-ink-100">
           {['项 A', '项 B', '项 C'].map((t) => (
-            <button
+            <div
               key={t}
-              type="button"
-              data-press
-              onClick={() => snack(`点击了 ${t}`)}
-              className="flex w-full items-center gap-2.5 border-b border-ink-50 px-3 py-2.5 text-left transition hover:bg-subtle last:border-b-0"
+              className="flex w-full items-center gap-2.5 border-b border-ink-50 px-3 py-2.5 text-left last:border-b-0"
             >
               <span className="h-7 w-7 shrink-0 rounded-full bg-brand-100" />
               <span className="text-[13px] text-ink-800">{t}</span>
-            </button>
+            </div>
           ))}
         </div>
       </div>
@@ -2653,16 +2581,13 @@ export const demoMocks: Record<string, () => ReactNode> = {
         <span className="mb-1 block font-mono text-[11px] text-ok">dense: true</span>
         <div className="overflow-hidden rounded-lg bg-surface shadow-card ring-1 ring-ink-100">
           {['项 A', '项 B', '项 C', '项 D'].map((t) => (
-            <button
+            <div
               key={t}
-              type="button"
-              data-press
-              onClick={() => snack(`点击了 ${t}（dense）`)}
-              className="flex w-full items-center gap-2.5 border-b border-ink-50 px-3 py-1.5 text-left transition hover:bg-subtle last:border-b-0"
+              className="flex w-full items-center gap-2.5 border-b border-ink-50 px-3 py-1.5 text-left last:border-b-0"
             >
               <span className="h-5 w-5 shrink-0 rounded-full bg-brand-100" />
               <span className="text-[12.5px] text-ink-800">{t}</span>
-            </button>
+            </div>
           ))}
         </div>
       </div>
@@ -2919,18 +2844,9 @@ export const demoMocks: Record<string, () => ReactNode> = {
             <p className="text-[12.5px] text-ink-400">↓ 再往下就要滚动了（SingleChildScrollView）</p>
           </div>
           <div className="mt-2.5 flex justify-end gap-1.5">
-            <PressBtn
-              onClick={() => snack('已取消')}
-              className="rounded px-2.5 py-1 text-[13px] text-brand-600 hover:bg-brand-50"
-            >
-              取消
-            </PressBtn>
-            <PressBtn
-              onClick={() => snack('已同意')}
-              className="rounded px-2.5 py-1 text-[13px] text-brand-600 hover:bg-brand-50"
-            >
-              同意
-            </PressBtn>
+            {/* 代码里这两个按钮只是 Navigator.pop，不弹提示 */}
+            <span className="px-2.5 py-1 text-[13px] text-brand-600">取消</span>
+            <span className="px-2.5 py-1 text-[13px] text-brand-600">同意</span>
           </div>
         </div>
         <span className="mt-1.5 block text-center font-mono text-[10.5px] text-ok">

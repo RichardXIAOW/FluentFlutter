@@ -35,11 +35,10 @@ function M3Card({ children }: { children: React.ReactNode }) {
   );
 }
 
-function M3PrimaryButton({ children, toast }: { children: React.ReactNode; toast?: string }) {
+function M3PrimaryButton({ children }: { children: React.ReactNode }) {
   return (
     <button
       type="button"
-      data-snack={toast}
       className="inline-flex h-10 select-none items-center justify-center rounded-[20px] bg-grad-brand px-6 text-[17px] font-medium tracking-[.01em] text-white transition active:brightness-95"
     >
       {children}
@@ -47,11 +46,10 @@ function M3PrimaryButton({ children, toast }: { children: React.ReactNode; toast
   );
 }
 
-function M3OutlinedButton({ children, toast }: { children: React.ReactNode; toast?: string }) {
+function M3OutlinedButton({ children }: { children: React.ReactNode }) {
   return (
     <button
       type="button"
-      data-snack={toast}
       className="inline-flex h-10 select-none items-center justify-center rounded-[20px] border border-ink-300 px-6 text-[17px] font-medium text-brand-600 transition hover:bg-brand-50 active:brightness-95"
     >
       {children}
@@ -101,7 +99,10 @@ const SAMPLES: Sample[] = [
             </span>
             <button
               type="button"
-              data-snack="地址已复制"
+              onClick={() => {
+                // 代码里的 onPressed 就是 copyAddress —— 只复制，不弹提示
+                navigator.clipboard?.writeText('广州市天河区体育西路 1 号').catch(() => {});
+              }}
               className="ml-auto shrink-0 pl-2 text-[16px] font-medium text-brand-600 transition hover:text-brand-700"
             >
               复制
@@ -193,8 +194,8 @@ Column(
           <p className="text-[19px] font-semibold text-ink-900">订单已提交</p>
           <p className="mt-1.5 text-[16px] text-ink-600">预计 3 个工作日内发货</p>
           <div className="mt-4 flex items-center gap-3">
-            <M3PrimaryButton toast="打开订单详情">查看订单</M3PrimaryButton>
-            <M3OutlinedButton toast="正在接入客服…">联系客服</M3OutlinedButton>
+            <M3PrimaryButton>查看订单</M3PrimaryButton>
+            <M3OutlinedButton>联系客服</M3OutlinedButton>
           </div>
         </M3Card>
       </div>
