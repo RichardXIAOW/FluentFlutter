@@ -243,10 +243,6 @@ export default function DemoShowcase() {
         <div className="flex flex-col justify-center gap-3 bg-ink-50/40 p-5">
           <span className="flex items-center gap-2 text-[13.5px] font-semibold uppercase tracking-wider text-ink-400">
             实际渲染效果
-            <span className="flex items-center gap-1 rounded-full bg-surface px-2 py-0.5 text-[11.5px] font-medium normal-case tracking-normal text-brand-700 ring-1 ring-brand-100">
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-brand-500" />
-              可点击
-            </span>
           </span>
           <MockRuntime className="flex justify-center">{s.render}</MockRuntime>
         </div>

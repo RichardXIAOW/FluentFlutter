@@ -128,49 +128,18 @@ export default function DemoPreview({
             <p className="mt-0.5 text-[15px] leading-relaxed text-ink-500">{demo.note}</p>
           )}
         </div>
-
-        {/* 工具条：代码 / 复制 / 重新演示 */}
-        {mode !== 'none' && (
-          <div className="flex shrink-0 items-center gap-0.5 rounded-lg">
-            <ToolBtn
-              on={showCode}
-              onClick={() => setShowCode((v) => !v)}
-              label={showCode ? '收起代码' : '查看代码'}
-            >
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="m8 7-5 5 5 5M16 7l5 5-5 5" />
-              </svg>
-              <span>{showCode ? '收起' : '代码'}</span>
-            </ToolBtn>
-            <CopyBtn code={demo.code} />
-            {mode === 'mock' && (
-              <ToolBtn onClick={() => setRunId((v) => v + 1)} label="重新演示">
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v4h-4" />
-                </svg>
-                <span>重放</span>
-              </ToolBtn>
-            )}
-          </div>
-        )}
       </header>
 
       {/* 效果区 */}
       <div className="relative px-4 pb-4 pt-3 sm:px-5">
         {mode !== 'none' ? (
           mode === 'mock' ? (
-            <div className="relative">
-              <MockRuntime
-                key={runId}
-                className="preview-grid overflow-hidden rounded-xl border border-ink-100"
-              >
-                {mock}
-              </MockRuntime>
-              <span className="pointer-events-none absolute right-2 top-2 flex items-center gap-1 rounded-full bg-surface/85 px-2 py-0.5 text-[11.5px] font-medium text-brand-700 ring-1 ring-brand-100 backdrop-blur">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-brand-500" />
-                可交互 · 点点看
-              </span>
-            </div>
+            <MockRuntime
+              key={runId}
+              className="preview-grid overflow-hidden rounded-xl border border-ink-100"
+            >
+              {mock}
+            </MockRuntime>
           ) : (
             <FlutterPreview
               url={previewUrl}
@@ -188,6 +157,31 @@ export default function DemoPreview({
       {showCode && mode !== 'none' && (
         <div className="anim-in border-t border-ink-100 bg-subtle px-4 py-4 sm:px-5">
           <CodeBlock code={demo.code} lang="dart" maxHeight={560} />
+        </div>
+      )}
+
+      {/* 工具条：代码 / 复制 / 重放 —— 放卡片右下角 */}
+      {mode !== 'none' && (
+        <div className="flex items-center justify-end gap-0.5 border-t border-ink-100 px-4 py-1.5 sm:px-5">
+          <ToolBtn
+            on={showCode}
+            onClick={() => setShowCode((v) => !v)}
+            label={showCode ? '收起代码' : '查看代码'}
+          >
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="m8 7-5 5 5 5M16 7l5 5-5 5" />
+            </svg>
+            <span>{showCode ? '收起' : '代码'}</span>
+          </ToolBtn>
+          <CopyBtn code={demo.code} />
+          {mode === 'mock' && (
+            <ToolBtn onClick={() => setRunId((v) => v + 1)} label="重新演示">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v4h-4" />
+              </svg>
+              <span>重放</span>
+            </ToolBtn>
+          )}
         </div>
       )}
     </section>

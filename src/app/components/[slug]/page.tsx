@@ -131,11 +131,8 @@ export default function ComponentPage({
               <span className="h-1.5 w-1.5 rounded-full bg-ok" />
               组件效果
             </span>
-            <span className="rounded-full bg-brand-50 px-2 py-0.5 text-[12.5px] font-medium text-brand-700 ring-1 ring-brand-100">
-              可交互
-            </span>
             <span className="ml-auto hidden text-[13.5px] text-ink-400 sm:inline">
-              点一下试试 · HTML 复刻的典型外观，细节以真实 Flutter 渲染为准
+              HTML 复刻的典型外观，细节以真实 Flutter 渲染为准
             </span>
           </div>
           <MockBox slug={c.slug} canvas />
