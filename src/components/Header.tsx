@@ -34,6 +34,7 @@ export default function Header() {
     { href: '/guide', label: '指南' },
     { href: '/components', label: '组件' },
     { href: '/resources', label: '教程' },
+    { href: '/about', label: '关于' },
   ];
 
   const isActive = (href: string) => {

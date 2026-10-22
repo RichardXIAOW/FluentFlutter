@@ -36,6 +36,7 @@ try {
 // contains: 该页必须命中的特征串（正则），用来防「页面渲染成了空壳」
 const STATIC_ROUTES = [
   { url: '/', status: 200, contains: [/Flutter 从入门/] },
+  { url: '/about', status: 200, contains: [/居然是二师兄/, /蓝牙交互/ ] },
   { url: '/components', status: 200 },
   { url: '/guide', status: 200 },
   { url: '/resources', status: 200, contains: [/Dart 语言讲解/, /Flutter 基础开发/, /工程化搭建指南/, /组件手册/] },

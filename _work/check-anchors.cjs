@@ -24,6 +24,7 @@ const componentSlugs = fs
 const routes = [
   ...componentSlugs.map((s) => `/components/${s}`),
   '/',
+  '/about',
   '/guide',
   '/resources',
   '/resources/dart',
