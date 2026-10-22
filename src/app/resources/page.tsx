@@ -25,7 +25,6 @@ type Step = {
   href?: string;
   external?: boolean;
   state: 'ready' | 'coming';
-  accent?: boolean;
 };
 
 const steps: Step[] = [
@@ -71,7 +70,6 @@ const steps: Step[] = [
     tags: ['界面编写', 'TabBar / 底部导航', '第三方库', '避坑速查'],
     href: '/resources/basic',
     state: 'ready',
-    accent: true,
   },
   {
     no: '04',
@@ -129,7 +127,7 @@ export default function ResourcesPage() {
             <div className="flex min-w-0 flex-1 flex-col gap-1.5">
               <div
                 className={`h-1 rounded-full ${
-                  s.state === 'coming' ? 'bg-ink-100' : s.accent ? 'bg-brand-500' : 'bg-brand-300'
+                  s.state === 'coming' ? 'bg-ink-100' : 'bg-brand-300'
                 }`}
               />
               <span
@@ -241,9 +239,7 @@ function StepCard({ s }: { s: Step }) {
       className={`relative overflow-hidden rounded-xl border transition ${
         coming
           ? 'border-dashed border-ink-200 bg-ink-50/50'
-          : s.accent
-            ? 'border-brand-200 bg-gradient-to-br from-brand-50/70 to-surface shadow-card hover:shadow-pop'
-            : 'border-ink-100 bg-surface shadow-card hover:shadow-pop'
+          : 'border-ink-100 bg-surface shadow-card hover:border-brand-200 hover:shadow-pop'
       }`}
     >
       <div className="flex flex-col gap-5 p-5 sm:flex-row sm:p-6">
@@ -320,11 +316,7 @@ function StepCard({ s }: { s: Step }) {
           ) : (
             <Link
               href={s.href!}
-              className={`inline-flex h-9 items-center gap-1.5 rounded-lg px-3.5 text-[16px] font-medium transition ${
-                s.accent
-                  ? 'bg-grad-brand text-white shadow-sm hover:brightness-110'
-                  : 'border border-ink-200 bg-surface text-ink-700 hover:border-brand-300 hover:text-brand-600'
-              }`}
+              className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-ink-200 bg-surface px-3.5 text-[16px] font-medium text-ink-700 transition hover:border-brand-300 hover:text-brand-600"
             >
               进入
               <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2">
