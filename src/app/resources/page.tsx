@@ -4,14 +4,14 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: '资源',
   description:
-    'Flutter 学习路线：Dart 语言 → Flutter 框架讲解 → Material 组件手册 → 工程化搭建 → 实战教程。从零基础到能独立交付项目，按阶段排好，卡在哪查哪。',
+    'Flutter 学习路线：Dart 语言 → Flutter 框架讲解 → 基础开发（界面 / 导航 / 第三方库）→ 工程化搭建 → 实战教程。组件手册全程随用随查。从零基础到能独立交付项目，按阶段排好，卡在哪查哪。',
 };
 
 /**
  * 资源页
  *
  * 五步路线，顺序即依赖关系：
- *   语言 → 框架 → 组件 → 工程化 → 实战
+ *   语言 → 框架 → 基础开发 → 工程化 → 实战（组件手册不在主线上，作随用随查的字典）
  * 前四步都已完成，第五步整理中。
  */
 
@@ -59,16 +59,17 @@ const steps: Step[] = [
   },
   {
     no: '03',
-    stage: '上手界面',
-    title: 'Material 组件手册',
-    desc: '67 个高频组件：长什么样（图形示例，可直接点）、什么场景该用、新手最容易踩什么坑。每个组件只列高频属性，不搬运 API 文档。每个示例右下角点一下就能看源码。',
+    stage: '上手开发',
+    title: 'Flutter 基础开发',
+    desc: '把页面真正写出来：基本界面的编写方法、AppBar / 底部导航 / TabBar 等常用界面元素的配置，以及蓝牙、定位、文件上传下载、扫码这些基础能力对应的第三方库用法。循序渐进，学完就能写出多页 App。',
     bullets: [
-      '67 个组件 / 134 个示例，每个示例配独立的图形演示',
-      '属性表只保留真正会改的那几个参数',
-      '每个组件附「什么时候用 / 什么时候别用」与相关组件推荐',
+      '界面编写：页面骨架、布局组件怎么选、ListView 列表、setState 交互',
+      '常用配置：AppBar、底部导航（保状态的正确姿势）、顶部标签页、抽屉与轻提示',
+      '第三方库速查：dio 上传下载、mobile_scanner 扫码、geolocator 定位、flutter_blue_plus 蓝牙',
+      '新手高频坑速查表 + 与第四步工程化的衔接地图',
     ],
-    tags: ['67 个组件', '图形示例', '属性速查', '避坑指南'],
-    href: '/components',
+    tags: ['界面编写', 'TabBar / 底部导航', '第三方库', '避坑速查'],
+    href: '/resources/basic',
     state: 'ready',
     accent: true,
   },
@@ -76,7 +77,7 @@ const steps: Step[] = [
     no: '04',
     stage: '真实项目',
     title: '工程化搭建指南',
-    desc: '组件会用了，项目怎么搭？从一张全站选型总表开始（Riverpod 3 / go_router / freezed / dio / slang / drift），逐章落地环境分档、feature-first 目录、统一错误处理、测试与 CI/CD，直到签名上架。每个技术点先结论、再对比、再最小可跑代码。',
+    desc: '页面会写了，项目怎么搭？从一张全站选型总表开始（Riverpod 3 / go_router / freezed / dio / slang / drift），逐章落地环境分档、feature-first 目录、统一错误处理、测试与 CI/CD，直到签名上架。每个技术点先结论、再对比、再最小可跑代码。',
     bullets: [
       '每章明确告诉你「小项目不要做什么」，拒绝过度工程',
       '状态 / 路由 / 网络三个重写章，配端到端可抄的订单列表模板',
@@ -154,6 +155,31 @@ export default function ResourcesPage() {
           <StepCard key={s.no} s={s} />
         ))}
       </div>
+
+      {/* ── 随用随查：组件手册 ── */}
+      <section className="mt-6">
+        <Link
+          href="/components"
+          className="group flex items-center gap-3 rounded-xl border border-ink-100 bg-surface p-4 shadow-card transition hover:border-brand-200 hover:shadow-pop"
+        >
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-ink-50 text-ink-500 transition group-hover:bg-brand-50 group-hover:text-brand-600">
+            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M4 5h16v6H4zM4 13h7v6H4zM13 13h7v6h-7z" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-[16.5px] font-semibold text-ink-900 group-hover:text-brand-600">
+              组件手册 · 随用随查
+            </span>
+            <span className="mt-0.5 block text-[15px] leading-relaxed text-ink-500">
+              67 个高频 Material 组件、134 个图形示例、属性速查与避坑 —— 不在主线上，当字典用。
+            </span>
+          </span>
+          <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0 text-ink-400 transition group-hover:text-brand-600" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </Link>
+      </section>
 
       {/* ── 官方资料 ── */}
       <section className="mt-14">

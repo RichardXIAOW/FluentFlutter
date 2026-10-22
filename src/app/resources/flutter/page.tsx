@@ -12,10 +12,10 @@ export const metadata: Metadata = {
 /**
  * Flutter 讲解
  *
- * 定位：夹在「Dart 语言」和「组件手册」之间。
+ * 定位：夹在「Dart 语言」和「Flutter 基础开发」之间。
  *   上一站告诉你 Dart 怎么写；
  *   这一站告诉你 Flutter 是怎么把界面「搭」出来的、组件为什么这么设计；
- *   下一站才是逐个组件的具体用法。
+ *   下一站是上手写出真实页面（界面 / 导航 / 第三方库）。
  */
 export default function FlutterPage() {
   return (
@@ -33,7 +33,7 @@ export default function FlutterPage() {
         chapters={flutterTutorial}
         siblings={{
           prev: { href: '/resources/dart', label: 'Dart 语言讲解' },
-          next: { href: '/components', label: 'Material 组件手册' },
+          next: { href: '/resources/basic', label: 'Flutter 基础开发' },
         }}
       />
 
@@ -42,18 +42,18 @@ export default function FlutterPage() {
           <div className="min-w-0 flex-1">
             <p className="text-[14px] font-medium text-brand-600">下一步</p>
             <p className="mt-1 text-[18px] font-semibold text-ink-900">
-              原理通了，开始逐个认识组件
+              原理通了，开始动手写页面
             </p>
             <p className="mt-1 text-[15.5px] leading-relaxed text-ink-600">
-              67 个高频 Material 组件，每个都配图形示例、属性表和避坑说明。
-              每个示例右下角点一下就能看源码。
+              基本界面的编写方法、底部导航与 TabBar 的配置，
+              蓝牙 / 定位 / 文件 / 扫码等基础能力的第三方库用法。
             </p>
           </div>
           <Link
-            href="/components"
+            href="/resources/basic"
             className="flex h-10 shrink-0 items-center gap-1.5 rounded-lg bg-grad-brand px-4 text-[16.5px] font-medium text-white shadow-sm transition hover:brightness-110"
           >
-            浏览组件手册
+            进入基础开发
             <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
             </svg>

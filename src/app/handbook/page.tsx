@@ -21,7 +21,7 @@ export default function HandbookPage() {
       title="Flutter 工程化搭建指南"
       intro={
         <>
-          组件会用了，项目怎么搭？这份指南从 <code>flutter create</code> 讲到
+          页面会写了，项目怎么搭？这份指南从 <code>flutter create</code> 讲到
           能上架：先给一张全站选型总表，再逐章落地状态管理、路由、网络、测试与发布。
           <strong className="font-semibold text-ink-800">
             每个技术点都是先结论、再对比、再最小可跑代码
@@ -32,7 +32,7 @@ export default function HandbookPage() {
       chapters={engineeringTutorial}
       accent="violet"
       siblings={{
-        prev: { href: '/components', label: '组件手册' },
+        prev: { href: '/resources/basic', label: 'Flutter 基础开发' },
       }}
     />
   );

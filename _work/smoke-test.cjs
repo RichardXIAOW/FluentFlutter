@@ -38,7 +38,7 @@ const STATIC_ROUTES = [
   { url: '/', status: 200, contains: [/Flutter 从入门/] },
   { url: '/components', status: 200 },
   { url: '/guide', status: 200 },
-  { url: '/resources', status: 200, contains: [/Dart 语言讲解/, /Flutter 讲解/, /工程化搭建指南/] },
+  { url: '/resources', status: 200, contains: [/Dart 语言讲解/, /Flutter 基础开发/, /工程化搭建指南/, /组件手册/] },
   {
     url: '/resources/dart',
     status: 200,
@@ -53,6 +53,14 @@ const STATIC_ROUTES = [
     contains: [/Flutter 的心智模型/, /组件封装/, /状态、生命周期与性能/],
     minCode: 18,
     minSections: 16,
+  },
+  {
+    url: '/resources/basic',
+    status: 200,
+    // 基础开发（第 3 站）：抽 3 个章标题做特征
+    contains: [/界面编写的基本方法/, /常用界面元素配置/, /常用第三方库/],
+    minCode: 12,
+    minSections: 14,
   },
   {
     url: '/handbook',

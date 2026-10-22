@@ -189,7 +189,7 @@ export default function HomePage() {
                 从零基础到能独立交付
               </h2>
               <p className="mt-2 max-w-2xl text-[16.5px] leading-relaxed text-ink-600">
-                Dart 语言 → Flutter 框架 → 组件手册 → 工程化搭建 → 实战教程。
+                Dart 语言 → Flutter 框架 → 基础开发 → 工程化搭建 → 实战教程。
                 按依赖关系排好，每站都不需要「学完才走下一步」——
                 够用就往前走，卡住了再回来查。
               </p>
@@ -197,7 +197,7 @@ export default function HomePage() {
                 {[
                   'Dart 语言：基础 + 高级语法',
                   'Flutter 讲解：框架与组件封装',
-                  '67 个组件 · 134 个示例',
+                  '基础开发：界面 / 导航 / 第三方库',
                   '工程化搭建 · 选型到上架',
                 ].map((t) => (
                   <li key={t} className="flex items-center gap-1.5">

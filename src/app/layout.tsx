@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     template: '%s · FluentFlutter',
   },
   description:
-    'Flutter 中文学习站：Dart 语言讲解、Flutter 框架与组件封装、67 个 Material 组件手册（134 个可交互图形示例）、从零搭建项目的工程化指南。一条线从入门走到能独立交付。',
+    'Flutter 中文学习站：Dart 语言讲解、Flutter 框架与组件封装、基础开发方法（界面 / 导航 / 第三方库速查）、67 个 Material 组件手册、从零搭建项目的工程化指南。一条线从入门走到能独立交付。',
   keywords: [
     'Flutter',
     'Flutter 教程',
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'FluentFlutter · Flutter 从入门到工程化',
     description:
-      'Dart → Flutter 框架 → 组件手册 → 工程化 → 实战。67 个 Material 组件、134 个图形示例，附从零搭建项目的完整指南。',
+      'Dart → Flutter 框架 → 基础开发 → 工程化 → 实战。界面编写、底部导航与 TabBar 配置、蓝牙 / 定位 / 扫码等第三方库速查，附 67 个组件手册与从零搭建项目的完整指南。',
     type: 'website',
     siteName: 'FluentFlutter',
   },

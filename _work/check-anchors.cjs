@@ -28,6 +28,7 @@ const routes = [
   '/resources',
   '/resources/dart',
   '/resources/flutter',
+  '/resources/basic',
   '/components',
 ];
 
