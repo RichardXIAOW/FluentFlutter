@@ -33,13 +33,13 @@ export default function Header() {
     { href: '/', label: '首页' },
     { href: '/guide', label: '指南' },
     { href: '/components', label: '组件' },
-    { href: '/resources', label: '资源' },
+    { href: '/resources', label: '教程' },
   ];
 
   const isActive = (href: string) => {
     if (href === '/') return pathname === '/';
     if (href === '/components') return pathname.startsWith('/components');
-    // 「资源」tab 覆盖资源索引页与工程化搭建指南
+    // 「教程」tab 覆盖教程索引页与工程化搭建指南
     if (href === '/resources') return pathname.startsWith('/resources') || pathname.startsWith('/handbook');
     return pathname.startsWith(href);
   };
