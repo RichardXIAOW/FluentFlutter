@@ -14,9 +14,8 @@ const QQ_NUMBER = '2932257007';
 /**
  * 关于作者（/about）
  *
- * Hero（头像 + 昵称 + slogan + 联系按钮）
+ * Hero（头像 + 昵称 + 一句话定位 + 联系按钮）
  * → 擅长什么（技能栈网格，蓝牙/OTA 单独强调）
- * → 做过什么（项目卡）
  * → 怎么找到我（GitHub / QQ）
  */
 
@@ -55,27 +54,6 @@ const BLE_POINTS = [
   'Android / iOS 双端权限与系统差异踩坑经验充足',
 ] as const;
 
-const PROJECTS = [
-  {
-    name: 'MoonTV',
-    desc: '开源影视聚合项目，基于 Next.js 构建，部署于 Cloudflare Pages。',
-    href: 'https://github.com/RichardXIAOW/MoonTV',
-    label: 'GitHub',
-  },
-  {
-    name: 'FluentFlutter',
-    desc: 'Flutter 中文学习站（就是你正在看的这个站）：Dart 讲解、基础开发、组件手册、工程化指南一条线。',
-    href: 'https://fluent.wlp.de5.net',
-    label: '访问',
-  },
-  {
-    name: '更多项目',
-    desc: '长期更新的实验与工具项目，都在 GitHub 上。',
-    href: GITHUB_URL,
-    label: '去看看',
-  },
-] as const;
-
 export default function AboutPage() {
   return (
     <main id="main" className="mx-auto max-w-page px-4 py-10 sm:px-6">
@@ -102,12 +80,11 @@ export default function AboutPage() {
               居然是二师兄
             </h1>
             <p className="mt-2.5 max-w-2xl text-[17px] leading-[1.9] text-ink-600">
-              计算机专业出身的软件工程师。日常在 Vue 生态里做业务，在 Flutter 里做产品，
-              在 Three.js 里做表达；最熟悉的领域是
-              <strong className="font-semibold text-ink-800">
-                设备侧的蓝牙交互与 OTA 升级
-              </strong>
-              —— 让 App 和硬件「说上话」这件事，做过很多遍。
+              计算机专业毕业的前端开发工程师，长期深耕 Web 前端与跨端应用开发，
+              技术栈覆盖 <b className="font-semibold text-ink-800">Vue 生态、Flutter、uni-app 与 Three.js 三维可视化</b>，
+              并专注于移动端设备通信方向，在
+              <strong className="font-semibold text-ink-800">蓝牙低功耗（BLE）交互与固件 OTA 升级</strong>
+              领域具备完整的工程实践经验。
             </p>
             <div className="mt-5 flex flex-wrap items-center gap-2.5">
               <a
@@ -184,32 +161,6 @@ export default function AboutPage() {
               </li>
             ))}
           </ul>
-        </div>
-      </section>
-
-      {/* ── 项目 ── */}
-      <section className="mt-10">
-        <h2 className="text-[22px] font-bold tracking-tight text-ink-900">做过什么</h2>
-        <p className="mt-1.5 text-[16px] text-ink-500">选几个有代表性的，其余都在 GitHub。</p>
-        <div className="mt-4 grid gap-2.5 sm:grid-cols-3">
-          {PROJECTS.map((p) => (
-            <a
-              key={p.name}
-              href={p.href}
-              target="_blank"
-              rel="noreferrer"
-              className="group rounded-xl border border-ink-100 bg-surface p-4 transition hover:border-brand-200 hover:shadow-card"
-            >
-              <p className="flex items-center gap-1.5 text-[16.5px] font-semibold text-ink-900 group-hover:text-brand-600">
-                {p.name}
-                <svg viewBox="0 0 24 24" className="h-3 w-3 shrink-0 text-ink-400 transition group-hover:text-brand-600" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M7 17 17 7M17 7H8M17 7v9" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </p>
-              <p className="mt-1.5 text-[14.5px] leading-[1.75] text-ink-500">{p.desc}</p>
-              <p className="mt-2 text-[13.5px] font-medium text-brand-600">{p.label} →</p>
-            </a>
-          ))}
         </div>
       </section>
 
