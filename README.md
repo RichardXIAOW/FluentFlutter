@@ -5,7 +5,7 @@
 1. **Dart 语言讲解** —— 类型、空安全、函数、类、集合、异步，再到 sealed / 模式匹配 / copyWith / mixin 等工程化必备语法
 2. **Flutter 讲解** —— Widget 树、build 与 BuildContext、组件封装与参数设计、布局约束、状态与生命周期、性能优化
 3. **Material 组件手册** —— 67 个高频组件、135 个可交互图形示例、属性表与避坑说明
-4. **工程化搭建指南** —— 14 阶段 39 步，从 `flutter create` 到发布签名
+4. **工程化搭建指南** —— 全站选型总表 + 11 章落地：状态、路由、网络、测试、CI/CD，直到签名上架
 5. **实战教程** —— 完整项目实战（整理中）
 
 > 域名约定：`xx.wlp.de5.net` 中的 `xx` 取 **`fluent`**，
@@ -69,8 +69,7 @@ material-docs/
 │  │  ├─ MockBox.tsx         # mock 的客户端中转外壳（见下）
 │  │  ├─ mock-kit.tsx        # 图形 mock 的共用零件
 │  │  ├─ mocks.tsx           # 67 个组件的默认外观
-│  │  ├─ demo-mocks.tsx      # 135 个「示例专属」外观（key = slug::示例标题）
-│  │  └─ HandbookShell.tsx   # 指南的 iframe 外壳
+│  │  └─ demo-mocks.tsx      # 135 个「示例专属」外观（key = slug::示例标题）
 │  ├─ data/
 │  │  ├─ types.ts            # 组件数据类型定义
 │  │  ├─ categories.ts       # 8 个分类
@@ -215,9 +214,8 @@ vercel --prod   # 生产环境
 
 ### 部署后要确认的三件事
 
-1. **`/handbook` 能正常显示** —— 它走的是 `public/handbook/index.html` 静态文件。
-   如果显示 404 或白屏，检查 `next.config.js` 里给 `/handbook/:path*.html`
-   设置的 `Content-Type` 头是否生效（中文必须带 `charset=utf-8`）。
+1. **`/handbook` 能正常显示** —— 指南已是站内原生渲染（TutorialShell + `src/data/tutorials/engineering/`），走正常的 Next.js 页面构建。
+   旧版 iframe 文档在 `public/handbook/index.html` 留档（站内无入口），直接访问仍应 200。
 2. **搜索能搜到中文** —— 搜索是纯前端内存过滤，不依赖任何 API。
 3. **移动端布局** —— 用手机打开，确认左侧导航变成了顶部抽屉。
 
@@ -234,30 +232,9 @@ vercel --prod   # 生产环境
 
 ## 更新工程化指南
 
-那份指南是独立维护的 HTML，本站只是搬运：
+指南内容现已站内化：改 `src/data/tutorials/engineering/` 下的章节文件（ch0-2 / ch3-4 / ch5-6 / ch7-10，`index.ts` 聚合导出 `engineeringTutorial`），不需要动任何 UI 代码。
 
-```bash
-cp "../PulseShop-Handbook/flutter-new-project-setup.html" \
-   "public/handbook/index.html"
-```
-
-复制完对比一下大小，确认是完整文件：
-
-```bash
-wc -c "../PulseShop-Handbook/flutter-new-project-setup.html" \
-      "public/handbook/index.html"
-```
-
-**注意**：仓库里的 `public/handbook/index.html` 已经做了一处本地修改 ——
-原「附录 E · Dart 高级语法速查」已被搬到 `/resources/dart`，
-原地替换成一张指向新页面的引导卡片，页内所有 `#a5*` 锚点也改成了跨页链接。
-直接覆盖会把这份改动冲掉，覆盖后需要重新跑一遍：
-
-```bash
-node _work/move-dart-appendix.cjs
-```
-
-两个数字不一致是正常的（搬运后体积会略小）。改完提交，Vercel 会自动重新部署。
+> 历史留档：`public/handbook/index.html` 是旧版独立 HTML（原「附录 E · Dart 高级语法速查」已搬到 `/resources/dart`）。仅作存档，站内无入口，不随内容更新。
 
 ---
 

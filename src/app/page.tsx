@@ -198,7 +198,7 @@ export default function HomePage() {
                   'Dart 语言：基础 + 高级语法',
                   'Flutter 讲解：框架与组件封装',
                   '67 个组件 · 134 个示例',
-                  '工程化搭建 · 14 阶段 39 步',
+                  '工程化搭建 · 选型到上架',
                 ].map((t) => (
                   <li key={t} className="flex items-center gap-1.5">
                     <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 shrink-0 text-ok" fill="none" stroke="currentColor" strokeWidth="2.5">

@@ -54,7 +54,15 @@ const STATIC_ROUTES = [
     minCode: 18,
     minSections: 16,
   },
-  { url: '/handbook', status: 200 },
+  {
+    url: '/handbook',
+    status: 200,
+    // 工程化指南已改为站内渲染（TutorialShell）：抽 3 个章标题做特征
+    contains: [/这份指南怎么用/, /状态管理：Riverpod/, /验收清单/],
+    minCode: 28,
+    minSections: 34,
+  },
+  // 旧 iframe 版文档在 public/handbook/ 留档（站内已无入口），直接访问仍应 200
   { url: '/handbook/index.html', status: 200 },
 ];
 

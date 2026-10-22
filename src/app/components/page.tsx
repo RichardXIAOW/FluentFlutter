@@ -114,7 +114,8 @@ export default function ComponentsPage() {
           <p className="mt-2 max-w-2xl text-[16px] leading-relaxed text-ink-600">
             会写 67 个组件不等于会写项目。真实项目的难点在于：配置怎么分环境、
             网络层怎么统一错误、路由怎么写才不乱、发布构建怎么不出错。
-            这份指南把这些问题按 14 个阶段拆成可执行步骤，每步都带验证方法。
+            这份指南先给一张全站选型总表（状态 / 路由 / 网络 / 存储 / CI），
+            再逐章落地到能上架，每个技术点先结论、再对比、再最小可跑代码。
           </p>
           <Link
             href="/handbook"
