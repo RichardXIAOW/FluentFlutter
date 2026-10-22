@@ -1,21 +1,328 @@
 import type { Chapter } from '../types';
 
 /**
- * 工程化搭建指南 · 第 7 ~ 10 章（重写重点：第 7、8 章）
+ * 工程化搭建指南 · 第 7 ~ 11 章（重写重点：第 8、9 章）
  *
- * 第 7 章 测试 / 第 8 章 CI-CD 与发布 / 第 9 章 性能与包体积 / 第 10 章 验收清单
+ * 第 7 章 主题定制与明暗切换（2026-10-22 新增）/ 第 8 章 测试 / 第 9 章 CI-CD 与发布
+ * / 第 10 章 性能与包体积 / 第 11 章 验收清单
  */
 export const engineeringCh7to10: Chapter[] = [
   /* ════════════════════════════ 第 7 章 ════════════════════════════ */
   {
-    id: 'ech7',
+    id: 'etheme',
     no: '第 7 章',
+    title: '主题定制与明暗切换',
+    lead: '主题不是美化工，是结构工：颜色和字体只有一个出处（ThemeData），明暗两套就是同一个出处的两种亮度。做对了，跟随系统是免费的，手动切换只需要一个枚举加一个缓存。',
+    sections: [
+      {
+        id: 'e-theme-data',
+        title: '7.1 ThemeData：一套代码派生明暗两套主题',
+        level: '基础',
+        summary: '结论：从 ColorScheme.fromSeed 起步，全部颜色从 ColorScheme 派生，不写死。这是后面「自动切换零成本」的前提。',
+        blocks: [
+          {
+            kind: 'p',
+            html: 'Flutter 的主题体系只有一层核心：<b>ThemeData 是全站样式的唯一出处</b>，Material 组件（按钮、输入框、AppBar……）全部从它取色。所以「定制主题」不是到处改组件样式，而是把 <code>ThemeData</code> 配好 —— 组件自然就对了。而 Material 3 给了一个起点：<code>ColorScheme.fromSeed</code>，给一个品牌种子色，自动派生出整套明暗两档配色。',
+          },
+          {
+            kind: 'code',
+            filename: 'lib/core/theme/app_theme.dart',
+            code: `import 'package:flutter/material.dart';
+
+/// 全站主题唯一出处（目录约定见第 1.4 节 core/theme/）。
+/// 页面里要用颜色/字体，一律 Theme.of(context)，禁止写死。
+class AppTheme {
+  const AppTheme._();
+
+  /// 品牌主色：只定义这一次
+  static const _seed = Color(0xFF2563EB);
+
+  static ThemeData light() => _base(Brightness.light);
+  static ThemeData dark() => _base(Brightness.dark);
+
+  /// 明暗共用一套配置 —— 差异全部由 ColorScheme 承担
+  static ThemeData _base(Brightness brightness) {
+    final scheme = ColorScheme.fromSeed(
+      seedColor: _seed,
+      brightness: brightness,
+    );
+    return ThemeData(
+      useMaterial3: true,
+      colorScheme: scheme,
+      scaffoldBackgroundColor: scheme.surface,
+      appBarTheme: AppBarTheme(
+        backgroundColor: scheme.surface,
+        foregroundColor: scheme.onSurface,
+        elevation: 0,
+        centerTitle: true,
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        border: const OutlineInputBorder(),
+        filled: true,
+        fillColor: scheme.surfaceContainerHighest,
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      ),
+      snackBarTheme: SnackBarThemeData(
+        behavior: SnackBarBehavior.floating,
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      ),
+    );
+  }
+}`,
+          },
+          {
+            kind: 'p',
+            html: '注意这个写法的关键点：<b><code>light()</code> 和 <code>dark()</code> 共用同一个 <code>_base</code></b>，差异完全交给 <code>ColorScheme.fromSeed(brightness: ...)</code> 去派生。你没有任何一处 <code>if (isDark)</code> —— 这就是「一套代码两套主题」。想强化品牌感时，可以在此基础上覆写个别槽位（<code>scheme.primary = ...</code> 用 <code>copyWith</code>），但别推倒 fromSeed 的结果从零手拼。',
+          },
+          {
+            kind: 'table',
+            head: ['常用主题槽位', '管什么', '什么时候动它'],
+            rows: [
+              ['<code>colorScheme</code>', '全部颜色的根：primary / surface / error / onXxx', '几乎只动 seedColor，其余派生'],
+              ['<code>textTheme</code>', '六档文字样式（display/headline/title/body/label）', '要统一字号行高时，在默认 M3 基础上 copyWith'],
+              ['<code>appBarTheme</code>', '顶栏背景、前景、高度', '想要「与页面同色无边框」顶栏时'],
+              ['<code>inputDecorationTheme</code>', '所有输入框的边框、填充、内边距', '表单多于一个页面时尽早配掉'],
+              ['<code>snackBarTheme</code>', '提示条的形态（浮动、圆角）', '有全局提示规范时'],
+            ],
+          },
+          {
+            kind: 'keypoints',
+            items: [
+              '主题只有一个出处：<code>core/theme/app_theme.dart</code>，别在页面里散落样式。',
+              '<code>ColorScheme.fromSeed</code> 起步，品牌感靠覆写个别槽位，不从零手拼。',
+              '明暗两套共用一个 <code>_base</code>，差异全在 <code>ColorScheme</code>，业务代码零 <code>if (isDark)</code>。',
+              '组件级一次性样式（输入框、提示条）配进 ThemeData，别每个页面重复写。',
+            ],
+          },
+        ],
+      },
+      {
+        id: 'e-theme-app',
+        title: '7.2 MaterialApp：theme / darkTheme / themeMode',
+        level: '基础',
+        summary: '三个参数各管一件事：浅色给 theme、深色给 darkTheme、themeMode 决定用哪个。就这么简单，没有第四件事。',
+        blocks: [
+          {
+            kind: 'p',
+            html: '<code>MaterialApp</code> 上有三个主题参数，分工非常干净：<b><code>theme</code> 是浅色、<code>darkTheme</code> 是深色、<code>themeMode</code> 是开关</b>（system / light / dark 三选一，默认 system）。把第 7.1 节的两套 ThemeData 挂上去：',
+          },
+          {
+            kind: 'code',
+            filename: 'lib/app/app.dart',
+            code: `class ShopApp extends ConsumerWidget {
+  const ShopApp({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(appThemeModeProvider); // 第 7.4 节
+    return MaterialApp.router(
+      theme: AppTheme.light(),    // 浅色
+      darkTheme: AppTheme.dark(), // 深色
+      themeMode: themeMode,       // system / light / dark
+      routerConfig: appRouter,
+    );
+  }
+}`,
+          },
+          {
+            kind: 'p',
+            html: '只有 <code>theme</code> 没有 <code>darkTheme</code> 时，系统切到深色，App 依然是浅色 —— <b>很多人以为「深色模式要专门开发」，其实是因为只给了一半材料</b>。两个都给、<code>themeMode</code> 保持默认，跟随系统就已经成立了。剩下的全部工作只有一件事：<b>页面里不许写死颜色</b>。',
+          },
+          {
+            kind: 'compare',
+            bad: {
+              title: '❌ 颜色写死',
+              code: `Container(
+  // 白天正常，深色模式下刺眼的白块
+  color: Colors.white,
+  child: Text(
+    '标题',
+    style: TextStyle(
+      color: Colors.black, // 深色下直接看不见
+      fontSize: 16,
+    ),
+  ),
+)`,
+            },
+            good: {
+              title: '✅ 全部从 Theme 取',
+              code: `Container(
+  // 明暗各自正确，切换零代码
+  color: Theme.of(context).colorScheme.surface,
+  child: Text(
+    '标题',
+    style: Theme.of(context).textTheme.titleMedium,
+  ),
+)`,
+            },
+            note: '判别标准很简单：<b>业务代码里出现 <code>Colors.white</code> / <code>Colors.black</code>，基本都该换成 <code>colorScheme</code> 的语义色</b>。品牌色用 <code>theme.colorScheme.primary</code>，错误用 <code>error</code>，表面用 <code>surface</code> / <code>surfaceContainerHighest</code>。',
+          },
+          {
+            kind: 'keypoints',
+            items: [
+              '<code>theme</code> 浅色、<code>darkTheme</code> 深色、<code>themeMode</code> 决定用哪个，三参数分工。',
+              '两个都给了，跟随系统自动成立；只给一个是「半成品」。',
+              '页面颜色一律 <code>Theme.of(context).colorScheme</code>，写死的 <code>Colors.white/black</code> 是深色模式的最大杀手。',
+            ],
+          },
+        ],
+      },
+      {
+        id: 'e-theme-system',
+        title: '7.3 跟随系统：默认就该是这个行为',
+        level: '基础',
+        summary: 'themeMode: ThemeMode.system 是默认值 —— 只要颜色没写死，跟随系统的成本约等于零。要做的只剩适配检查。',
+        blocks: [
+          {
+            kind: 'p',
+            html: '<code>ThemeMode.system</code> 下，Flutter 监听系统的明暗设置并自动重建 —— <b>这部分框架全包了，你不用写一行监听代码</b>。个别地方确实需要手动分支时（比如深色下换一张图），用 <code>MediaQuery.platformBrightnessOf(context)</code> 判断，别自己查系统 API。',
+          },
+          {
+            kind: 'p',
+            html: '真正的工作量在「适配检查」—— 深色模式下把每个页面过一遍，常见翻车点就这几类：',
+          },
+          {
+            kind: 'list',
+            items: [
+              '<b>写死的颜色</b>：上一节说过，<code>Colors.white/black</code> 全换成语义色，这一条能消灭 90% 的问题。',
+              '<b>图片与图标</b>：彩色彩 logo 在深色下可能突兀 —— 图标优先用 <code>IconTheme</code> 着色，必要时按明暗给两份资源。',
+              '<b>系统栏</b>：状态栏图标颜色要跟随 —— 用 <code>AnnotatedRegion&lt;SystemUiOverlayStyle&gt;</code> 包页面，或交给 <code>AppBarTheme.systemOverlayStyle</code>。',
+              '<b>原生洞</b>：WebView、地图、广告这类原生视图不受 ThemeData 管，深色下单独检查观感。',
+              '<b>启动瞬间</b>：原生启动屏是白是黑与 Flutter 无关，用原生主题（styles.xml / Info.plist）配，避免「闪一下白」。',
+            ],
+          },
+          {
+            kind: 'note',
+            tone: 'info',
+            html: '<b>调试技巧：</b>不用真的去改系统设置。Flutter DevTools（第 1.2 节那条链接）里可以直接切换 platform brightness，模拟器/真机上在开发者选项里切深色也行 —— 每改一轮主题相关代码，明暗各过一遍页面，成本两分钟。',
+          },
+          {
+            kind: 'keypoints',
+            items: [
+              '跟随系统是默认行为，前提是 theme + darkTheme 都给了、颜色没写死。',
+              '手动分支用 <code>MediaQuery.platformBrightnessOf(context)</code>，别引系统插件。',
+              '适配检查五类点：写死颜色 / 图片图标 / 系统栏 / 原生洞 / 启动屏。',
+            ],
+          },
+        ],
+      },
+      {
+        id: 'e-theme-toggle',
+        title: '7.4 手动切换与持久化：一个 Notifier + 一个缓存',
+        level: '进阶',
+        summary: '「让用户自己选」只需要三态枚举进 Riverpod、写进 shared_preferences。启动先给默认值再异步恢复，避免白等。',
+        blocks: [
+          {
+            kind: 'p',
+            html: '用户手动选择的主题要记住 —— 状态用 Riverpod 管，持久化用 <code>shared_preferences</code>（第 6 章的 KV 存储，存这种开关正合适）。核心只有一个 <code>ThemeMode</code> 三态枚举：',
+          },
+          {
+            kind: 'code',
+            filename: 'lib/core/theme/theme_mode.dart',
+            code: `import 'package:flutter/material.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+part 'theme_mode.g.dart';
+
+/// 主题模式状态：system（跟随系统）/ light / dark
+@riverpod
+class AppThemeMode extends _$AppThemeMode {
+  static const _key = 'theme_mode';
+
+  @override
+  ThemeMode build() {
+    _restore(); // 异步恢复 —— 先返回默认值，不阻塞启动
+    return ThemeMode.system;
+  }
+
+  Future<void> _restore() async {
+    final sp = await SharedPreferences.getInstance();
+    final saved = sp.getString(_key);
+    if (saved == null) return; // 没存过 = 第一次用，跟随系统
+    state = ThemeMode.values.firstWhere(
+      (m) => m.name == saved,
+      orElse: () => ThemeMode.system,
+    );
+  }
+
+  /// 切换并持久化。UI 给三选一控件调这一个方法就够
+  Future<void> set(ThemeMode mode) async {
+    state = mode; // 立刻生效，不等磁盘
+    final sp = await SharedPreferences.getInstance();
+    await sp.setString(_key, mode.name);
+  }
+}`,
+          },
+          {
+            kind: 'p',
+            html: '两个设计点说清楚。<b>第一，「先默认、再恢复」</b>：<code>build()</code> 同步返回 <code>ThemeMode.system</code>，缓存在后台异步读 —— App 秒开，读到缓存后自动重建，最多闪一下过渡帧，比启动时同步等磁盘强得多。<b>第二，缓存键存的是枚举名</b>（<code>mode.name</code>），<code>firstWhere + orElse</code> 兜底，以后加新档位、或缓存里出现了垃圾值，都不会崩。',
+          },
+          {
+            kind: 'p',
+            html: '设置页的入口，一个三选一的 <code>SegmentedButton</code> 就是全部 UI：',
+          },
+          {
+            kind: 'code',
+            filename: '设置页 · 主题三选一',
+            code: `SegmentedButton<ThemeMode>(
+  segments: const [
+    ButtonSegment(
+      value: ThemeMode.system,
+      icon: Icon(Icons.brightness_auto),
+      label: Text('系统'),
+    ),
+    ButtonSegment(
+      value: ThemeMode.light,
+      icon: Icon(Icons.light_mode),
+      label: Text('浅色'),
+    ),
+    ButtonSegment(
+      value: ThemeMode.dark,
+      icon: Icon(Icons.dark_mode),
+      label: Text('深色'),
+    ),
+  ],
+  selected: {ref.watch(appThemeModeProvider)},
+  onSelectionChanged: (s) =>
+      ref.read(appThemeModeProvider.notifier).set(s.first),
+)`,
+          },
+          {
+            kind: 'p',
+            html: '跑一下 <code>build_runner</code> 生成 <code>theme_mode.g.dart</code>（第 2.2 节的心法），接上第 7.2 节的 <code>MaterialApp</code> —— 手动切换 + 持久化 + 启动恢复，整条链路就通了。默认「跟随系统」、用户选了就记住，这正是主流 App 的行为。',
+          },
+          {
+            kind: 'note',
+            tone: 'warn',
+            html: '<b>不要做的事：</b>别为此引 provider 之外的持久化方案（数据库、文件）—— 一个字符串键值的活；也别把主题状态塞给每一页单独传 —— 它是全局唯一的，放全局 provider，<code>MaterialApp</code> 一处消费。',
+          },
+          {
+            kind: 'keypoints',
+            items: [
+              '状态 = <code>@riverpod</code> Notifier 持有 <code>ThemeMode</code>，持久化 = <code>shared_preferences</code> 存枚举名。',
+              '启动先返回 <code>ThemeMode.system</code>，缓存异步恢复 —— 不阻塞启动。',
+              '读缓存要 <code>orElse</code> 兜底，缓存脏值不能让 App 崩。',
+              'UI 只有一个 <code>SegmentedButton</code> 三选一，调 <code>set()</code> 一个方法。',
+            ],
+          },
+        ],
+      },
+    ],
+  },
+
+  /* ════════════════════════════ 第 8 章 ════════════════════════════ */
+  {
+    id: 'ech7',
+    no: '第 8 章',
     title: '测试',
     lead: '测试的目标不是覆盖率数字，是「改代码时敢不敢直接提交」。这一章给的是务实配置：核心逻辑必测，UI 测关键交互，其余靠 CI 的 analyze 和 format 兜底。',
     sections: [
       {
         id: 'e-test-what',
-        title: '7.1 测什么：金字塔与务实原则',
+        title: '8.1 测什么：金字塔与务实原则',
         level: '基础',
         summary: '把有限的测试预算花在「逻辑会变、错了会赔钱」的地方。',
         blocks: [
@@ -37,7 +344,7 @@ export const engineeringCh7to10: Chapter[] = [
           {
             kind: 'note',
             tone: 'warn',
-            html: '两个反面清单：<b>不要测 Widget 的布局细节</b>（改个 padding 测试全红，维护测试比维护代码还贵）；<b>不要为了覆盖率写断言为空的测试</b>（<code>expect(true, isTrue)</code> 这种测试比没有测试更有害，它让你误以为有保护网）。覆盖率是仪表盘不是 KPI，第 7.4 节细说。',
+            html: '两个反面清单：<b>不要测 Widget 的布局细节</b>（改个 padding 测试全红，维护测试比维护代码还贵）；<b>不要为了覆盖率写断言为空的测试</b>（<code>expect(true, isTrue)</code> 这种测试比没有测试更有害，它让你误以为有保护网）。覆盖率是仪表盘不是 KPI，第 8.4 节细说。',
           },
           {
             kind: 'keypoints',
@@ -51,7 +358,7 @@ export const engineeringCh7to10: Chapter[] = [
       },
       {
         id: 'e-test-unit',
-        title: '7.2 单元测试：测 Riverpod Notifier',
+        title: '8.2 单元测试：测 Riverpod Notifier',
         level: '实战',
         summary: 'ProviderContainer + mocktail 假仓库，不启动任何 UI 就能把状态链路测完。',
         blocks: [
@@ -135,7 +442,7 @@ void main() {
       },
       {
         id: 'e-test-widget',
-        title: '7.3 Widget 测试模板：点按钮出现 X',
+        title: '8.3 Widget 测试模板：点按钮出现 X',
         level: '进阶',
         summary: '只测关键交互。一个可复制的模板，覆盖 80% 的 Widget 测试需求。',
         blocks: [
@@ -211,7 +518,7 @@ void main() {
       },
       {
         id: 'e-coverage',
-        title: '7.4 覆盖率：看趋势，别追数字',
+        title: '8.4 覆盖率：看趋势，别追数字',
         level: '进阶',
         summary: '核心逻辑 80% 是健康线，全局 100% 是病态线。',
         blocks: [
@@ -250,16 +557,16 @@ genhtml coverage/lcov.info -o coverage/html
     ],
   },
 
-  /* ════════════════════════════ 第 8 章 ════════════════════════════ */
+  /* ════════════════════════════ 第 9 章 ════════════════════════════ */
   {
     id: 'ech8',
-    no: '第 8 章',
+    no: '第 9 章',
     title: 'CI/CD 与发布',
     lead: '这一章让「能不能发版」不再取决于谁的记性好：PR 门禁自动守住质量，构建命令和签名各就各位，发布前对着检查单走一遍。',
     sections: [
       {
         id: 'e-ci',
-        title: '8.1 GitHub Actions：PR 门禁',
+        title: '9.1 GitHub Actions：PR 门禁',
         level: '实战',
         summary: 'format / analyze / test 三道闸，配置一次，永久生效。',
         blocks: [
@@ -328,7 +635,7 @@ jobs:
       },
       {
         id: 'e-build',
-        title: '8.2 构建模式与混淆',
+        title: '9.2 构建模式与混淆',
         level: '基础',
         summary: 'debug / profile / release 各干什么；release 必开混淆，符号文件要留好。',
         blocks: [
@@ -387,7 +694,7 @@ jobs:
       },
       {
         id: 'e-sign',
-        title: '8.3 Android 签名：key.properties 标准接法',
+        title: '9.3 Android 签名：key.properties 标准接法',
         level: '进阶',
         summary: '密钥不进 git、不硬编码，通过 properties 文件注入 gradle。',
         blocks: [
@@ -454,7 +761,7 @@ android {
       },
       {
         id: 'e-checklist',
-        title: '8.4 发布前检查单',
+        title: '9.4 发布前检查单',
         level: '实战',
         summary: '发版不是技术活，是流程活。每次发布对着这张单走一遍。',
         blocks: [
@@ -475,7 +782,7 @@ android {
       },
       {
         id: 'e-web',
-        title: '8.5 （可选）Web 部署一句话',
+        title: '9.5 （可选）Web 部署一句话',
         level: '基础',
         summary: 'Flutter Web 的产物就是一堆静态文件，任何静态托管都能吃。',
         blocks: [
@@ -498,16 +805,16 @@ android {
     ],
   },
 
-  /* ════════════════════════════ 第 9 章 ════════════════════════════ */
+  /* ════════════════════════════ 第 10 章 ════════════════════════════ */
   {
     id: 'ech9',
-    no: '第 9 章',
+    no: '第 10 章',
     title: '上线之后：性能与包体积',
     lead: '短章。不追求性能优化大全 —— 90% 的 Flutter 性能问题由下面这几件事造成，先把它们做对。',
     sections: [
       {
         id: 'e-perf',
-        title: '9.1 先做对这六件事',
+        title: '10.1 先做对这六件事',
         level: '进阶',
         summary: '每条一两句话。都做对了还有性能问题，再去 devtools 找。',
         blocks: [
@@ -541,13 +848,13 @@ android {
   /* ════════════════════════════ 第 10 章 ════════════════════════════ */
   {
     id: 'ech10',
-    no: '第 10 章',
+    no: '第 11 章',
     title: '验收清单',
     lead: '全指南收官。这一页是前面九章的浓缩 —— 能对着它逐条打勾，说明项目真的立住了。',
     sections: [
       {
         id: 'e-final-check',
-        title: '10.1 从零到能上架的 10 步',
+        title: '11.1 从零到能上架的 10 步',
         level: '实战',
         summary: '建议的动手顺序。每步对应的章在括号里。',
         blocks: [
@@ -563,15 +870,15 @@ android {
               '<b>⑥ 第一个真实页面闭环</b>（2.2 / 3.3 / 5.3）—— 模型 freezed → repository → Notifier → 三态 UI，照订单列表模板抄。',
               '<b>⑦ 登录态重定向</b>（4.4）—— 全局 redirect + refreshListenable。',
               '<b>⑧ 国际化与存储</b>（6.1 / 6.2）—— slang 接入，shared_preferences / drift 按需上。',
-              '<b>⑨ CI 门禁 + 测试</b>（7 / 8.1）—— workflow 三道闸，核心逻辑测试 ≥ 80%。',
-              '<b>⑩ 发布流程</b>（8.2 ~ 8.4）—— 混淆 + 符号归档 + 签名 + 检查单走通一次。走通过一次，之后就是重复劳动。',
+              '<b>⑨ CI 门禁 + 测试</b>（8 / 9.1）—— workflow 三道闸，核心逻辑测试 ≥ 80%。',
+              '<b>⑩ 发布流程</b>（9.2 ~ 9.4）—— 混淆 + 符号归档 + 签名 + 检查单走通一次。走通过一次，之后就是重复劳动。',
             ],
           },
         ],
       },
       {
         id: 'e-pitfalls',
-        title: '10.2 常见坑速查',
+        title: '11.2 常见坑速查',
         level: '基础',
         summary: '九个最高频的坑。出问题时先来这里对症状。',
         blocks: [
@@ -580,9 +887,9 @@ android {
             head: ['症状', '原因', '解法'],
             rows: [
               ['build_runner 卡住不动', '生成器缓存抽风 / watch 进程死了', '<code>flutter clean</code> → 删 <code>.dart_tool</code> → 重新 <code>pub get</code> + build（见 2.2）'],
-              ['路由刷新 404（Web）', '服务器把深链当 404 处理', 'Nginx 配 <code>try_files</code> fallback 到 index.html（见 8.5）'],
+              ['路由刷新 404（Web）', '服务器把深链当 404 处理', 'Nginx 配 <code>try_files</code> fallback 到 index.html（见 9.5）'],
               ['Riverpod 报循环依赖', 'A watch B、B 又 watch A', '把共享状态抽成第三个 provider，两个都 watch 它（见 3.2）'],
-              ['混淆后崩溃栈看不懂', '符号文件没归档或版本对不上', '按版本归档 <code>split-debug-info</code>，崩溃平台上传对应版本符号（见 8.2）'],
+              ['混淆后崩溃栈看不懂', '符号文件没归档或版本对不上', '按版本归档 <code>split-debug-info</code>，崩溃平台上传对应版本符号（见 9.2）'],
               ['dart-define 没生效', '改了参数没重新构建 / 用了 run 没用 build', 'dart-define 是编译期常量，热重载不生效 —— 全新启动或重新 build（见 1.1）'],
               ['Web 端 extra 丢失崩溃', '路由参数依赖 extra 传对象', '只传 id，详情页按 id 取数据（见 4.5）'],
               ['切换语言界面没变', '文案硬编码在 Widget 里 / 没挂 TranslationProvider', '文案进 json，App 壳挂 TranslationProvider（见 6.1）'],

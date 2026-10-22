@@ -11,7 +11,7 @@ import { engineeringCh7to10 } from './ch7-10';
  *   ch0-2    选型总表 / 环境与骨架 / 依赖与代码生成
  *   ch3-4    Riverpod 状态管理 / go_router 路由（重写重点）
  *   ch5-6    网络与错误处理（重写重点）/ 国际化与存储
- *   ch7-10   测试 / CI-CD 与发布 / 性能 / 验收清单（重写重点：7、8）
+ *   ch7-10   主题定制与明暗切换 / 测试 / CI-CD 与发布 / 性能 / 验收清单（重写重点：8、9）
  *
  * 唯一入口：engineeringTutorial —— 消费方（/handbook 页）只 import 这里。
  */

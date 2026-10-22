@@ -57,7 +57,7 @@ export default function GuidePage() {
             {[
               { href: '/components', t: '直接看组件', d: '总览页按用途分类', primary: true },
               { href: '/resources', t: '五步学习路线', d: 'Dart → Flutter → 组件 → 工程化' },
-              { href: '/handbook', t: '工程化搭建', d: '选型总表 · 11 章' },
+              { href: '/handbook', t: '工程化搭建', d: '选型总表 · 12 章' },
             ].map((q) => (
               <Link
                 key={q.href}

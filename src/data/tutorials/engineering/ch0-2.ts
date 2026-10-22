@@ -73,6 +73,7 @@ export const engineeringCh0to2: Chapter[] = [
               ['网络', '<code>dio</code>', '拦截器、取消、超时齐全，中文社区资料最多', 'http（简单项目够用）'],
               ['错误处理', '<code>sealed Result</code>', '把「失败」变成类型的一部分，UI 不用满天 try-catch', '直接抛异常（不推荐）'],
               ['国际化', '<code>slang</code>', '类型安全、写起来最快', 'gen-l10n（要跟官方生态时）'],
+              ['主题', '<code>Material 3 + ColorScheme.fromSeed</code>', '一套代码派生明暗两套配色，跟随系统零成本', '手写两份 ThemeData（重复劳动）'],
               ['KV 存储', '<code>shared_preferences</code>', '官方维护，存 token/开关/设置足够', 'hive_ce（量大或要加密时）'],
               ['结构化存储', '<code>drift</code>', '真 SQLite、类型安全、支持复杂查询', 'isar（注意维护状态）'],
               ['Lint', '<code>flutter_lints</code>', '官方默认，零配置起步', 'very_good_analysis（团队要求严格时）'],
@@ -245,7 +246,7 @@ flutter run
 # 连测试环境联调
 flutter run --dart-define=APP_ENV=staging
 
-# 打生产包（混淆见第 8 章，这里先记住完整形态）
+# 打生产包（混淆见第 9 章，这里先记住完整形态）
 flutter build apk --release \\
   --dart-define=APP_ENV=prod \\
   --obfuscate --split-debug-info=build/symbols`,
@@ -349,7 +350,7 @@ flutter build appbundle --release \\
           {
             kind: 'note',
             tone: 'warn',
-            html: '<b>别拿 dev 包当测试包。</b>dev 连的是 localhost，装到测试手机上就是「永远在转圈」；也别拿 prod 包给测试 —— 测试的脏数据直接进生产库。<b>测试包 = staging 环境 + release 编译。</b>签名配置与 <code>--obfuscate</code> 的细节在第 8 章展开，这里先记牢：环境与编译模式是两个独立维度 —— <code>dart-define</code> 决定连哪个后端，debug/release 决定怎么编译。',
+            html: '<b>别拿 dev 包当测试包。</b>dev 连的是 localhost，装到测试手机上就是「永远在转圈」；也别拿 prod 包给测试 —— 测试的脏数据直接进生产库。<b>测试包 = staging 环境 + release 编译。</b>签名配置与 <code>--obfuscate</code> 的细节在第 9 章展开，这里先记牢：环境与编译模式是两个独立维度 —— <code>dart-define</code> 决定连哪个后端，debug/release 决定怎么编译。',
           },
           {
             kind: 'keypoints',
@@ -552,7 +553,7 @@ linter:
             },
             good: {
               title: '✅ CI 卡门禁',
-              code: `# .github/workflows/ci.yml（第 8 章有完整版）
+              code: `# .github/workflows/ci.yml（第 9 章有完整版）
 - run: dart format --set-exit-if-changed .
 - run: flutter analyze --fatal-infos
 - run: flutter test
