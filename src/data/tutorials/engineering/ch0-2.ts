@@ -81,7 +81,7 @@ export const engineeringCh0to2: Chapter[] = [
           },
           {
             kind: 'p',
-            html: '最终的项目形态就是下面这棵树（feature-first 结构，第 1.3 节细讲）。你可以先扫一眼有个印象 —— <b>读完整份指南之后，你应该能独立搭出这棵树</b>：',
+            html: '最终的项目形态就是下面这棵树（feature-first 结构，第 1.4 节细讲）。你可以先扫一眼有个印象 —— <b>读完整份指南之后，你应该能独立搭出这棵树</b>：',
           },
           {
             kind: 'code',
@@ -262,8 +262,109 @@ flutter build apk --release \\
         ],
       },
       {
+        id: 'e-debug',
+        title: '1.2 实操：调试、真机与打包',
+        level: '基础',
+        summary: '三个最高频动作的命令速查：Chrome 里调 UI、真机上调功能、给测试和商店出包。',
+        blocks: [
+          {
+            kind: 'p',
+            html: '环境分档配好之后，日常开发就是三个动作的循环：<b>写 UI 在 Chrome 里看效果、调功能连真机、出包给测试或商店</b>。这一节全是命令和背后的「为什么」，可以当速查页收藏。',
+          },
+          {
+            kind: 'p',
+            html: '<b>Chrome 调试 —— 最快的 UI 迭代回路。</b>改样式、调布局、验证交互流程，Web 端的编译速度比真机快得多：',
+          },
+          {
+            kind: 'code',
+            lang: 'bash',
+            filename: 'Chrome / Web 调试',
+            code: `# Web 模式跑起来（首次会自动下载 web 工具链）
+flutter run -d chrome
+
+# 连测试后端调 Web 端（环境分档在第 1.1 节）
+flutter run -d chrome --dart-define=APP_ENV=staging
+
+# 不拉起浏览器、只起本地服务（想用指定浏览器或无头环境时）
+flutter run -d web-server --web-port 8080`,
+          },
+          {
+            kind: 'p',
+            html: '热重载在 Chrome 里同样生效（终端按 <code>r</code> / <code>R</code>）。Widget 检查、布局约束、内存这些深度调试不在浏览器 F12 里，而在终端打印的 <b>DevTools 链接</b>中。两个注意点：<b>Web 端的编译产物和真机 release 不是一回事</b>，性能以真机为准；个别原生插件在 Web 上不可用（dio 正常，shared_preferences 自动落到 localStorage），报错先怀疑插件而不是你的代码。',
+          },
+          {
+            kind: 'p',
+            html: '<b>真机调试 —— 功能行为的最终裁判。</b>插件行为、手势、键盘、权限弹窗、真实网络环境，这些只有真机能给你答案：',
+          },
+          {
+            kind: 'code',
+            lang: 'bash',
+            filename: 'Android 真机调试',
+            code: `# 手机打开「开发者选项 → USB 调试」，插线后确认设备在线
+flutter devices          # 列出所有可用设备
+adb devices              # Flutter 看不到设备时，先看 adb 这层认到没有
+
+# 指定设备跑（多设备同时连着时必须 -d）
+flutter run -d <device_id>
+
+# 另开一个终端看原生日志（崩溃、权限被拒都在这里）
+flutter logs`,
+          },
+          {
+            kind: 'p',
+            html: 'Android 11+ 支持无线调试：开发者选项里点「使用配对码配对设备」，<code>adb pair &lt;ip:port&gt;</code> 输入配对码，再 <code>adb connect &lt;ip:port&gt;</code>，之后体验和插线完全一样。iOS 需要一台 Mac + Xcode：<code>flutter run -d &lt;iphone&gt;</code>，首次运行要在手机上「信任」开发者证书。',
+          },
+          {
+            kind: 'p',
+            html: '<b>打包 —— 测试包和正式包是两种东西。</b>先分清目标和命令的对应关系：',
+          },
+          {
+            kind: 'table',
+            head: ['目标', '命令骨架', '说明'],
+            rows: [
+              ['本机验证流程', '<code>flutter build apk --debug</code>', '不混淆、无签名门槛，快速装到手机跑通功能'],
+              ['发给测试同事', '<code>flutter build apk --release --dart-define=APP_ENV=staging</code>', 'release 编译 + staging 后端，apk 文件直接发'],
+              ['上架 Google Play', '<code>flutter build appbundle --release --dart-define=APP_ENV=prod …</code>', 'AAB 格式，商店强制要求'],
+              ['国内商店 / 官网直发', '<code>flutter build apk --release --dart-define=APP_ENV=prod …</code>', '完整命令见下'],
+            ],
+          },
+          {
+            kind: 'code',
+            lang: 'bash',
+            filename: '生产包完整命令（带混淆）',
+            code: `# 生产 apk（国内商店 / 官网直发）
+flutter build apk --release \\
+  --dart-define=APP_ENV=prod \\
+  --obfuscate --split-debug-info=build/symbols
+
+# 生产 aab（Google Play）
+flutter build appbundle --release \\
+  --dart-define=APP_ENV=prod \\
+  --obfuscate --split-debug-info=build/symbols
+
+# 产物位置
+#   apk: build/app/outputs/flutter-apk/app-release.apk
+#   aab: build/app/outputs/bundle/release/app-release.aab`,
+          },
+          {
+            kind: 'note',
+            tone: 'warn',
+            html: '<b>别拿 dev 包当测试包。</b>dev 连的是 localhost，装到测试手机上就是「永远在转圈」；也别拿 prod 包给测试 —— 测试的脏数据直接进生产库。<b>测试包 = staging 环境 + release 编译。</b>签名配置与 <code>--obfuscate</code> 的细节在第 8 章展开，这里先记牢：环境与编译模式是两个独立维度 —— <code>dart-define</code> 决定连哪个后端，debug/release 决定怎么编译。',
+          },
+          {
+            kind: 'keypoints',
+            items: [
+              'Chrome 调 UI 迭代最快，但性能与插件行为以真机为准。',
+              '真机三板斧：<code>flutter devices</code> → <code>flutter run -d &lt;id&gt;</code> → <code>flutter logs</code>。',
+              '测试包用 <code>staging + release</code>；正式包 <code>prod + 混淆</code>，商店走 AAB、直发走 apk。',
+              '环境与编译模式是独立维度：dart-define 管连哪个后端，debug/release 管怎么编译。',
+            ],
+          },
+        ],
+      },
+      {
         id: 'e-create',
-        title: '1.2 项目创建与清理',
+        title: '1.3 项目创建与清理',
         level: '基础',
         summary: 'flutter create 之后的第一件事不是写代码，是把 counter demo 和默认依赖清干净。',
         blocks: [
@@ -336,7 +437,7 @@ flutter analyze`,
       },
       {
         id: 'e-structure',
-        title: '1.3 目录结构：feature-first',
+        title: '1.4 目录结构：feature-first',
         level: '基础',
         summary: '按「功能」分目录，而不是按「技术分层」分目录。这是本指南最重要的一条结构决定。',
         blocks: [
@@ -405,7 +506,7 @@ flutter analyze`,
       },
       {
         id: 'e-lint',
-        title: '1.4 Lint 与格式化：让机器管风格',
+        title: '1.5 Lint 与格式化：让机器管风格',
         level: '基础',
         summary: '代码风格不应该出现在 code review 里。Lint 管规则，format 管排版，CI 管住两者。',
         blocks: [
@@ -492,7 +593,7 @@ linter:
         blocks: [
           {
             kind: 'p',
-            html: '下面这张表是第 1.2 节「分批装」的完整版。一个实用的检验标准：<b>pubspec 里的每一个包，你应该都能说出「它替我干了什么活」</b>；说不出来的，就是该删的。',
+            html: '下面这张表是第 1.3 节「分批装」的完整版。一个实用的检验标准：<b>pubspec 里的每一个包，你应该都能说出「它替我干了什么活」</b>；说不出来的，就是该删的。',
           },
           {
             kind: 'table',

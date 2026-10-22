@@ -265,7 +265,7 @@ genhtml coverage/lcov.info -o coverage/html
         blocks: [
           {
             kind: 'p',
-            html: '门禁的目标在第 1.4 节说过：风格话题不进 review、analyze 存量只减不增、测试挂了不能合。一个 workflow 三道闸全解决，直接照抄：',
+            html: '门禁的目标在第 1.5 节说过：风格话题不进 review、analyze 存量只减不增、测试挂了不能合。一个 workflow 三道闸全解决，直接照抄：',
           },
           {
             kind: 'code',

@@ -9,7 +9,10 @@ import type { Chapter, Block, Section } from '@/data/tutorials/types';
  * 教程页外壳（Dart / Flutter 两页共用）
  *
  * 版式目标：长文可读 + 结构可见 + 随时能定位。
- *   - Hero：这条路线走到哪一步、这页有多少内容、大概要多久
+ *   - Hero：紧凑单列 —— 这条路线走到哪一步、这页有多少内容、大概要多久
+ *   - 章节总览：Hero 下方全宽网格卡，替代旧版右侧目录柱
+ *               （右侧柱在章节多时会把 Hero 撑出一大片空白）
+ *   - overview 插槽：可选的「主题说明」区，由各页自行传入
  *   - 左栏：章节分组导航，带编号块与当前行进条
  *   - 正文：小节用「编号 + 标题 + 导语 + 内容块」四段式，
  *           每个小节顶部有一条细进度线，滚动到哪一眼看得出来
@@ -37,12 +40,15 @@ export default function TutorialShell({
   intro,
   chapters,
   siblings,
+  overview,
   accent = 'brand',
 }: {
   eyebrow: string;
   title: string;
   intro: React.ReactNode;
   chapters: Chapter[];
+  /** 可选「主题说明」区：渲染在章节总览卡与正文之间 */
+  overview?: React.ReactNode;
   siblings?: {
     prev?: { href: string; label: string };
     next?: { href: string; label: string };
@@ -104,105 +110,102 @@ export default function TutorialShell({
 
   return (
     <div className="mx-auto max-w-page px-4 sm:px-6">
-      {/* ══ Hero ══ */}
+      {/* ══ Hero（紧凑单列）══ */}
       <header className="relative mt-6 overflow-hidden rounded-xl border border-ink-100 bg-surface shadow-card">
         {/* 装饰 */}
         <div
           aria-hidden="true"
           className="pointer-events-none absolute -right-20 -top-24 h-[280px] w-[280px] rounded-full bg-brand-100/50 blur-3xl"
         />
-        <div className="relative grid gap-6 p-6 sm:p-8 lg:grid-cols-[1fr_260px]">
-          <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-brand-200 bg-brand-50 px-2.5 py-1 text-[14px] font-medium text-brand-700">
-                {eyebrow}
-              </span>
-              <span className="text-[14.5px] text-ink-400">
-                {chapters.length} 章 · {flat.length} 节 · {codeCount} 个代码块
-              </span>
-            </div>
-
-            <h1 className="mt-3.5 text-[33px] font-bold leading-tight tracking-tight text-ink-900 sm:text-[42px]">
-              {title}
-            </h1>
-            <div className="mt-3.5 max-w-2xl text-[17px] leading-[1.9] text-ink-600">{intro}</div>
-
-            <div className="mt-6 flex flex-wrap items-center gap-2.5">
-              <button
-                type="button"
-                onClick={() => jump(flat[0]?.id ?? '')}
-                className="flex h-10 items-center gap-1.5 rounded-xl bg-grad-brand px-4 text-[16.5px] font-medium text-white shadow-sm transition hover:brightness-110"
-              >
-                从第一节开始
-                <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </button>
-              {siblings?.next && (
-                <Link
-                  href={siblings.next.href}
-                  className="flex h-10 items-center gap-1.5 rounded-xl border border-ink-200 bg-surface px-4 text-[16.5px] font-medium text-ink-700 transition hover:border-brand-300 hover:text-brand-600"
-                >
-                  直接看 {siblings.next.label}
-                </Link>
-              )}
-            </div>
+        <div className="relative p-6 sm:p-8">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-brand-200 bg-brand-50 px-2.5 py-1 text-[14px] font-medium text-brand-700">
+              {eyebrow}
+            </span>
+            <span className="text-[14.5px] text-ink-400">
+              {chapters.length} 章 · {flat.length} 节 · {codeCount} 个代码块 · 预计 {minutes} 分钟
+            </span>
           </div>
 
-          {/* 右侧：章节目录卡 */}
-          <div className="min-w-0">
-            <div className="rounded-xl border border-ink-100 bg-ink-50/60 p-4">
-              <p className="text-[13.5px] font-semibold uppercase tracking-wider text-ink-400">
-                本页章节
-              </p>
-              <ol className="mt-2.5 space-y-1.5">
-                {chapters.map((c, i) => {
-                  const done = currentChapter && chapters.indexOf(currentChapter) > i;
-                  const isCur = currentChapter?.id === c.id;
-                  return (
-                    <li key={c.id}>
-                      <button
-                        type="button"
-                        onClick={() => jump(c.sections[0]?.id ?? '')}
-                        className={`group flex w-full items-start gap-2.5 rounded-lg px-2 py-1.5 text-left transition ${
-                          isCur ? 'bg-surface shadow-sm' : 'hover:bg-surface/70'
-                        }`}
-                      >
-                        <span
-                          className={`mt-px flex h-5 w-5 shrink-0 items-center justify-center rounded-md text-[13.5px] font-bold ${
-                            isCur
-                              ? 'bg-grad-brand text-white'
-                              : done
-                                ? 'bg-ok/15 text-ok'
-                                : 'bg-surface text-ink-400 ring-1 ring-ink-100'
-                          }`}
-                        >
-                          {done ? '✓' : i + 1}
-                        </span>
-                        <span className="min-w-0">
-                          <span
-                            className={`block text-[15.5px] font-medium leading-snug ${
-                              isCur ? 'text-brand-700' : 'text-ink-700'
-                            }`}
-                          >
-                            {c.title}
-                          </span>
-                          <span className="mt-0.5 block text-[13.5px] text-ink-400">
-                            {c.sections.length} 节
-                          </span>
-                        </span>
-                      </button>
-                    </li>
-                  );
-                })}
-              </ol>
-              <p className="mt-3 border-t border-ink-100 pt-2.5 text-[13.5px] text-ink-400">
-                预计阅读 <span className="font-mono text-ink-600">{minutes}</span> 分钟 · 建议边读边敲
-              </p>
-            </div>
+          <h1 className="mt-3.5 text-[33px] font-bold leading-tight tracking-tight text-ink-900 sm:text-[42px]">
+            {title}
+          </h1>
+          <div className="mt-3.5 max-w-3xl text-[17px] leading-[1.9] text-ink-600">{intro}</div>
+
+          <div className="mt-6 flex flex-wrap items-center gap-2.5">
+            <button
+              type="button"
+              onClick={() => jump(flat[0]?.id ?? '')}
+              className="flex h-10 items-center gap-1.5 rounded-xl bg-grad-brand px-4 text-[16.5px] font-medium text-white shadow-sm transition hover:brightness-110"
+            >
+              从第一节开始
+              <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+            {siblings?.next && (
+              <Link
+                href={siblings.next.href}
+                className="flex h-10 items-center gap-1.5 rounded-xl border border-ink-200 bg-surface px-4 text-[16.5px] font-medium text-ink-700 transition hover:border-brand-300 hover:text-brand-600"
+              >
+                直接看 {siblings.next.label}
+              </Link>
+            )}
+            <span className="ml-auto hidden text-[13.5px] text-ink-400 sm:block">
+              建议边读边敲
+            </span>
           </div>
         </div>
       </header>
+
+      {/* ══ 章节总览（全宽网格卡）══ */}
+      <nav aria-label="章节总览" className="mt-4">
+        <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {chapters.map((c, i) => {
+            const done = currentChapter && chapters.indexOf(currentChapter) > i;
+            const isCur = currentChapter?.id === c.id;
+            return (
+              <button
+                key={c.id}
+                type="button"
+                onClick={() => jump(c.sections[0]?.id ?? '')}
+                className={`group flex items-start gap-3 rounded-xl border p-3.5 text-left transition ${
+                  isCur
+                    ? 'border-brand-300 bg-brand-50/60 shadow-sm'
+                    : 'border-ink-100 bg-surface hover:border-brand-200 hover:shadow-card'
+                }`}
+              >
+                <span
+                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl font-mono text-[16px] font-bold transition ${
+                    isCur
+                      ? 'bg-grad-brand text-white'
+                      : done
+                        ? 'bg-ok/15 text-ok'
+                        : 'bg-ink-50 text-ink-400 group-hover:bg-brand-50 group-hover:text-brand-600'
+                  }`}
+                >
+                  {done ? '✓' : i}
+                </span>
+                <span className="min-w-0">
+                  <span
+                    className={`block text-[15.5px] font-semibold leading-snug ${
+                      isCur ? 'text-brand-700' : 'text-ink-800'
+                    }`}
+                  >
+                    {c.title}
+                  </span>
+                  <span className="mt-0.5 block text-[13.5px] text-ink-400">
+                    {c.no} · {c.sections.length} 节
+                  </span>
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </nav>
+
+      {/* ══ 主题说明（可选插槽）══ */}
+      {overview && <div className="mt-6">{overview}</div>}
 
       {/* ══ 主体三栏 ══ */}
       <div className="mt-6 flex gap-8 pb-10">
