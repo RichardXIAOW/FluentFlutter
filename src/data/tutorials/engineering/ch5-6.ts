@@ -445,7 +445,7 @@ class ShopApp extends StatelessWidget {
 }
 
 // 任意 Widget 里使用 —— 全程类型安全，拼错 key 编译不过：
-// Text(t.greeting(name: '曹工'))
+// Text(t.greeting(name: '张工'))
 // Text(t.cart.empty)
 // Text(t.cart.itemCount(count: 3))
 // Text(t.order.status['1'])  // → 已付款`,

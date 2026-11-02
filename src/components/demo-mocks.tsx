@@ -1585,7 +1585,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
         <div key={t} className="flex flex-col items-center gap-1.5">
           <span className="relative">
             <span className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-100 text-[19px] font-semibold text-brand-700">
-              曹
+              张
             </span>
             <span className={`absolute bottom-0 right-0 h-4 w-4 rounded-full ${c} ring-2 ring-surface`} />
           </span>
@@ -2538,7 +2538,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
         className="flex w-full items-center gap-3 rounded-lg bg-surface px-3 py-2 text-left shadow-card ring-1 ring-ink-100 transition hover:bg-ink-50/60"
       >
         <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-100 text-[13px] font-semibold text-brand-700">
-          曹
+          张
         </span>
         <span className="min-w-0 flex-1">
           <span className="block truncate text-[13.5px] text-ink-900">项目群</span>
@@ -2636,7 +2636,7 @@ export const demoMocks: Record<string, () => ReactNode> = {
     <Frame className="gap-6">
       <div className="flex flex-col items-center gap-1.5">
         <span className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-100 text-[17px] font-semibold text-brand-700">
-          曹
+          张
         </span>
         <span className="text-[11.5px] text-ink-400">首字母兜底</span>
       </div>

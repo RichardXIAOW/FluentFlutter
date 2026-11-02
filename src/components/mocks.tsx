@@ -468,10 +468,10 @@ export const mocks: Record<string, () => ReactNode> = {
       >
         <div className="flex items-center gap-3">
           <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-100 text-[15px] font-semibold text-brand-700">
-            曹
+            张
           </span>
           <div className="min-w-0">
-            <p className="truncate text-[15.5px] text-ink-900">曹禹</p>
+            <p className="truncate text-[15.5px] text-ink-900">张三</p>
             <p className="truncate text-[13.5px] text-ink-500">最近消息：明天见</p>
           </div>
           <MI d={P.chevR} size={17} className="ml-auto text-ink-400" />
@@ -496,7 +496,7 @@ export const mocks: Record<string, () => ReactNode> = {
     <MockFrame className="gap-3">
       <button type="button" className="transition active:scale-90">
         <span className="flex h-11 w-11 items-center justify-center rounded-full bg-brand-100 text-[17px] font-semibold text-brand-700">
-          曹
+          张
         </span>
       </button>
       <button type="button" className="relative transition active:scale-90">
