@@ -56,7 +56,7 @@ export default function GuidePage() {
           <div className="mt-7 grid gap-2.5 sm:grid-cols-3">
             {[
               { href: '/components', t: '直接看组件', d: '总览页按用途分类', primary: true },
-              { href: '/resources', t: '五步学习路线', d: 'Dart → Flutter → 组件 → 工程化' },
+              { href: '/resources', t: '四步学习路线', d: 'Dart → Flutter → 基础开发 → 工程化' },
               { href: '/handbook', t: '工程化搭建', d: '选型总表 · 12 章' },
             ].map((q) => (
               <Link

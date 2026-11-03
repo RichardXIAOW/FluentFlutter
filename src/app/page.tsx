@@ -183,13 +183,13 @@ export default function HomePage() {
           <div className="flex flex-col gap-5 md:flex-row md:items-center">
             <div className="flex-1">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-surface px-2.5 py-1 text-[14px] font-medium text-brand-600 shadow-sm">
-                五步学习路线
+                四步学习路线
               </span>
               <h2 className="mt-3 text-[23px] font-semibold tracking-tight text-ink-900 sm:text-[26px]">
                 从零基础到能独立交付
               </h2>
               <p className="mt-2 max-w-2xl text-[16.5px] leading-relaxed text-ink-600">
-                Dart 语言 → Flutter 框架 → 基础开发 → 工程化搭建 → 实战教程。
+                Dart 语言 → Flutter 框架 → 基础开发 → 工程化搭建。
                 按依赖关系排好，每站都不需要「学完才走下一步」——
                 够用就往前走，卡住了再回来查。
               </p>

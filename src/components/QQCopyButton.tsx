@@ -9,8 +9,16 @@ const QQ_NUMBER = '2932257007';
  *
  * 点击复制 QQ 号，短暂显示「已复制」反馈 —— 复制成功由剪贴板 API 的
  * resolve 驱动，不复制假反馈。
+ *
+ * tone 变体：
+ *   - 'surface'（默认）：浅色外观，适配站点常规主题
+ *   - 'dark'：深色展厅外观，半透明白字 + 白色描边，hover 提亮
  */
-export default function QQCopyButton() {
+export default function QQCopyButton({
+  tone = 'surface',
+}: {
+  tone?: 'surface' | 'dark';
+}) {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
@@ -32,7 +40,9 @@ export default function QQCopyButton() {
       className={`flex h-10 items-center gap-1.5 rounded-xl border px-4 text-[16.5px] font-medium transition ${
         copied
           ? 'border-ok/40 bg-ok/10 text-ok'
-          : 'border-ink-200 bg-surface text-ink-700 hover:border-brand-300 hover:text-brand-600'
+          : tone === 'dark'
+            ? 'border-white/25 bg-white/5 text-white/85 hover:border-white/50 hover:bg-white/10 hover:text-white'
+            : 'border-ink-200 bg-surface text-ink-700 hover:border-brand-300 hover:text-brand-600'
       }`}
     >
       <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8">

@@ -4,15 +4,15 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: '资源',
   description:
-    'Flutter 学习路线：Dart 语言 → Flutter 框架讲解 → 基础开发（界面 / 导航 / 第三方库）→ 工程化搭建 → 实战教程。组件手册全程随用随查。从零基础到能独立交付项目，按阶段排好，卡在哪查哪。',
+    'Flutter 学习路线：Dart 语言 → Flutter 框架讲解 → 基础开发（界面 / 导航 / 第三方库）→ 工程化搭建。组件手册全程随用随查。从零基础到能独立交付项目，按阶段排好，卡在哪查哪。',
 };
 
 /**
  * 资源页
  *
- * 五步路线，顺序即依赖关系：
- *   语言 → 框架 → 基础开发 → 工程化 → 实战（组件手册不在主线上，作随用随查的字典）
- * 前四步都已完成，第五步整理中。
+ * 四步路线，顺序即依赖关系：
+ *   语言 → 框架 → 基础开发 → 工程化（组件手册不在主线上，作随用随查的字典）
+ * 四步均已完成。
  */
 
 type Step = {
@@ -85,19 +85,6 @@ const steps: Step[] = [
     href: '/handbook',
     state: 'ready',
   },
-  {
-    no: '05',
-    stage: '综合运用',
-    title: '实战教程 · 完整项目',
-    desc: '把前面四步串起来，跟着做一个能上架的真实应用：需求拆解、页面骨架、状态管理落地、接口对接、异常兜底、打包发布。整理中。',
-    bullets: [
-      '从需求文档到可用 App 的完整链路',
-      '复用工程化指南的目录结构与分层约定',
-      '含发布上架与后续迭代的工程实践',
-    ],
-    tags: ['综合实战', '完整链路'],
-    state: 'coming',
-  },
 ];
 
 export default function ResourcesPage() {
@@ -112,7 +99,7 @@ export default function ResourcesPage() {
           从入门到能独立交付
         </h1>
         <p className="mt-3 text-[17.5px] leading-relaxed text-ink-600">
-          按依赖关系排的五步。新手从上往下走；
+          按依赖关系排的四步。新手从上往下走；
           有经验的直接跳到需要的那一站 ——
           <strong className="font-semibold text-ink-800">
             每站都不需要「学完才走下一步」，够用就往前走，卡住再回来查。

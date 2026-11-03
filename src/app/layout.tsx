@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'FluentFlutter · Flutter 从入门到工程化',
     description:
-      'Dart → Flutter 框架 → 基础开发 → 工程化 → 实战。界面编写、底部导航与 TabBar 配置、蓝牙 / 定位 / 扫码等第三方库速查，附 67 个组件手册与从零搭建项目的完整指南。',
+      'Dart → Flutter 框架 → 基础开发 → 工程化。界面编写、底部导航与 TabBar 配置、蓝牙 / 定位 / 扫码等第三方库速查，附 67 个组件手册与从零搭建项目的完整指南。',
     type: 'website',
     siteName: 'FluentFlutter',
   },
