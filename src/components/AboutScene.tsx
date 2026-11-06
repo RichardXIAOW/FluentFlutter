@@ -13,16 +13,17 @@ import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
  * 层次（由远及近）：
  *   1. 星空三层（远景星尘 / 中景星点 / 近景辉光）—— 缓慢漂移、微旋转
  *   2. 星云光斑（程序化径向渐变贴图，additive 低透明度）—— 制造纵深
- *   3. 背光光轮 + 五道竖光柱 —— 人物身后的圆形辉光与「神殿感」光带
- *   3.5 人物核心粒子 + 轮廓辉光壳（shadow 层用低透明度青色放大 5% 做出边缘发光）
- *   3. 地阵三层：外八卦（双环 + 八角 + 八卦爻纹）/ 中符文阵 / 内五行（五芒星 + 金木水火土），
- *      转速与方向各不相同，带呼吸明暗
- *   4. 能量环 ×3（TorusGeometry + additive）—— 不同倾角反向旋转，形成光环缠绕
- *   5. 人物粒子模型（约 9k 粒子按人体几何采样：头/颈/躯干/骨盆/双臂/双腿）—— 呼吸、微旋转
- *   6. 蓝牙数据流（两条 CatmullRom 曲线上的流动粒子：设备→手掌、绕身螺旋）—— 青→品红渐变
- *   7. 技能卫星 ×6（Vue / Flutter / Three.js / BLE / OTA / uni-app）—— 倾斜圆轨道 +
+ *   3. 背光光轮 + 五道竖光柱 —— 核心背后的圆形辉光与「神殿感」光带
+ *   4. 能量核心：内核球 + 两层反向自转线框晶体 + 中心辉光脉冲
+ *   5. 雷电弧光 ×N：从核心向外放电的锯齿折线，每 0.1~0.2s 重新生成
+ *   6. 地阵三层：外八卦（双环 + 八角 + 八卦爻纹）/ 中符文阵 / 内五行（五芒星 + 金木水火土）
+ *   7. 地面冲击波 ×3 —— 由内向外扩散淡出
+ *   8. 能量环 ×3（TorusGeometry）—— 不同倾角反向旋转，缠绕核心
+ *   9. 流动粒子拖尾 ×3 —— 沿螺旋轨道推进的光点流（头亮尾暗，像彗尾）
+ *  10. 蓝牙数据流（两条 CatmullRom 曲线上的流动粒子：设备→核心、绕体螺旋）—— 青→品红渐变
+ *  11. 技能卫星 ×6（Vue / Flutter / Three.js / BLE / OTA / uni-app）—— 倾斜圆轨道 +
  *      线框八面体 + 发光铭牌，铭牌关闭 depthTest，任何角度都能看清
- *   8. 前景浮尘 —— 近景小粒子，强化空间感
+ *  12. 前景浮尘 —— 近景小粒子，强化空间感
  *   后期：UnrealBloom（辉光）+ OutputPass（色彩空间输出）
  *
  * 交互 / 降级：
@@ -385,78 +386,6 @@ function makeShaftTexture(): THREE.Texture {
   return tex;
 }
 
-/* ───────────── 人体粒子采样 ───────────── */
-type P3 = [number, number, number];
-
-function randDir(): THREE.Vector3 {
-  // 球面均匀方向（避免极点聚集）
-  const u = Math.random();
-  const v = Math.random();
-  const theta = 2 * Math.PI * u;
-  const phi = Math.acos(2 * v - 1);
-  return new THREE.Vector3(
-    Math.sin(phi) * Math.cos(theta),
-    Math.cos(phi),
-    Math.sin(phi) * Math.sin(theta),
-  );
-}
-
-function pushSphere(out: number[], c: P3, r: number, n: number, jitter = 0.06) {
-  for (let i = 0; i < n; i++) {
-    const d = randDir().multiplyScalar(r * (1 + (Math.random() - 0.5) * jitter));
-    out.push(c[0] + d.x, c[1] + d.y, c[2] + d.z);
-  }
-}
-
-function pushEllipsoid(out: number[], c: P3, rx: number, ry: number, rz: number, n: number) {
-  for (let i = 0; i < n; i++) {
-    const d = randDir();
-    const k = 1 + (Math.random() - 0.5) * 0.08;
-    out.push(c[0] + d.x * rx * k, c[1] + d.y * ry * k, c[2] + d.z * rz * k);
-  }
-}
-
-function pushCapsule(out: number[], a: P3, b: P3, r0: number, r1: number, n: number) {
-  const A = new THREE.Vector3(...a);
-  const B = new THREE.Vector3(...b);
-  const axis = new THREE.Vector3().subVectors(B, A);
-  for (let i = 0; i < n; i++) {
-    const t = Math.random();
-    const center = new THREE.Vector3().copy(A).addScaledVector(axis, t);
-    const d = randDir();
-    // 去掉沿轴分量，得到环绕方向
-    d.sub(axis.clone().normalize().multiplyScalar(d.dot(axis.clone().normalize())));
-    if (d.lengthSq() < 1e-6) d.set(1, 0, 0);
-    d.normalize().multiplyScalar((r0 + (r1 - r0) * t) * (0.8 + Math.random() * 0.4));
-    out.push(center.x + d.x, center.y + d.y, center.z + d.z);
-  }
-}
-
-/** 采样一个「能量人形」的点云（单位：米级；身高约 1.75） */
-function buildHumanPositions(density: number): Float32Array {
-  const pts: number[] = [];
-  // 头 / 颈
-  pushSphere(pts, [0, 0.78, 0], 0.145, Math.round(700 * density), 0.05);
-  pushCapsule(pts, [0, 0.66, 0], [0, 0.58, 0], 0.05, 0.06, Math.round(120 * density));
-  // 躯干（上宽下窄：两段椭球叠加）
-  pushEllipsoid(pts, [0, 0.42, 0], 0.235, 0.20, 0.135, Math.round(1400 * density));
-  pushEllipsoid(pts, [0, 0.20, 0], 0.19, 0.13, 0.12, Math.round(800 * density));
-  // 肩
-  pushSphere(pts, [-0.235, 0.55, 0], 0.085, Math.round(180 * density), 0.08);
-  pushSphere(pts, [0.235, 0.55, 0], 0.085, Math.round(180 * density), 0.08);
-  // 双臂（上臂 / 前臂 / 手）
-  for (const s of [-1, 1] as const) {
-    pushCapsule(pts, [0.235 * s, 0.55, 0], [0.35 * s, 0.30, 0.03], 0.062, 0.05, Math.round(420 * density));
-    pushCapsule(pts, [0.35 * s, 0.30, 0.03], [0.40 * s, 0.06, 0.10], 0.05, 0.042, Math.round(380 * density));
-    pushSphere(pts, [0.41 * s, 0.02, 0.12], 0.05, Math.round(120 * density), 0.12);
-    // 双腿（髋 / 大腿 / 小腿 / 脚）
-    pushCapsule(pts, [0.11 * s, 0.12, 0], [0.13 * s, -0.24, 0.01], 0.085, 0.062, Math.round(600 * density));
-    pushCapsule(pts, [0.13 * s, -0.24, 0.01], [0.14 * s, -0.62, 0.02], 0.06, 0.045, Math.round(520 * density));
-    pushSphere(pts, [0.14 * s, -0.66, 0.06], 0.055, Math.round(120 * density), 0.15);
-  }
-  return new Float32Array(pts);
-}
-
 /* ───────────── 组件 ───────────── */
 
 export default function AboutScene({ className }: { className?: string }) {
@@ -599,56 +528,117 @@ export default function AboutScene({ className }: { className?: string }) {
       dispose.push(geo, mat);
     }
 
-    const humanPos = buildHumanPositions(smallScreen ? 0.62 : 1);
-    const humanGeo = new THREE.BufferGeometry();
-    humanGeo.setAttribute('position', new THREE.BufferAttribute(humanPos, 3));
-    const count = humanPos.length / 3;
-    const colors = new Float32Array(count * 3);
-    // 更饱和的霓虹梯度：深紫 → 青 → 冰蓝（少量白点做「星火」，避免整体发白）
-    const cBottom = new THREE.Color(0x6d28d9);
-    const cMid = new THREE.Color(0x22d3ee);
-    const cTop = new THREE.Color(0x9be8ff);
-    const tmpColor = new THREE.Color();
-    for (let i = 0; i < count; i++) {
-      const y = humanPos[i * 3 + 1];
-      const t = THREE.MathUtils.clamp((y + 0.7) / 1.6, 0, 1);
-      tmpColor.copy(t < 0.62 ? cBottom.clone().lerp(cMid, t / 0.62) : cMid.clone().lerp(cTop, (t - 0.62) / 0.38));
-      if (Math.random() < 0.02) tmpColor.lerp(new THREE.Color(0xffffff), 0.45);
-      colors[i * 3] = tmpColor.r;
-      colors[i * 3 + 1] = tmpColor.g;
-      colors[i * 3 + 2] = tmpColor.b;
-    }
-    humanGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-    const humanMat = new THREE.PointsMaterial({
-      size: smallScreen ? 0.028 : 0.022,
-      map: glowTex,
-      vertexColors: true,
-      transparent: true,
-      opacity: 0.66,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false,
-      sizeAttenuation: true,
-    });
-    const humanPoints = new THREE.Points(humanGeo, humanMat);
-    figure.add(humanPoints);
-    dispose.push(humanGeo, humanMat);
+    /* ── 3.3 能量核心：中心发光晶体（内核 + 两层线框 + 中心辉光）── */
+    const core = new THREE.Group();
+    figure.add(core);
 
-    // 轮廓辉光壳：同一套点放大一圈、只留低透明度青色，做出「边缘发光」而不是整体过曝
-    const auraGeo = humanGeo.clone();
-    const auraMat = new THREE.PointsMaterial({
-      size: smallScreen ? 0.06 : 0.05,
-      map: glowTex,
-      color: 0x67e8f9,
+    const coreInnerGeo = new THREE.IcosahedronGeometry(0.26, 2);
+    const coreInnerMat = new THREE.MeshBasicMaterial({
+      color: 0x9fe8ff,
       transparent: true,
-      opacity: 0.13,
+      opacity: 0.26,
       blending: THREE.AdditiveBlending,
       depthWrite: false,
-      sizeAttenuation: true,
     });
-    const humanAura = new THREE.Points(auraGeo, auraMat);
-    humanAura.scale.setScalar(1.05);
-    figure.add(humanAura);
-    dispose.push(auraGeo, auraMat);
+    const coreInner = new THREE.Mesh(coreInnerGeo, coreInnerMat);
+    core.add(coreInner);
+
+    const coreWire1Geo = new THREE.IcosahedronGeometry(0.46, 1);
+    const coreWire1Mat = new THREE.MeshBasicMaterial({
+      color: 0x67e8f9,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.55,
+    });
+    const coreWire1 = new THREE.Mesh(coreWire1Geo, coreWire1Mat);
+    core.add(coreWire1);
+
+    const coreWire2Geo = new THREE.IcosahedronGeometry(0.68, 0);
+    const coreWire2Mat = new THREE.MeshBasicMaterial({
+      color: 0xa78bfa,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.28,
+    });
+    const coreWire2 = new THREE.Mesh(coreWire2Geo, coreWire2Mat);
+    core.add(coreWire2);
+
+    const coreGlowMat = new THREE.SpriteMaterial({
+      map: glowTex,
+      color: 0x9fe8ff,
+      transparent: true,
+      opacity: 0.45,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    });
+    const coreGlow = new THREE.Sprite(coreGlowMat);
+    coreGlow.scale.setScalar(1.05);
+    core.add(coreGlow);
+    dispose.push(coreInnerGeo, coreInnerMat, coreWire1Geo, coreWire1Mat, coreWire2Geo, coreWire2Mat, coreGlowMat);
+
+    /* ── 3.4 雷电弧光：从核心向外放电的锯齿折线，定时重新生成 ── */
+    const ARCS = smallScreen ? 4 : 7;
+    const ARC_SEG = 10;
+    const arcs: Array<{
+      line: THREE.Line;
+      mat: THREE.LineBasicMaterial;
+      nextAt: number;
+    }> = [];
+
+    const randOnSphere = (rMin: number, rMax: number) =>
+      new THREE.Vector3(
+        Math.random() * 2 - 1,
+        Math.random() * 2 - 1,
+        Math.random() * 2 - 1,
+      )
+        .normalize()
+        .multiplyScalar(rMin + Math.random() * (rMax - rMin));
+
+    const buildArc = (arc: (typeof arcs)[number], now: number) => {
+      const start = randOnSphere(0.34, 0.44);
+      const end = randOnSphere(1.0, 1.7);
+      end.y += (Math.random() - 0.5) * 0.5;
+
+      const attr = arc.line.geometry.getAttribute('position') as THREE.BufferAttribute;
+      const arr = attr.array as Float32Array;
+      const dir = new THREE.Vector3().subVectors(end, start);
+      const len = dir.length();
+      // 垂直于主方向的偏移轴，折线沿着它抖出电光锯齿
+      const perp = new THREE.Vector3(-dir.y, dir.x, dir.z * 0.5 || 0.001).normalize();
+
+      for (let i = 0; i <= ARC_SEG; i++) {
+        const t = i / ARC_SEG;
+        const p = new THREE.Vector3().copy(start).addScaledVector(dir, t);
+        if (i !== 0 && i !== ARC_SEG) {
+          p.addScaledVector(perp, (Math.random() - 0.5) * len * 0.24);
+        }
+        arr[i * 3] = p.x;
+        arr[i * 3 + 1] = p.y;
+        arr[i * 3 + 2] = p.z;
+      }
+      attr.needsUpdate = true;
+      arc.mat.opacity = 0.3 + Math.random() * 0.45;
+      arc.nextAt = now + 0.08 + Math.random() * 0.18;
+    };
+
+    for (let i = 0; i < ARCS; i++) {
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array((ARC_SEG + 1) * 3), 3));
+      const mat = new THREE.LineBasicMaterial({
+        color: i % 3 === 0 ? 0xe879f9 : 0x8be9ff,
+        transparent: true,
+        opacity: 0.5,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+      });
+      const line = new THREE.Line(geo, mat);
+      line.frustumCulled = false;
+      figure.add(line);
+      const arc = { line, mat, nextAt: 0 };
+      buildArc(arc, 0);
+      arcs.push(arc);
+      dispose.push(geo, mat);
+    }
 
     /* ── 4. 能量环 ×3（缠绕人物的光环）── */
     const rings: THREE.Mesh[] = [];
@@ -718,14 +708,19 @@ export default function AboutScene({ className }: { className?: string }) {
       dispose.push(geo, mat);
     }
 
-    /* ── 5.2 能量丝带：绕体数圈的光带，比细圆环更有「能量流动」感 ── */
-    const ribbons: THREE.Mesh[] = [];
-    const ribbonSpecs = [
-      { color: 0x67e8f9, r: 0.66, turns: 2.6, y0: -0.6, y1: 0.8, speed: 0.006, opacity: 0.24, squash: 0.9 },
-      { color: 0xe879f9, r: 0.8, turns: 2.1, y0: -0.55, y1: 0.72, speed: -0.0045, opacity: 0.18, squash: 0.8 },
-      { color: 0xa78bfa, r: 0.92, turns: 3.1, y0: -0.5, y1: 0.86, speed: 0.0035, opacity: 0.15, squash: 0.95 },
+    /* ── 5.2 流动粒子拖尾：三条螺旋轨道上的光点流（替代静态丝带）── */
+    const trails: Array<{
+      curve: THREE.CatmullRomCurve3;
+      geo: THREE.BufferGeometry;
+      baseT: Float32Array;
+      speed: number;
+    }> = [];
+    const trailSpecs = [
+      { color: 0x67e8f9, r: 0.68, turns: 2.6, y0: -0.6, y1: 0.82, speed: 0.055, squash: 0.9, count: smallScreen ? 90 : 150 },
+      { color: 0xe879f9, r: 0.84, turns: 2.1, y0: -0.55, y1: 0.74, speed: -0.045, squash: 0.8, count: smallScreen ? 80 : 130 },
+      { color: 0xa78bfa, r: 0.96, turns: 3.1, y0: -0.5, y1: 0.88, speed: 0.038, squash: 0.95, count: smallScreen ? 80 : 130 },
     ];
-    for (const spec of ribbonSpecs) {
+    for (const spec of trailSpecs) {
       const pts: THREE.Vector3[] = [];
       for (let i = 0; i <= 80; i++) {
         const t = i / 80;
@@ -740,18 +735,38 @@ export default function AboutScene({ className }: { className?: string }) {
         );
       }
       const curve = new THREE.CatmullRomCurve3(pts);
-      const geo = new THREE.TubeGeometry(curve, 220, 0.008, 6, false);
-      const mat = new THREE.MeshBasicMaterial({
-        color: spec.color,
+      const n = spec.count;
+      const pos = new Float32Array(n * 3);
+      const col = new Float32Array(n * 3);
+      const baseT = new Float32Array(n);
+      const base = new THREE.Color(spec.color);
+      const bright = base.clone().lerp(new THREE.Color(0xffffff), 0.55);
+      const dim = base.clone().multiplyScalar(0.32);
+      for (let i = 0; i < n; i++) {
+        // 等距铺开，亮度沿轨道「头亮尾暗」，跑起来就是一串彗尾
+        baseT[i] = i / n;
+        const k = Math.pow(i / n, 1.6);
+        const c = dim.clone().lerp(bright, 0.25 + 0.75 * k);
+        col[i * 3] = c.r;
+        col[i * 3 + 1] = c.g;
+        col[i * 3 + 2] = c.b;
+      }
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+      geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+      const mat = new THREE.PointsMaterial({
+        size: smallScreen ? 0.058 : 0.05,
+        map: glowTex,
+        vertexColors: true,
         transparent: true,
-        opacity: spec.opacity,
+        opacity: 0.95,
         blending: THREE.AdditiveBlending,
         depthWrite: false,
+        sizeAttenuation: true,
       });
-      const mesh = new THREE.Mesh(geo, mat);
-      mesh.userData.speed = spec.speed;
-      figure.add(mesh);
-      ribbons.push(mesh);
+      const points = new THREE.Points(geo, mat);
+      figure.add(points);
+      trails.push({ curve, geo, baseT, speed: spec.speed });
       dispose.push(geo, mat);
     }
 
@@ -1007,12 +1022,24 @@ export default function AboutScene({ className }: { className?: string }) {
         n.scale.setScalar((i === 2 ? 8 : 10) * pulse);
       });
 
-      // 人物：呼吸 + 微旋转（核心与辉光壳同步）
-      const breath = 1 + Math.sin(elapsed * 0.9) * 0.012;
-      humanPoints.scale.setScalar(breath);
-      humanAura.scale.setScalar(breath * 1.05);
-      figure.rotation.y = Math.sin(elapsed * 0.12) * 0.28 + pointer.x * 0.18;
-      figure.rotation.z = Math.sin(elapsed * 0.16) * 0.02;
+      // 整体：轻微摇摆（保留纵深感）
+      figure.rotation.y = Math.sin(elapsed * 0.12) * 0.2 + pointer.x * 0.18;
+      figure.rotation.z = Math.sin(elapsed * 0.16) * 0.015;
+
+      // 能量核心：三层几何反向自转 + 中心辉光脉冲
+      coreInner.rotation.y += 0.004;
+      coreInner.rotation.x += 0.002;
+      coreWire1.rotation.y -= 0.0035;
+      coreWire1.rotation.z += 0.0015;
+      coreWire2.rotation.y += 0.0022;
+      coreWire2.rotation.x -= 0.0012;
+      coreGlow.scale.setScalar(1.0 + Math.sin(elapsed * 1.7) * 0.07);
+      coreGlowMat.opacity = 0.38 + 0.12 * (0.5 + 0.5 * Math.sin(elapsed * 2.4));
+
+      // 雷电弧光：到点就重新生成一条，形成持续放电
+      for (const a of arcs) {
+        if (elapsed > a.nextAt) buildArc(a, elapsed);
+      }
 
       // 背光光轮：缓慢自转 + 呼吸
       haloMat.rotation += 0.0007;
@@ -1024,9 +1051,18 @@ export default function AboutScene({ className }: { className?: string }) {
         s.mat.opacity = s.base * (0.65 + 0.35 * (0.5 + 0.5 * Math.sin(elapsed * 0.5 + s.phase)));
       }
 
-      // 能量丝带：绕体反向旋转
-      for (const r of ribbons) {
-        r.rotation.y += r.userData.speed as number;
+      // 流动粒子拖尾：沿螺旋轨道推进
+      for (const tr of trails) {
+        const attr = tr.geo.getAttribute('position') as THREE.BufferAttribute;
+        const arr = attr.array as Float32Array;
+        for (let i = 0; i < tr.baseT.length; i++) {
+          const t = (tr.baseT[i] + elapsed * tr.speed) % 1;
+          tr.curve.getPointAt(t < 0 ? t + 1 : t, tmp);
+          arr[i * 3] = tmp.x;
+          arr[i * 3 + 1] = tmp.y;
+          arr[i * 3 + 2] = tmp.z;
+        }
+        attr.needsUpdate = true;
       }
 
       // 地面冲击波：由内向外扩散并淡出
