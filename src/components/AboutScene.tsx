@@ -14,8 +14,8 @@ import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
  *   1. 星空三层（远景星尘 / 中景星点 / 近景辉光）—— 缓慢漂移、微旋转
  *   2. 星云光斑（程序化径向渐变贴图，additive 低透明度）—— 制造纵深
  *   3. 背光光轮 + 五道竖光柱 —— 核心背后的圆形辉光与「神殿感」光带
- *   4. 能量核心：内核球 + 两层反向自转线框晶体 + 中心辉光脉冲
- *   5. 雷电弧光 ×N：从核心向外放电的锯齿折线，每 0.1~0.2s 重新生成
+ *   4. 玻璃能量球：菲涅尔外壳 + 经纬网格 + 深蓝内核 + 赤道亮带 + 高光斑
+ *   5. 雷电弧光 ×N：从球体向外放电的锯齿折线，每 0.1~0.2s 重新生成
  *   6. 地阵三层：外八卦（双环 + 八角 + 八卦爻纹）/ 中符文阵 / 内五行（五芒星 + 金木水火土）
  *   7. 地面冲击波 ×3 —— 由内向外扩散淡出
  *   8. 能量环 ×3（TorusGeometry）—— 不同倾角反向旋转，缠绕核心
@@ -334,19 +334,20 @@ function makeHaloTexture(): THREE.Texture {
   ctx.fillStyle = soft;
   ctx.fillRect(0, 0, size, size);
 
-  ctx.strokeStyle = 'rgba(180,235,255,0.9)';
-  ctx.shadowColor = 'rgba(80,200,255,0.95)';
-  ctx.shadowBlur = 46;
-  ctx.lineWidth = 6;
+  ctx.strokeStyle = 'rgba(150,220,255,0.55)';
+  ctx.shadowColor = 'rgba(70,180,255,0.6)';
+  ctx.shadowBlur = 16;
+  ctx.lineWidth = 2.5;
   ctx.beginPath();
-  ctx.arc(R, R, R * 0.66, 0, Math.PI * 2);
+  // 外圈细环落在球壳之外（球半径 0.88，光轮半径 2.75/2*0.88≈1.21）
+  ctx.arc(R, R, R * 0.88, 0, Math.PI * 2);
   ctx.stroke();
 
-  ctx.globalAlpha = 0.65;
-  ctx.lineWidth = 2;
-  ctx.shadowBlur = 24;
+  ctx.globalAlpha = 0.35;
+  ctx.lineWidth = 1.2;
+  ctx.shadowBlur = 10;
   ctx.beginPath();
-  ctx.arc(R, R, R * 0.73, 0, Math.PI * 2);
+  ctx.arc(R, R, R * 0.94, 0, Math.PI * 2);
   ctx.stroke();
   ctx.globalAlpha = 1;
 
@@ -386,6 +387,78 @@ function makeShaftTexture(): THREE.Texture {
   return tex;
 }
 
+/* ───────────── 玻璃能量球：菲涅尔材质 + 经纬网格 ───────────── */
+
+const FRESNEL_VERT = `
+varying vec3 vNormal;
+varying vec3 vEye;
+void main() {
+  vNormal = normalize(normalMatrix * normal);
+  vec4 mv = modelViewMatrix * vec4(position, 1.0);
+  vEye = normalize(-mv.xyz);
+  gl_Position = projectionMatrix * mv;
+}`;
+
+const FRESNEL_FRAG = `
+uniform vec3 uColor;
+uniform float uPower;
+uniform float uStrength;
+varying vec3 vNormal;
+varying vec3 vEye;
+void main() {
+  float f = pow(1.0 - abs(dot(normalize(vNormal), normalize(vEye))), uPower);
+  vec3 c = uColor * (0.035 + f * 1.25);
+  gl_FragColor = vec4(c, (0.025 + f * 0.58) * uStrength);
+}`;
+
+/** 边缘发光的玻璃质感：视线与法线夹角越大越亮（菲涅尔） */
+function makeFresnel(color: number, power: number, strength: number, side: THREE.Side = THREE.FrontSide) {
+  return new THREE.ShaderMaterial({
+    uniforms: {
+      uColor: { value: new THREE.Color(color) },
+      uPower: { value: power },
+      uStrength: { value: strength },
+    },
+    vertexShader: FRESNEL_VERT,
+    fragmentShader: FRESNEL_FRAG,
+    transparent: true,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    side,
+  });
+}
+
+/** 经纬线网格：手动生成纬线圈 + 经线，比 sphere wireframe 的三角网干净得多 */
+function makeGlobeGridGeometry(r: number, lats = 7, lons = 14, seg = 96): THREE.BufferGeometry {
+  const pos: number[] = [];
+  const sph = (theta: number, phi: number) =>
+    new THREE.Vector3(
+      Math.sin(phi) * Math.cos(theta) * r,
+      Math.cos(phi) * r,
+      Math.sin(phi) * Math.sin(theta) * r,
+    );
+  const push = (a: THREE.Vector3, b: THREE.Vector3) => {
+    pos.push(a.x, a.y, a.z, b.x, b.y, b.z);
+  };
+
+  for (let i = 1; i < lats; i++) {
+    const phi = (i / lats) * Math.PI;
+    for (let j = 0; j < seg; j++) {
+      push(sph((j / seg) * Math.PI * 2, phi), sph(((j + 1) / seg) * Math.PI * 2, phi));
+    }
+  }
+  for (let i = 0; i < lons; i++) {
+    const theta = (i / lons) * Math.PI * 2;
+    for (let j = 0; j < 48; j++) {
+      push(sph(theta, (j / 48) * Math.PI), sph(theta, ((j + 1) / 48) * Math.PI));
+    }
+  }
+
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  return geo;
+}
+
 /* ───────────── 组件 ───────────── */
 
 export default function AboutScene({ className }: { className?: string }) {
@@ -410,7 +483,7 @@ export default function AboutScene({ className }: { className?: string }) {
     const dpr = Math.min(2, window.devicePixelRatio || 1);
     renderer.setPixelRatio(dpr);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 0.9;
+    renderer.toneMappingExposure = 0.84;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
 
     const scene = new THREE.Scene();
@@ -497,14 +570,14 @@ export default function AboutScene({ className }: { className?: string }) {
     const haloMat = new THREE.SpriteMaterial({
       map: haloTex,
       transparent: true,
-      opacity: 0.5,
+      opacity: 0.3,
       blending: THREE.AdditiveBlending,
       depthWrite: false,
     });
     const halo = new THREE.Sprite(haloMat);
-    // 与能量核心同轴：正对核心略靠后，光环套住晶体
-    halo.position.set(0, 0.04, -0.85);
-    halo.scale.setScalar(2.4);
+    // 与能量球同轴：略靠后，光环套住球体
+    halo.position.set(0, 0.25, -0.9);
+    halo.scale.setScalar(2.75);
     figure.add(halo);
     dispose.push(haloMat);
 
@@ -529,53 +602,94 @@ export default function AboutScene({ className }: { className?: string }) {
       dispose.push(geo, mat);
     }
 
-    /* ── 3.3 能量核心：中心发光晶体（内核 + 两层线框 + 中心辉光）── */
+    /* ── 3.3 玻璃能量球：外层菲涅尔球壳 + 经纬网格 + 内层发光球 + 赤道亮带 ── */
     const core = new THREE.Group();
+    core.position.y = 0.25;
     figure.add(core);
 
-    const coreInnerGeo = new THREE.IcosahedronGeometry(0.26, 2);
-    const coreInnerMat = new THREE.MeshBasicMaterial({
-      color: 0x9fe8ff,
+    // 外层球壳：只渲染正面 + 更紧的菲涅尔，得到「玻璃边缘亮、中间透」而非整球泛白
+    const shellGeo = new THREE.SphereGeometry(0.88, 64, 48);
+    const shellMat = makeFresnel(0x8bd8ff, 2.9, 0.86);
+    const coreShell = new THREE.Mesh(shellGeo, shellMat);
+    core.add(coreShell);
+    // 第二层外壳：更宽更柔的青色边缘辉光，做出「玻璃厚度」而不炸白
+    const rimGeo = new THREE.SphereGeometry(0.895, 64, 48);
+    const rimMat = makeFresnel(0x6fd0ff, 1.7, 0.42);
+    core.add(new THREE.Mesh(rimGeo, rimMat));
+
+    // 经纬网格：参考图里的球仪线框，稍提亮以保证在暗底上可读
+    const gridGeo = makeGlobeGridGeometry(0.885);
+    const gridMat = new THREE.LineBasicMaterial({
+      color: 0x8be9ff,
       transparent: true,
-      opacity: 0.26,
+      opacity: 0.14,
       blending: THREE.AdditiveBlending,
       depthWrite: false,
     });
-    const coreInner = new THREE.Mesh(coreInnerGeo, coreInnerMat);
+    const coreGrid = new THREE.LineSegments(gridGeo, gridMat);
+    core.add(coreGrid);
+
+    // 内层球：深蓝不透明实体，遮挡背面网格，让球体有「实心内核」的层次
+    const innerGeo = new THREE.SphereGeometry(0.52, 48, 32);
+    const innerMat = new THREE.MeshBasicMaterial({ color: 0x071d3c });
+    core.add(new THREE.Mesh(innerGeo, innerMat));
+    const innerShellMat = makeFresnel(0x3b82f6, 1.7, 0.55);
+    const coreInner = new THREE.Mesh(innerGeo, innerShellMat);
     core.add(coreInner);
 
-    const coreWire1Geo = new THREE.IcosahedronGeometry(0.46, 1);
-    const coreWire1Mat = new THREE.MeshBasicMaterial({
-      color: 0x67e8f9,
-      wireframe: true,
+    // 内核柔光：让深蓝球心有体积感，而不是一个黑洞
+    const innerGlowMat = new THREE.SpriteMaterial({
+      map: glowTex,
+      color: 0x1d6fe0,
       transparent: true,
-      opacity: 0.55,
+      opacity: 0.2,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
     });
-    const coreWire1 = new THREE.Mesh(coreWire1Geo, coreWire1Mat);
-    core.add(coreWire1);
+    const innerGlow = new THREE.Sprite(innerGlowMat);
+    innerGlow.scale.setScalar(1.0);
+    core.add(innerGlow);
 
-    const coreWire2Geo = new THREE.IcosahedronGeometry(0.68, 0);
-    const coreWire2Mat = new THREE.MeshBasicMaterial({
-      color: 0xa78bfa,
-      wireframe: true,
+    // 左上高光斑：参考图里玻璃球那一处白色反光
+    const glintMat = new THREE.SpriteMaterial({
+      map: glowTex,
+      color: 0xe6f6ff,
       transparent: true,
-      opacity: 0.28,
+      opacity: 0.42,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
     });
-    const coreWire2 = new THREE.Mesh(coreWire2Geo, coreWire2Mat);
-    core.add(coreWire2);
+    const glint = new THREE.Sprite(glintMat);
+    glint.scale.setScalar(0.5);
+    glint.position.set(-0.62, 0.62, 0.42);
+    core.add(glint);
 
+    // 赤道亮带：参考图里内核那条横向高光
+    const equatorGeo = new THREE.TorusGeometry(0.53, 0.008, 8, 160);
+    const equatorMat = new THREE.MeshBasicMaterial({
+      color: 0xdbeafe,
+      transparent: true,
+      opacity: 0.85,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    });
+    const coreEquator = new THREE.Mesh(equatorGeo, equatorMat);
+    coreEquator.rotation.x = Math.PI / 2;
+    core.add(coreEquator);
+
+    // 球心柔光（克制，避免白爆）
     const coreGlowMat = new THREE.SpriteMaterial({
       map: glowTex,
-      color: 0x9fe8ff,
+      color: 0x7dd3fc,
       transparent: true,
-      opacity: 0.45,
+      opacity: 0.28,
       blending: THREE.AdditiveBlending,
       depthWrite: false,
     });
     const coreGlow = new THREE.Sprite(coreGlowMat);
     coreGlow.scale.setScalar(1.05);
     core.add(coreGlow);
-    dispose.push(coreInnerGeo, coreInnerMat, coreWire1Geo, coreWire1Mat, coreWire2Geo, coreWire2Mat, coreGlowMat);
+    dispose.push(shellGeo, shellMat, rimGeo, rimMat, gridGeo, gridMat, innerGeo, innerMat, innerShellMat, innerGlowMat, glintMat, equatorGeo, equatorMat, coreGlowMat);
 
     /* ── 3.4 雷电弧光：从核心向外放电的锯齿折线，定时重新生成 ── */
     const ARCS = smallScreen ? 4 : 7;
@@ -596,9 +710,10 @@ export default function AboutScene({ className }: { className?: string }) {
         .multiplyScalar(rMin + Math.random() * (rMax - rMin));
 
     const buildArc = (arc: (typeof arcs)[number], now: number) => {
-      const start = randOnSphere(0.34, 0.44);
-      const end = randOnSphere(1.0, 1.7);
-      end.y += (Math.random() - 0.5) * 0.5;
+      const start = randOnSphere(0.86, 0.94);
+      const end = randOnSphere(1.2, 1.75);
+      start.y += 0.25;
+      end.y += 0.25 + (Math.random() - 0.5) * 0.6;
 
       const attr = arc.line.geometry.getAttribute('position') as THREE.BufferAttribute;
       const arr = attr.array as Float32Array;
@@ -611,14 +726,14 @@ export default function AboutScene({ className }: { className?: string }) {
         const t = i / ARC_SEG;
         const p = new THREE.Vector3().copy(start).addScaledVector(dir, t);
         if (i !== 0 && i !== ARC_SEG) {
-          p.addScaledVector(perp, (Math.random() - 0.5) * len * 0.24);
+          p.addScaledVector(perp, (Math.random() - 0.5) * len * 0.12);
         }
         arr[i * 3] = p.x;
         arr[i * 3 + 1] = p.y;
         arr[i * 3 + 2] = p.z;
       }
       attr.needsUpdate = true;
-      arc.mat.opacity = 0.3 + Math.random() * 0.45;
+      arc.mat.opacity = 0.22 + Math.random() * 0.38;
       arc.nextAt = now + 0.08 + Math.random() * 0.18;
     };
 
@@ -641,15 +756,16 @@ export default function AboutScene({ className }: { className?: string }) {
       dispose.push(geo, mat);
     }
 
-    /* ── 4. 能量环 ×3（缠绕人物的光环）── */
+    /* ── 4. 环绕轨道 ×3（近水平的细椭圆，围绕球体，不再竖着切过画面）── */
     const rings: THREE.Mesh[] = [];
+    const ringBase: Array<{ tilt: number; roll: number; opacity: number }> = [];
     const ringSpecs = [
-      { r: 0.62, tilt: [Math.PI / 2.4, 0, 0.25], color: CYAN, opacity: 0.4, speed: 0.004 },
-      { r: 0.78, tilt: [Math.PI / 1.9, 0.4, -0.3], color: VIOLET, opacity: 0.32, speed: -0.0032 },
-      { r: 0.95, tilt: [Math.PI / 2.9, -0.35, 0.5], color: MAGENTA, opacity: 0.22, speed: 0.0022 },
+      { r: 1.1, tilt: 0.1, roll: 0.12, color: CYAN, opacity: 0.32 },
+      { r: 1.36, tilt: -0.16, roll: -0.2, color: 0xfbbf24, opacity: 0.22 },
+      { r: 1.62, tilt: 0.22, roll: 0.3, color: MAGENTA, opacity: 0.16 },
     ];
     for (const spec of ringSpecs) {
-      const geo = new THREE.TorusGeometry(spec.r, 0.009, 8, 160);
+      const geo = new THREE.TorusGeometry(spec.r, 0.006, 8, 180);
       const mat = new THREE.MeshBasicMaterial({
         color: spec.color,
         transparent: true,
@@ -658,10 +774,10 @@ export default function AboutScene({ className }: { className?: string }) {
         depthWrite: false,
       });
       const ring = new THREE.Mesh(geo, mat);
-      ring.rotation.set(spec.tilt[0], spec.tilt[1], spec.tilt[2]);
-      ring.userData.speed = spec.speed;
+      ring.rotation.set(Math.PI / 2 + spec.tilt, 0, spec.roll);
       figure.add(ring);
       rings.push(ring);
+      ringBase.push({ tilt: spec.tilt, roll: spec.roll, opacity: spec.opacity });
       dispose.push(geo, mat);
     }
 
@@ -685,9 +801,86 @@ export default function AboutScene({ className }: { className?: string }) {
       return { mesh, mat };
     };
 
-    const trigramFloor = makeFloor(trigramTex, 4.6, -0.75, 0.26, 0x9fe4ff);
-    const runeFloor = makeFloor(runeTex, 2.6, -0.738, 0.46, 0xffffff);
-    const pentacleFloor = makeFloor(pentacleTex, 1.72, -0.726, 0.4, 0xe6d9ff);
+    // 平台整体下沉，让悬浮球体与台面之间留出明显空隙（参考图的悬浮感）
+    const trigramFloor = makeFloor(trigramTex, 4.6, -1.0, 0.16, 0x9fe4ff);
+    const runeFloor = makeFloor(runeTex, 2.6, -0.988, 0.26, 0xffffff);
+    const pentacleFloor = makeFloor(pentacleTex, 1.72, -0.976, 0.22, 0xe6d9ff);
+
+    /* ── 5.0 立体同心圆平台：暗色台面 + 四层发光环 + 外圈灯点 ── */
+    const discGeo = new THREE.CircleGeometry(2.32, 96);
+    const discMat = new THREE.MeshBasicMaterial({
+      color: 0x06172e,
+      transparent: true,
+      opacity: 0.45,
+      side: THREE.DoubleSide,
+      depthWrite: false,
+    });
+    const disc = new THREE.Mesh(discGeo, discMat);
+    disc.rotation.x = -Math.PI / 2;
+    disc.position.y = -1.012;
+    figure.add(disc);
+    dispose.push(discGeo, discMat);
+
+    const platformSpecs = [
+      { r: 0.98, tube: 0.016, color: 0x93c5fd, opacity: 0.8, y: -0.95 },
+      { r: 1.34, tube: 0.012, color: 0x38bdf8, opacity: 0.55, y: -0.96 },
+      { r: 1.78, tube: 0.02, color: 0x67e8f9, opacity: 0.42, y: -0.975 },
+      { r: 2.3, tube: 0.014, color: 0xfbbf24, opacity: 0.42, y: -0.99 },
+    ];
+    for (const spec of platformSpecs) {
+      const geo = new THREE.TorusGeometry(spec.r, spec.tube, 8, 180);
+      const mat = new THREE.MeshBasicMaterial({
+        color: spec.color,
+        transparent: true,
+        opacity: spec.opacity,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+      });
+      const ring = new THREE.Mesh(geo, mat);
+      ring.rotation.x = -Math.PI / 2;
+      ring.position.y = spec.y;
+      figure.add(ring);
+      dispose.push(geo, mat);
+    }
+
+    // 中心圆台（暗面 + 亮边由第一道圆环提供）
+    const padGeo = new THREE.RingGeometry(0.5, 0.96, 96);
+    const padMat = new THREE.MeshBasicMaterial({
+      color: 0x0d2a4d,
+      transparent: true,
+      opacity: 0.55,
+      side: THREE.DoubleSide,
+      depthWrite: false,
+    });
+    const pad = new THREE.Mesh(padGeo, padMat);
+    pad.rotation.x = -Math.PI / 2;
+    pad.position.y = -0.945;
+    figure.add(pad);
+    dispose.push(padGeo, padMat);
+
+    // 外圈灯点（一圈均匀分布的辉光点，像面板指示灯）
+    const lampCount = 56;
+    const lampPos = new Float32Array(lampCount * 3);
+    for (let i = 0; i < lampCount; i++) {
+      const a = (i / lampCount) * Math.PI * 2;
+      lampPos[i * 3] = Math.cos(a) * 2.3;
+      lampPos[i * 3 + 1] = -0.95;
+      lampPos[i * 3 + 2] = Math.sin(a) * 2.3;
+    }
+    const lampGeo = new THREE.BufferGeometry();
+    lampGeo.setAttribute('position', new THREE.BufferAttribute(lampPos, 3));
+    const lampMat = new THREE.PointsMaterial({
+      color: 0x9fe8ff,
+      size: 0.055,
+      map: glowTex,
+      transparent: true,
+      opacity: 0.75,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      sizeAttenuation: true,
+    });
+    figure.add(new THREE.Points(lampGeo, lampMat));
+    dispose.push(lampGeo, lampMat);
 
     /* ── 5.1 地面冲击波：三道由内向外扩散的圆环 ── */
     const ripples: Array<{ mesh: THREE.Mesh; mat: THREE.MeshBasicMaterial; offset: number }> = [];
@@ -703,7 +896,7 @@ export default function AboutScene({ className }: { className?: string }) {
       });
       const mesh = new THREE.Mesh(geo, mat);
       mesh.rotation.x = -Math.PI / 2;
-      mesh.position.y = -0.744;
+      mesh.position.y = -0.965;
       figure.add(mesh);
       ripples.push({ mesh, mat, offset: i / 3 });
       dispose.push(geo, mat);
@@ -717,9 +910,9 @@ export default function AboutScene({ className }: { className?: string }) {
       speed: number;
     }> = [];
     const trailSpecs = [
-      { color: 0x67e8f9, r: 0.68, turns: 2.6, y0: -0.6, y1: 0.82, speed: 0.055, squash: 0.9, count: smallScreen ? 90 : 150 },
-      { color: 0xe879f9, r: 0.84, turns: 2.1, y0: -0.55, y1: 0.74, speed: -0.045, squash: 0.8, count: smallScreen ? 80 : 130 },
-      { color: 0xa78bfa, r: 0.96, turns: 3.1, y0: -0.5, y1: 0.88, speed: 0.038, squash: 0.95, count: smallScreen ? 80 : 130 },
+      { color: 0x67e8f9, r: 1.08, turns: 2.6, y0: -0.35, y1: 0.95, speed: 0.055, squash: 0.9, count: smallScreen ? 90 : 150 },
+      { color: 0xe879f9, r: 1.3, turns: 2.1, y0: -0.3, y1: 0.9, speed: -0.045, squash: 0.8, count: smallScreen ? 80 : 130 },
+      { color: 0xa78bfa, r: 1.52, turns: 3.1, y0: -0.25, y1: 1.0, speed: 0.038, squash: 0.95, count: smallScreen ? 80 : 130 },
     ];
     for (const spec of trailSpecs) {
       const pts: THREE.Vector3[] = [];
@@ -771,22 +964,22 @@ export default function AboutScene({ className }: { className?: string }) {
       dispose.push(geo, mat);
     }
 
-    /* ── 6. 蓝牙数据流：设备→手掌 + 绕身螺旋 ── */
+    /* ── 6. 蓝牙数据流：设备→球体 + 绕球螺旋 ── */
     const streamCurves = [
-      // 设备（左侧悬浮）→ 右手
+      // 设备（左侧悬浮）→ 能量球左缘
       new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-1.55, 0.18, 0.45),
-        new THREE.Vector3(-1.25, 0.42, 0.5),
-        new THREE.Vector3(-0.95, 0.3, 0.35),
-        new THREE.Vector3(-0.7, 0.12, 0.2),
-        new THREE.Vector3(-0.45, 0.02, 0.14),
+        new THREE.Vector3(-2.0, 0.3, 0.55),
+        new THREE.Vector3(-1.7, 0.55, 0.6),
+        new THREE.Vector3(-1.4, 0.45, 0.45),
+        new THREE.Vector3(-1.1, 0.3, 0.3),
+        new THREE.Vector3(-0.85, 0.25, 0.2),
       ]),
-      // 绕身螺旋（自下而上）
+      // 绕球螺旋（自下而上）
       new THREE.CatmullRomCurve3(
         Array.from({ length: 26 }, (_, i) => {
           const t = i / 25;
           const a = t * Math.PI * 4.2;
-          return new THREE.Vector3(Math.cos(a) * 0.5, -0.55 + t * 1.45, Math.sin(a) * 0.4);
+          return new THREE.Vector3(Math.cos(a) * 0.95, -0.35 + t * 1.6, Math.sin(a) * 0.78);
         }),
       ),
     ];
@@ -850,7 +1043,7 @@ export default function AboutScene({ className }: { className?: string }) {
     const devGlow = new THREE.Sprite(devGlowMat);
     devGlow.scale.setScalar(0.7);
     device.add(devGlow);
-    device.position.set(-1.55, 0.18, 0.45);
+    device.position.set(-2.0, 0.3, 0.55);
     figure.add(device);
     dispose.push(devGeo, devMat, devGlowMat);
 
@@ -865,12 +1058,12 @@ export default function AboutScene({ className }: { className?: string }) {
       speed: number;
       phase: number;
     }> = [
-      { name: 'Vue 3', color: 0x42d392, rgb: [66, 211, 146], r: 1.22, y: 0.3, tilt: 0.44, speed: 0.34, phase: 0 },
-      { name: 'Flutter', color: 0x54c5f8, rgb: [84, 197, 248], r: 1.1, y: 0.52, tilt: -0.3, speed: -0.44, phase: 1.15 },
-      { name: 'Three.js', color: 0xdce8ff, rgb: [220, 232, 255], r: 1.52, y: -0.1, tilt: 0.22, speed: 0.27, phase: 2.3 },
-      { name: 'BLE', color: 0x38bdf8, rgb: [56, 189, 248], r: 1.02, y: 0.04, tilt: -0.56, speed: 0.52, phase: 3.4 },
-      { name: 'OTA', color: 0xe879f9, rgb: [232, 121, 249], r: 1.36, y: 0.48, tilt: 0.58, speed: -0.35, phase: 4.5 },
-      { name: 'uni-app', color: 0xa78bfa, rgb: [167, 139, 250], r: 1.16, y: -0.24, tilt: 0.1, speed: 0.4, phase: 5.6 },
+      { name: 'Vue 3', color: 0x42d392, rgb: [66, 211, 146], r: 1.62, y: 0.42, tilt: 0.44, speed: 0.34, phase: 0 },
+      { name: 'Flutter', color: 0x54c5f8, rgb: [84, 197, 248], r: 1.48, y: 0.66, tilt: -0.3, speed: -0.44, phase: 1.15 },
+      { name: 'Three.js', color: 0xdce8ff, rgb: [220, 232, 255], r: 1.86, y: 0.1, tilt: 0.22, speed: 0.27, phase: 2.3 },
+      { name: 'BLE', color: 0x38bdf8, rgb: [56, 189, 248], r: 1.42, y: 0.18, tilt: -0.56, speed: 0.52, phase: 3.4 },
+      { name: 'OTA', color: 0xe879f9, rgb: [232, 121, 249], r: 1.74, y: 0.6, tilt: 0.58, speed: -0.35, phase: 4.5 },
+      { name: 'uni-app', color: 0xa78bfa, rgb: [167, 139, 250], r: 1.56, y: -0.12, tilt: 0.1, speed: 0.4, phase: 5.6 },
     ];
 
     const satellites: THREE.Group[] = [];
@@ -907,12 +1100,12 @@ export default function AboutScene({ className }: { className?: string }) {
       const labelMat = new THREE.SpriteMaterial({
         map: texture,
         transparent: true,
-        opacity: smallScreen ? 0.68 : 0.92,
+        opacity: smallScreen ? 0.6 : 0.78,
         depthWrite: false,
         depthTest: false,
       });
       const label = new THREE.Sprite(labelMat);
-      label.scale.set(0.16 * aspect, 0.16, 1);
+      label.scale.set(0.145 * aspect, 0.145, 1);
       label.position.y = 0.14;
       group.add(label);
       dispose.push(texture, labelMat);
@@ -950,7 +1143,7 @@ export default function AboutScene({ className }: { className?: string }) {
     const composer = new EffectComposer(renderer);
     composer.setPixelRatio(dpr);
     const renderPass = new RenderPass(scene, camera);
-    const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), smallScreen ? 0.42 : 0.5, 0.85, 0.3);
+    const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), smallScreen ? 0.36 : 0.42, 0.72, 0.42);
     const outputPass = new OutputPass();
     composer.addPass(renderPass);
     composer.addPass(bloom);
@@ -967,13 +1160,13 @@ export default function AboutScene({ className }: { className?: string }) {
       composer.setSize(w, h);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
-      // 宽屏：人物偏右，给左侧文案留空间；窄屏：居中偏下
+      // 宽屏：能量球偏右，给左侧文案留空间；窄屏：下移并缩小，避免压住标题
       const wide = w >= 1024;
-      figure.position.x = wide ? 0.72 : 0;
-      figure.position.y = wide ? -0.1 : -0.18;
-      figure.scale.setScalar(wide ? 1 : 0.92);
-      camera.position.z = wide ? 3.9 : 4.4;
-      orbitScale = wide ? 1 : 0.64;
+      figure.position.x = wide ? 0.5 : 0;
+      figure.position.y = wide ? -0.1 : -0.66;
+      figure.scale.setScalar(wide ? 1 : 0.82);
+      camera.position.z = wide ? 4.25 : 4.7;
+      orbitScale = wide ? 1 : 0.6;
     };
     const ro = new ResizeObserver(resize);
     ro.observe(wrap);
@@ -1027,15 +1220,15 @@ export default function AboutScene({ className }: { className?: string }) {
       figure.rotation.y = Math.sin(elapsed * 0.12) * 0.2 + pointer.x * 0.18;
       figure.rotation.z = Math.sin(elapsed * 0.16) * 0.015;
 
-      // 能量核心：三层几何反向自转 + 中心辉光脉冲
-      coreInner.rotation.y += 0.004;
-      coreInner.rotation.x += 0.002;
-      coreWire1.rotation.y -= 0.0035;
-      coreWire1.rotation.z += 0.0015;
-      coreWire2.rotation.y += 0.0022;
-      coreWire2.rotation.x -= 0.0012;
-      coreGlow.scale.setScalar(1.0 + Math.sin(elapsed * 1.7) * 0.07);
-      coreGlowMat.opacity = 0.38 + 0.12 * (0.5 + 0.5 * Math.sin(elapsed * 2.4));
+      // 玻璃能量球：网格自转、内层反向、赤道亮带缓慢摆动、球心柔光呼吸
+      coreGrid.rotation.y += 0.0018;
+      coreShell.rotation.y -= 0.0009;
+      coreInner.rotation.y += 0.0024;
+      coreEquator.rotation.z += 0.0026;
+      coreGlow.scale.setScalar(1.02 + Math.sin(elapsed * 1.7) * 0.05);
+      coreGlowMat.opacity = 0.22 + 0.09 * (0.5 + 0.5 * Math.sin(elapsed * 2.4));
+      innerGlowMat.opacity = 0.18 + 0.06 * (0.5 + 0.5 * Math.sin(elapsed * 1.1));
+      glintMat.opacity = 0.36 + 0.1 * (0.5 + 0.5 * Math.sin(elapsed * 0.9));
 
       // 雷电弧光：到点就重新生成一条，形成持续放电
       for (const a of arcs) {
@@ -1044,8 +1237,8 @@ export default function AboutScene({ className }: { className?: string }) {
 
       // 背光光轮：缓慢自转 + 呼吸
       haloMat.rotation += 0.0007;
-      haloMat.opacity = 0.4 + 0.14 * (0.5 + 0.5 * Math.sin(elapsed * 0.6));
-      halo.scale.setScalar(2.4 + Math.sin(elapsed * 0.6) * 0.05);
+      haloMat.opacity = 0.24 + 0.08 * (0.5 + 0.5 * Math.sin(elapsed * 0.6));
+      halo.scale.setScalar(2.75 + Math.sin(elapsed * 0.6) * 0.06);
 
       // 竖光柱：各自缓慢明暗
       for (const s of shafts) {
@@ -1070,25 +1263,26 @@ export default function AboutScene({ className }: { className?: string }) {
       for (const rp of ripples) {
         const t = (elapsed * 0.22 + rp.offset) % 1;
         const fadeIn = Math.min(1, t / 0.12);
-        rp.mesh.scale.setScalar(0.7 + t * 3.1);
-        rp.mat.opacity = (1 - t) * 0.3 * fadeIn;
+        rp.mesh.scale.setScalar(0.7 + t * 2.4);
+        rp.mat.opacity = (1 - t) * 0.18 * fadeIn;
       }
 
-      // 光环反向旋转
+      // 光环：保持近水平，只做小幅摆动与明暗呼吸（不再累积成竖立大圆）
       rings.forEach((ring, i) => {
-        ring.rotation.z += (ring.userData.speed as number) * (1 + i * 0.15);
-        ring.rotation.x += (ring.userData.speed as number) * 0.35;
+        const b = ringBase[i];
+        ring.rotation.x = Math.PI / 2 + b.tilt + Math.sin(elapsed * 0.17 + i) * 0.035;
+        ring.rotation.z = b.roll + Math.sin(elapsed * 0.22 + i * 1.3) * 0.06;
         const m = ring.material as THREE.MeshBasicMaterial;
-        m.opacity = 0.25 + 0.35 * (0.5 + 0.5 * Math.sin(elapsed * 0.8 + i));
+        m.opacity = b.opacity * (0.65 + 0.35 * (0.5 + 0.5 * Math.sin(elapsed * 0.8 + i)));
       });
 
       // 地阵三层：外八卦慢转、中符文正转、内五行反转，各自呼吸
       trigramFloor.mesh.rotation.z += 0.0009;
-      trigramFloor.mat.opacity = 0.18 + 0.12 * (0.5 + 0.5 * Math.sin(elapsed * 0.45));
+      trigramFloor.mat.opacity = 0.1 + 0.06 * (0.5 + 0.5 * Math.sin(elapsed * 0.45));
       runeFloor.mesh.rotation.z += 0.0016;
-      runeFloor.mat.opacity = 0.32 + 0.2 * (0.5 + 0.5 * Math.sin(elapsed * 0.7));
+      runeFloor.mat.opacity = 0.18 + 0.1 * (0.5 + 0.5 * Math.sin(elapsed * 0.7));
       pentacleFloor.mesh.rotation.z -= 0.0026;
-      pentacleFloor.mat.opacity = 0.28 + 0.16 * (0.5 + 0.5 * Math.sin(elapsed * 0.9 + 1.2));
+      pentacleFloor.mat.opacity = 0.16 + 0.08 * (0.5 + 0.5 * Math.sin(elapsed * 0.9 + 1.2));
 
       // 技能卫星：倾斜圆轨道 + 轻微上下浮动
       for (const s of satellites) {
