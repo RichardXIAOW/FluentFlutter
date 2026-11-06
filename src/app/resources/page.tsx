@@ -64,7 +64,7 @@ const steps: Step[] = [
     bullets: [
       '界面编写：页面骨架、布局组件怎么选、ListView 列表、setState 交互',
       '常用配置：AppBar、底部导航（保状态的正确姿势）、顶部标签页、抽屉与轻提示',
-      '第三方库速查：dio 上传下载、mobile_scanner 扫码、geolocator 定位、flutter_blue_plus 蓝牙',
+      '第三方库速查：dio 上传下载、mobile_scanner 扫码、geolocator 定位、universal_ble 蓝牙',
       '新手高频坑速查表 + 与第四步工程化的衔接地图',
     ],
     tags: ['界面编写', 'TabBar / 底部导航', '第三方库', '避坑速查'],

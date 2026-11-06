@@ -13,11 +13,14 @@ import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
  * 层次（由远及近）：
  *   1. 星空三层（远景星尘 / 中景星点 / 近景辉光）—— 缓慢漂移、微旋转
  *   2. 星云光斑（程序化径向渐变贴图，additive 低透明度）—— 制造纵深
- *   3. 魔法法阵（CanvasTexture 绘制的双层符文环）—— 人物脚下，缓慢自转 + 呼吸
+ *   3. 地阵三层：外八卦（双环 + 八角 + 八卦爻纹）/ 中符文阵 / 内五行（五芒星 + 金木水火土），
+ *      转速与方向各不相同，带呼吸明暗
  *   4. 能量环 ×3（TorusGeometry + additive）—— 不同倾角反向旋转，形成光环缠绕
  *   5. 人物粒子模型（约 9k 粒子按人体几何采样：头/颈/躯干/骨盆/双臂/双腿）—— 呼吸、微旋转
  *   6. 蓝牙数据流（两条 CatmullRom 曲线上的流动粒子：设备→手掌、绕身螺旋）—— 青→品红渐变
- *   7. 前景浮尘 —— 近景小粒子，强化空间感
+ *   7. 技能卫星 ×6（Vue / Flutter / Three.js / BLE / OTA / uni-app）—— 倾斜圆轨道 +
+ *      线框八面体 + 发光铭牌，铭牌关闭 depthTest，任何角度都能看清
+ *   8. 前景浮尘 —— 近景小粒子，强化空间感
  *   后期：UnrealBloom（辉光）+ OutputPass（色彩空间输出）
  *
  * 交互 / 降级：
@@ -130,8 +133,189 @@ function makeRuneTexture(): THREE.Texture {
   return tex;
 }
 
-/* ───────────── 人体粒子采样 ───────────── */
+/** 八卦地阵：双环 + 八角 + 八卦爻纹（外层，最慢自转） */
+function makeTrigramTexture(): THREE.Texture {
+  const size = 1024;
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = size;
+  const ctx = canvas.getContext('2d')!;
+  ctx.translate(size / 2, size / 2);
+  const R = size / 2;
 
+  ctx.strokeStyle = 'rgba(120,220,255,0.8)';
+  ctx.lineWidth = 2;
+
+  for (const r of [0.98, 0.93, 0.66]) {
+    ctx.beginPath();
+    ctx.arc(0, 0, R * r, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+
+  // 八角形
+  ctx.beginPath();
+  for (let i = 0; i < 8; i++) {
+    const a = (i / 8) * Math.PI * 2 - Math.PI / 2;
+    const x = Math.cos(a) * R * 0.9;
+    const y = Math.sin(a) * R * 0.9;
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+  ctx.stroke();
+
+  // 八卦爻纹：阳爻一整条、阴爻断成两截，三条一卦
+  const TRIGRAMS = ['111', '110', '101', '100', '011', '010', '001', '000'];
+  ctx.lineWidth = 3.5;
+  for (let i = 0; i < 8; i++) {
+    const a = (i / 8) * Math.PI * 2 - Math.PI / 2;
+    ctx.save();
+    ctx.translate(Math.cos(a) * R * 0.78, Math.sin(a) * R * 0.78);
+    ctx.rotate(a + Math.PI / 2);
+    const half = R * 0.055;
+    for (let k = 0; k < 3; k++) {
+      const y = (k - 1) * 11;
+      if (TRIGRAMS[i][k] === '1') {
+        ctx.beginPath();
+        ctx.moveTo(-half, y);
+        ctx.lineTo(half, y);
+        ctx.stroke();
+      } else {
+        ctx.beginPath();
+        ctx.moveTo(-half, y);
+        ctx.lineTo(-half * 0.22, y);
+        ctx.moveTo(half * 0.22, y);
+        ctx.lineTo(half, y);
+        ctx.stroke();
+      }
+    }
+    ctx.restore();
+  }
+
+  // 边缘细刻度
+  ctx.lineWidth = 1.5;
+  for (let i = 0; i < 128; i++) {
+    const a = (i / 128) * Math.PI * 2;
+    ctx.globalAlpha = i % 8 === 0 ? 0.75 : 0.28;
+    ctx.beginPath();
+    ctx.moveTo(Math.cos(a) * R * 0.935, Math.sin(a) * R * 0.935);
+    ctx.lineTo(Math.cos(a) * R * (i % 8 === 0 ? 0.98 : 0.955), Math.sin(a) * R * (i % 8 === 0 ? 0.98 : 0.955));
+    ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
+}
+
+/** 五行地阵：五芒星 + 金木水火土（内层，反向自转） */
+function makePentacleTexture(): THREE.Texture {
+  const size = 1024;
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = size;
+  const ctx = canvas.getContext('2d')!;
+  ctx.translate(size / 2, size / 2);
+  const R = size / 2;
+
+  ctx.strokeStyle = 'rgba(200,170,255,0.85)';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  ctx.arc(0, 0, R * 0.95, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // 内接正五边形顶点
+  const pt = (i: number, r: number) => {
+    const a = (i / 5) * Math.PI * 2 - Math.PI / 2;
+    return [Math.cos(a) * R * r, Math.sin(a) * R * r] as const;
+  };
+
+  // 五芒星：隔点连线
+  ctx.beginPath();
+  for (let i = 0; i < 5; i++) {
+    const [x, y] = pt(i * 2, 0.8);
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+  ctx.stroke();
+
+  // 内五边形
+  ctx.beginPath();
+  for (let i = 0; i < 5; i++) {
+    const [x, y] = pt(i, 0.5);
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+  ctx.stroke();
+
+  // 顶点小圆
+  for (let i = 0; i < 5; i++) {
+    const [x, y] = pt(i, 0.95);
+    ctx.beginPath();
+    ctx.arc(x, y, R * 0.012, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(210,185,255,0.9)';
+    ctx.fill();
+  }
+
+  // 五行字
+  const ELEMENTS = ['金', '木', '水', '火', '土'];
+  ctx.font = `600 ${Math.round(R * 0.1)}px "PingFang SC","Microsoft YaHei",serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = 'rgba(226,210,255,0.92)';
+  ELEMENTS.forEach((ch, i) => {
+    const [x, y] = pt(i, 0.665);
+    ctx.fillText(ch, x, y);
+  });
+
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
+}
+
+/** 技能铭牌：圆角胶囊底 + 发光文字，作为卫星标签 */
+function makeLabelTexture(text: string, rgb: [number, number, number]): { texture: THREE.Texture; aspect: number } {
+  const fontSize = 44;
+  const padX = 24;
+  const h = 92;
+  const font = `600 ${fontSize}px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace`;
+
+  const probe = document.createElement('canvas').getContext('2d')!;
+  probe.font = font;
+  const w = Math.ceil(probe.measureText(text).width) + padX * 2;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext('2d')!;
+  ctx.font = font;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+
+  // 胶囊底
+  const r = h / 2 - 6;
+  ctx.beginPath();
+  if (typeof ctx.roundRect === 'function') ctx.roundRect(3, 6, w - 6, h - 12, r);
+  else ctx.rect(3, 6, w - 6, h - 12);
+  ctx.fillStyle = 'rgba(6,10,22,0.66)';
+  ctx.fill();
+  ctx.strokeStyle = `rgba(${rgb[0]},${rgb[1]},${rgb[2]},0.7)`;
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+
+  // 文字（带同色辉光）
+  ctx.shadowColor = `rgba(${rgb[0]},${rgb[1]},${rgb[2]},0.95)`;
+  ctx.shadowBlur = 16;
+  ctx.fillStyle = 'rgba(240,250,255,0.96)';
+  ctx.fillText(text, w / 2, h / 2 + 1);
+
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return { texture: tex, aspect: w / h };
+}
+
+/* ───────────── 人体粒子采样 ───────────── */
 type P3 = [number, number, number];
 
 function randDir(): THREE.Vector3 {
@@ -242,7 +426,9 @@ export default function AboutScene({ className }: { className?: string }) {
     const nebulaTexA = makeNebulaTexture('rgba(56,189,248,0.55)');
     const nebulaTexB = makeNebulaTexture('rgba(167,139,250,0.5)');
     const runeTex = makeRuneTexture();
-    dispose.push(glowTex, nebulaTexA, nebulaTexB, runeTex);
+    const trigramTex = makeTrigramTexture();
+    const pentacleTex = makePentacleTexture();
+    dispose.push(glowTex, nebulaTexA, nebulaTexB, runeTex, trigramTex, pentacleTex);
 
     /* ── 1. 星空三层 ── */
     const starLayers: Array<{ points: THREE.Points; geo: THREE.BufferGeometry; speed: number }> = [];
@@ -364,21 +550,29 @@ export default function AboutScene({ className }: { className?: string }) {
       dispose.push(geo, mat);
     }
 
-    /* ── 5. 魔法法阵（脚下）── */
-    const runeGeo = new THREE.PlaneGeometry(2.6, 2.6);
-    const runeMat = new THREE.MeshBasicMaterial({
-      map: runeTex,
-      transparent: true,
-      opacity: 0.5,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false,
-      side: THREE.DoubleSide,
-    });
-    const rune = new THREE.Mesh(runeGeo, runeMat);
-    rune.rotation.x = -Math.PI / 2;
-    rune.position.y = -0.74;
-    figure.add(rune);
-    dispose.push(runeGeo, runeMat);
+    /* ── 5. 地阵三层：外八卦 / 中符文 / 内五行（脚下，各层转速与方向不同）── */
+    const makeFloor = (tex: THREE.Texture, size: number, y: number, opacity: number, tint: number) => {
+      const geo = new THREE.PlaneGeometry(size, size);
+      const mat = new THREE.MeshBasicMaterial({
+        map: tex,
+        color: tint,
+        transparent: true,
+        opacity,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+        side: THREE.DoubleSide,
+      });
+      const mesh = new THREE.Mesh(geo, mat);
+      mesh.rotation.x = -Math.PI / 2;
+      mesh.position.y = y;
+      figure.add(mesh);
+      dispose.push(geo, mat);
+      return { mesh, mat };
+    };
+
+    const trigramFloor = makeFloor(trigramTex, 4.6, -0.75, 0.26, 0x9fe4ff);
+    const runeFloor = makeFloor(runeTex, 2.6, -0.738, 0.46, 0xffffff);
+    const pentacleFloor = makeFloor(pentacleTex, 1.72, -0.726, 0.4, 0xe6d9ff);
 
     /* ── 6. 蓝牙数据流：设备→手掌 + 绕身螺旋 ── */
     const streamCurves = [
@@ -463,7 +657,75 @@ export default function AboutScene({ className }: { className?: string }) {
     figure.add(device);
     dispose.push(devGeo, devMat, devGlowMat);
 
-    /* ── 8. 前景浮尘 ── */
+    /* ── 8. 技能卫星：六块铭牌沿不同倾角的轨道绕体飞行 ── */
+    const SKILLS: Array<{
+      name: string;
+      color: number;
+      rgb: [number, number, number];
+      r: number;
+      y: number;
+      tilt: number;
+      speed: number;
+      phase: number;
+    }> = [
+      { name: 'Vue 3', color: 0x42d392, rgb: [66, 211, 146], r: 1.22, y: 0.3, tilt: 0.44, speed: 0.34, phase: 0 },
+      { name: 'Flutter', color: 0x54c5f8, rgb: [84, 197, 248], r: 1.1, y: 0.52, tilt: -0.3, speed: -0.44, phase: 1.15 },
+      { name: 'Three.js', color: 0xdce8ff, rgb: [220, 232, 255], r: 1.52, y: -0.1, tilt: 0.22, speed: 0.27, phase: 2.3 },
+      { name: 'BLE', color: 0x38bdf8, rgb: [56, 189, 248], r: 1.02, y: 0.04, tilt: -0.56, speed: 0.52, phase: 3.4 },
+      { name: 'OTA', color: 0xe879f9, rgb: [232, 121, 249], r: 1.36, y: 0.48, tilt: 0.58, speed: -0.35, phase: 4.5 },
+      { name: 'uni-app', color: 0xa78bfa, rgb: [167, 139, 250], r: 1.16, y: -0.24, tilt: 0.1, speed: 0.4, phase: 5.6 },
+    ];
+
+    const satellites: THREE.Group[] = [];
+    for (const s of SKILLS) {
+      const group = new THREE.Group();
+
+      // 能量点（辉光 sprite）
+      const dotMat = new THREE.SpriteMaterial({
+        map: glowTex,
+        color: s.color,
+        transparent: true,
+        opacity: 0.85,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+      });
+      const dot = new THREE.Sprite(dotMat);
+      dot.scale.setScalar(0.24);
+      group.add(dot);
+
+      // 线框八面体（转动时更有「实体」感）
+      const octaGeo = new THREE.OctahedronGeometry(0.05, 0);
+      const octaMat = new THREE.MeshBasicMaterial({
+        color: s.color,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.85,
+      });
+      const octa = new THREE.Mesh(octaGeo, octaMat);
+      group.add(octa);
+      dispose.push(octaGeo, octaMat, dotMat);
+
+      // 铭牌：关掉 depthTest，始终可读（HUD 观感）
+      const { texture, aspect } = makeLabelTexture(s.name, s.rgb);
+      const labelMat = new THREE.SpriteMaterial({
+        map: texture,
+        transparent: true,
+        opacity: smallScreen ? 0.68 : 0.92,
+        depthWrite: false,
+        depthTest: false,
+      });
+      const label = new THREE.Sprite(labelMat);
+      label.scale.set(0.16 * aspect, 0.16, 1);
+      label.position.y = 0.14;
+      group.add(label);
+      dispose.push(texture, labelMat);
+
+      group.userData = { ...s, octa };
+      figure.add(group);
+      satellites.push(group);
+    }
+
+    /* ── 9. 前景浮尘 ── */
     const dustCount = smallScreen ? 160 : 300;
     const dustPos = new Float32Array(dustCount * 3);
     for (let i = 0; i < dustCount; i++) {
@@ -499,6 +761,7 @@ export default function AboutScene({ className }: { className?: string }) {
     dispose.push(composer);
 
     /* ── 尺寸 / 布局自适应 ── */
+    let orbitScale = 1; // 窄屏收窄卫星轨道，避免铭牌被视口切掉
     const resize = () => {
       const w = wrap.clientWidth;
       const h = wrap.clientHeight;
@@ -513,6 +776,7 @@ export default function AboutScene({ className }: { className?: string }) {
       figure.position.y = wide ? -0.1 : -0.18;
       figure.scale.setScalar(wide ? 1 : 0.92);
       camera.position.z = wide ? 3.9 : 4.4;
+      orbitScale = wide ? 1 : 0.64;
     };
     const ro = new ResizeObserver(resize);
     ro.observe(wrap);
@@ -576,10 +840,37 @@ export default function AboutScene({ className }: { className?: string }) {
         m.opacity = 0.25 + 0.35 * (0.5 + 0.5 * Math.sin(elapsed * 0.8 + i));
       });
 
-      // 法阵：自转 + 呼吸
-      rune.rotation.z += 0.0016;
-      const rm = rune.material as THREE.MeshBasicMaterial;
-      rm.opacity = 0.32 + 0.24 * (0.5 + 0.5 * Math.sin(elapsed * 0.7));
+      // 地阵三层：外八卦慢转、中符文正转、内五行反转，各自呼吸
+      trigramFloor.mesh.rotation.z += 0.0009;
+      trigramFloor.mat.opacity = 0.18 + 0.12 * (0.5 + 0.5 * Math.sin(elapsed * 0.45));
+      runeFloor.mesh.rotation.z += 0.0016;
+      runeFloor.mat.opacity = 0.32 + 0.2 * (0.5 + 0.5 * Math.sin(elapsed * 0.7));
+      pentacleFloor.mesh.rotation.z -= 0.0026;
+      pentacleFloor.mat.opacity = 0.28 + 0.16 * (0.5 + 0.5 * Math.sin(elapsed * 0.9 + 1.2));
+
+      // 技能卫星：倾斜圆轨道 + 轻微上下浮动
+      for (const s of satellites) {
+        const { r, y, tilt, speed, phase, octa } = s.userData as {
+          r: number;
+          y: number;
+          tilt: number;
+          speed: number;
+          phase: number;
+          octa: THREE.Mesh;
+        };
+        const a = elapsed * speed + phase;
+        const rr = r * orbitScale;
+        const px = Math.cos(a) * rr;
+        const pz = Math.sin(a) * rr;
+        const py = y + Math.sin(a * 2 + phase) * 0.05;
+        s.position.set(
+          px,
+          py * Math.cos(tilt) - pz * Math.sin(tilt),
+          py * Math.sin(tilt) + pz * Math.cos(tilt),
+        );
+        octa.rotation.x += 0.02;
+        octa.rotation.y += 0.026;
+      }
 
       // 数据流粒子推进
       for (const s of streams) {

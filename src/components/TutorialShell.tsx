@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import CodeBlock from './CodeBlock';
+import { buildTutorialHtml, tutorialFileName } from '@/lib/tutorial-export';
 import type { Chapter, Block, Section } from '@/data/tutorials/types';
 
 /**
@@ -106,6 +107,27 @@ export default function TutorialShell({
     setActive(id);
   };
 
+  // 下载整篇为独立单文件 HTML（无外链、无脚本，可直接双击打开或打印成 PDF）
+  const download = () => {
+    const html = buildTutorialHtml({
+      title,
+      eyebrow,
+      chapters,
+      sourcePath: window.location.pathname,
+      siteName: 'FluentFlutter',
+    });
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = tutorialFileName(title);
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    // 60s 后再释放：过早 revoke 会让部分浏览器在写入途中取消下载
+    window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
+  };
+
   const currentChapter = chapters.find((c) => c.sections.some((s) => s.id === active));
 
   return (
@@ -151,6 +173,17 @@ export default function TutorialShell({
                 直接看 {siblings.next.label}
               </Link>
             )}
+            <button
+              type="button"
+              onClick={download}
+              title="把本篇教程打包成一个独立的 HTML 文件下载（含全部代码，可离线看 / 可打印成 PDF）"
+              className="flex h-10 items-center gap-1.5 rounded-xl border border-ink-200 bg-surface px-4 text-[16.5px] font-medium text-ink-700 transition hover:border-brand-300 hover:text-brand-600"
+            >
+              <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19h14" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              下载 HTML
+            </button>
             <span className="ml-auto hidden text-[13.5px] text-ink-400 sm:block">
               建议边读边敲
             </span>

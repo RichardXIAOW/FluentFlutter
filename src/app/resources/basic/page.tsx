@@ -5,7 +5,7 @@ import { basicsTutorial } from '@/data/tutorials/basics';
 export const metadata: Metadata = {
   title: 'Flutter 基础开发',
   description:
-    'Flutter 基础开发实战：页面骨架与布局组件怎么选、ListView 列表与 setState 交互、AppBar / 底部导航 NavigationBar / TabBar 等常用界面元素配置、dio 上传下载 / mobile_scanner 扫码 / geolocator 定位 / flutter_blue_plus 蓝牙等常用第三方库速查，以及新手高频坑速查。学完直接进入工程化指南。',
+    'Flutter 基础开发实战：页面骨架与布局组件怎么选、ListView 列表与 setState 交互、AppBar / 底部导航 NavigationBar / TabBar 等常用界面元素配置、dio 上传下载 / mobile_scanner 扫码 / geolocator 定位 / universal_ble 蓝牙等常用第三方库速查，以及新手高频坑速查。学完直接进入工程化指南。',
 };
 
 /**

@@ -709,33 +709,57 @@ Future<Position> getCurrent() async {
           },
           {
             kind: 'p',
-            html: '<b>蓝牙：flutter_blue_plus</b>（社区最活跃的 BLE 库）。经典流程四步 —— 扫描 → 连接 → 发现服务 → 读写特征：',
+            html: '<b>蓝牙：universal_ble</b>（一套 API 打通 Android / iOS / macOS / Windows / Linux / Web，做 OTA、透传类项目时不必再为平台分叉写两套）。经典流程四步 —— 扫描 → 连接 → 发现服务 → 读写特征：',
           },
           {
             kind: 'code',
-            filename: 'flutter_blue_plus：扫描与连接',
-            code: `import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+            filename: 'universal_ble：扫描、连接与收发',
+            code: `import 'dart:typed_data';
+import 'package:universal_ble/universal_ble.dart';
 
-// ① 扫描（记得先开手机蓝牙 + 定位权限，Android 扫 BLE 依赖定位权限）
-await FlutterBluePlus.startScan(timeout: const Duration(seconds: 4));
+// ① 扫描：起扫时框架会自动申请权限；
+//    Android 10 及以下的机器扫 BLE 依赖定位权限，需要显式打开
+await UniversalBle.requestPermissions(withAndroidFineLocation: true);
 
-// ② 监听扫描结果，选目标设备
-FlutterBluePlus.scanResults.listen((results) {
-  for (final r in results) {
-    debugPrint('\${r.device.remoteId}  \${r.advertisementData.advName}  RSSI \${r.rssi}');
-  }
-});
+UniversalBle.onScanResult = (device) {
+  debugPrint('\${device.deviceId}  \${device.name}  RSSI \${device.rssi}');
+};
 
-// ③ 连接并发现服务
-final device = /* 从扫描结果里挑一个 */;
-await device.connect();
+UniversalBle.startScan(
+  // 按 service 过滤能过滤掉一大半噪音设备；Web 端必须传，否则连上也取不到服务
+  scanFilter: ScanFilter(
+    withServices: ['0000ffe0-0000-1000-8000-00805f9b34fb'],
+  ),
+);
+
+// ② 连接（连接、发现服务都挂在设备对象上）
+await device.connect();                       // device 来自扫描回调
 final services = await device.discoverServices();
 for (final s in services) {
   debugPrint('服务 \${s.uuid}');
 }
 
-// ④ 读写特征值（读写、订阅 notify 都在 characteristic 上）
-// await c.write(value);  final v = await c.read();  c.onValueReceived.listen(...);`,
+// ③ 取到特征值：写 / 读 / 订阅三件事
+final ch = await device.getCharacteristic(serviceUuid, characteristicUuid);
+
+await ch.write([0x01, 0x02], withResponse: true);   // 写：默认带响应
+final Uint8List raw = await ch.read();              // 读
+debugPrint(raw.toHexString(separator: ':'));        // 包内自带类型扩展
+
+await ch.notifications.subscribe();                 // 订阅 notify（indicate 用 .indications）
+ch.onValueReceived.listen((bytes) {
+  debugPrint('收到: \${bytes.toUint16()}');          // 默认小端；也可 toUtf8() / toFloat32()
+});
+
+// ④ 收尾：先退订再断开，避免连接泄漏
+await ch.unsubscribe();
+await UniversalBle.stopScan();
+await device.disconnect();`,
+          },
+          {
+            kind: 'note',
+            tone: 'ok',
+            html: '<b>为什么用 universal_ble 而不是 flutter_blue_plus</b>：前者把 Android / iOS / macOS / Windows / Linux / Web 收在一套 API 下（连桌面端调试都能跑），特征值读写还自带 <code>toUint16()</code> / <code>toFloat32()</code> / <code>toHexString()</code> 这类扩展；后者生态更大、资料多，但只覆盖移动端。设备调试多、需要桌面端工具时选前者更省事。',
           },
           {
             kind: 'note',
@@ -745,7 +769,7 @@ for (final s in services) {
           {
             kind: 'keypoints',
             items: [
-              '扫码 <code>mobile_scanner</code>、定位 <code>geolocator</code>、BLE <code>flutter_blue_plus</code>，都是当前主流选择。',
+              '扫码 <code>mobile_scanner</code>、定位 <code>geolocator</code>、BLE <code>universal_ble</code>，都是当前主流选择。',
               '原生能力先配权限再写代码：Android 改 Manifest，iOS 改 Info.plist 加用途文案。',
               '地图展示国内选高德 / 腾讯官方插件（要平台 key），geolocator 只负责拿坐标。',
             ],

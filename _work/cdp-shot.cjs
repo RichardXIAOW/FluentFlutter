@@ -34,12 +34,12 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
     try {
       const res = await fetch(`http://127.0.0.1:${PORT}/json`);
       targets = await res.json();
-      const page = targets.find((t) => t.type === 'page' && t.url.includes('127.0.0.1'));
+      const page = targets.find((t) => t.type === 'page' && !/^(edge|about|devtools)/.test(t.url));
       if (page) break;
     } catch { /* 端口未就绪 */ }
   }
   if (!targets) { console.error('CDP 端口未就绪'); edge.kill(); process.exit(1); }
-  const page = targets.find((t) => t.type === 'page' && t.url.includes('127.0.0.1'));
+  const page = targets.find((t) => t.type === 'page' && !/^(edge|about|devtools)/.test(t.url));
   if (!page) { console.error('未找到页面 target'); edge.kill(); process.exit(1); }
 
   const ws = new WebSocket(page.webSocketDebuggerUrl);
