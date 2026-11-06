@@ -13,6 +13,8 @@ import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
  * 层次（由远及近）：
  *   1. 星空三层（远景星尘 / 中景星点 / 近景辉光）—— 缓慢漂移、微旋转
  *   2. 星云光斑（程序化径向渐变贴图，additive 低透明度）—— 制造纵深
+ *   3. 背光光轮 + 五道竖光柱 —— 人物身后的圆形辉光与「神殿感」光带
+ *   3.5 人物核心粒子 + 轮廓辉光壳（shadow 层用低透明度青色放大 5% 做出边缘发光）
  *   3. 地阵三层：外八卦（双环 + 八角 + 八卦爻纹）/ 中符文阵 / 内五行（五芒星 + 金木水火土），
  *      转速与方向各不相同，带呼吸明暗
  *   4. 能量环 ×3（TorusGeometry + additive）—— 不同倾角反向旋转，形成光环缠绕
@@ -315,6 +317,74 @@ function makeLabelTexture(text: string, rgb: [number, number, number]): { textur
   return { texture: tex, aspect: w / h };
 }
 
+/** 背光光轮：中心柔光 + 两道辉光圆环（人物背后的「动漫式」光晕） */
+function makeHaloTexture(): THREE.Texture {
+  const size = 512;
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = size;
+  const ctx = canvas.getContext('2d')!;
+  const R = size / 2;
+
+  const soft = ctx.createRadialGradient(R, R, 0, R, R, R);
+  soft.addColorStop(0, 'rgba(90,200,255,0.16)');
+  soft.addColorStop(0.45, 'rgba(110,190,255,0.09)');
+  soft.addColorStop(0.8, 'rgba(120,150,255,0.03)');
+  soft.addColorStop(1, 'rgba(80,110,255,0)');
+  ctx.fillStyle = soft;
+  ctx.fillRect(0, 0, size, size);
+
+  ctx.strokeStyle = 'rgba(180,235,255,0.9)';
+  ctx.shadowColor = 'rgba(80,200,255,0.95)';
+  ctx.shadowBlur = 46;
+  ctx.lineWidth = 6;
+  ctx.beginPath();
+  ctx.arc(R, R, R * 0.66, 0, Math.PI * 2);
+  ctx.stroke();
+
+  ctx.globalAlpha = 0.65;
+  ctx.lineWidth = 2;
+  ctx.shadowBlur = 24;
+  ctx.beginPath();
+  ctx.arc(R, R, R * 0.73, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
+}
+
+/** 竖光柱：底部亮、向上淡出，左右横向再淡出（destination-out 挖边） */
+function makeShaftTexture(): THREE.Texture {
+  const w = 128;
+  const h = 512;
+  const canvas = document.createElement('canvas');
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext('2d')!;
+
+  const v = ctx.createLinearGradient(0, h, 0, 0);
+  v.addColorStop(0, 'rgba(170,235,255,0.5)');
+  v.addColorStop(0.3, 'rgba(120,195,255,0.22)');
+  v.addColorStop(1, 'rgba(90,140,255,0)');
+  ctx.fillStyle = v;
+  ctx.fillRect(0, 0, w, h);
+
+  const edge = ctx.createLinearGradient(0, 0, w, 0);
+  edge.addColorStop(0, 'rgba(0,0,0,1)');
+  edge.addColorStop(0.34, 'rgba(0,0,0,0)');
+  edge.addColorStop(0.66, 'rgba(0,0,0,0)');
+  edge.addColorStop(1, 'rgba(0,0,0,1)');
+  ctx.globalCompositeOperation = 'destination-out';
+  ctx.fillStyle = edge;
+  ctx.fillRect(0, 0, w, h);
+  ctx.globalCompositeOperation = 'source-over';
+
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
+}
+
 /* ───────────── 人体粒子采样 ───────────── */
 type P3 = [number, number, number];
 
@@ -411,7 +481,7 @@ export default function AboutScene({ className }: { className?: string }) {
     const dpr = Math.min(2, window.devicePixelRatio || 1);
     renderer.setPixelRatio(dpr);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.1;
+    renderer.toneMappingExposure = 0.9;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
 
     const scene = new THREE.Scene();
@@ -428,7 +498,9 @@ export default function AboutScene({ className }: { className?: string }) {
     const runeTex = makeRuneTexture();
     const trigramTex = makeTrigramTexture();
     const pentacleTex = makePentacleTexture();
-    dispose.push(glowTex, nebulaTexA, nebulaTexB, runeTex, trigramTex, pentacleTex);
+    const haloTex = makeHaloTexture();
+    const shaftTex = makeShaftTexture();
+    dispose.push(glowTex, nebulaTexA, nebulaTexB, runeTex, trigramTex, pentacleTex, haloTex, shaftTex);
 
     /* ── 1. 星空三层 ── */
     const starLayers: Array<{ points: THREE.Points; geo: THREE.BufferGeometry; speed: number }> = [];
@@ -467,9 +539,9 @@ export default function AboutScene({ className }: { className?: string }) {
     /* ── 2. 星云光斑 ── */
     const nebulae: THREE.Sprite[] = [];
     const nebulaSpecs = [
-      { tex: nebulaTexA, pos: [-3.2, 0.9, -6], scale: 9, opacity: 0.5 },
-      { tex: nebulaTexB, pos: [3.4, -1.2, -7], scale: 11, opacity: 0.45 },
-      { tex: nebulaTexA, pos: [0.6, 2.6, -8], scale: 8, opacity: 0.3 },
+      { tex: nebulaTexA, pos: [-3.2, 0.9, -6], scale: 9, opacity: 0.28 },
+      { tex: nebulaTexB, pos: [3.4, -1.2, -7], scale: 11, opacity: 0.24 },
+      { tex: nebulaTexA, pos: [0.6, 2.6, -8], scale: 8, opacity: 0.16 },
     ];
     for (const spec of nebulaSpecs) {
       const mat = new THREE.SpriteMaterial({
@@ -492,32 +564,67 @@ export default function AboutScene({ className }: { className?: string }) {
     figure.position.set(0, -0.12, 0);
     scene.add(figure);
 
+    /* ── 3.1 背光光轮：人物身后的圆形辉光（动漫式轮廓光）── */
+    const haloMat = new THREE.SpriteMaterial({
+      map: haloTex,
+      transparent: true,
+      opacity: 0.5,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    });
+    const halo = new THREE.Sprite(haloMat);
+    halo.position.set(0, 0.44, -1.1);
+    halo.scale.setScalar(2.9);
+    figure.add(halo);
+    dispose.push(haloMat);
+
+    /* ── 3.2 竖光柱：背景数道向上的光带，做出「神殿感」纵深 ── */
+    const shafts: Array<{ mat: THREE.MeshBasicMaterial; phase: number; base: number }> = [];
+    for (let i = 0; i < 5; i++) {
+      const geo = new THREE.PlaneGeometry(0.4 + (i % 2) * 0.18, 4.6);
+      const base = 0.11 + (i % 3) * 0.035;
+      const mat = new THREE.MeshBasicMaterial({
+        map: shaftTex,
+        transparent: true,
+        opacity: base,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+        side: THREE.DoubleSide,
+      });
+      const shaft = new THREE.Mesh(geo, mat);
+      shaft.position.set(-1.5 + i * 0.75, 0.85, -1.5 - (i % 3) * 0.28);
+      shaft.rotation.z = (i % 2 === 0 ? 1 : -1) * 0.06;
+      figure.add(shaft);
+      shafts.push({ mat, phase: i * 1.7, base });
+      dispose.push(geo, mat);
+    }
+
     const humanPos = buildHumanPositions(smallScreen ? 0.62 : 1);
     const humanGeo = new THREE.BufferGeometry();
     humanGeo.setAttribute('position', new THREE.BufferAttribute(humanPos, 3));
     const count = humanPos.length / 3;
     const colors = new Float32Array(count * 3);
-    const cBottom = new THREE.Color(0x7c3aed);
-    const cMid = new THREE.Color(CYAN);
-    const cTop = new THREE.Color(ICE);
+    // 更饱和的霓虹梯度：深紫 → 青 → 冰蓝（少量白点做「星火」，避免整体发白）
+    const cBottom = new THREE.Color(0x6d28d9);
+    const cMid = new THREE.Color(0x22d3ee);
+    const cTop = new THREE.Color(0x9be8ff);
     const tmpColor = new THREE.Color();
     for (let i = 0; i < count; i++) {
       const y = humanPos[i * 3 + 1];
       const t = THREE.MathUtils.clamp((y + 0.7) / 1.6, 0, 1);
       tmpColor.copy(t < 0.62 ? cBottom.clone().lerp(cMid, t / 0.62) : cMid.clone().lerp(cTop, (t - 0.62) / 0.38));
-      // 少量高亮「火花」
-      if (Math.random() < 0.05) tmpColor.lerp(new THREE.Color(0xffffff), 0.75);
+      if (Math.random() < 0.02) tmpColor.lerp(new THREE.Color(0xffffff), 0.45);
       colors[i * 3] = tmpColor.r;
       colors[i * 3 + 1] = tmpColor.g;
       colors[i * 3 + 2] = tmpColor.b;
     }
     humanGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
     const humanMat = new THREE.PointsMaterial({
-      size: smallScreen ? 0.032 : 0.026,
+      size: smallScreen ? 0.028 : 0.022,
       map: glowTex,
       vertexColors: true,
       transparent: true,
-      opacity: 0.88,
+      opacity: 0.66,
       blending: THREE.AdditiveBlending,
       depthWrite: false,
       sizeAttenuation: true,
@@ -526,12 +633,29 @@ export default function AboutScene({ className }: { className?: string }) {
     figure.add(humanPoints);
     dispose.push(humanGeo, humanMat);
 
+    // 轮廓辉光壳：同一套点放大一圈、只留低透明度青色，做出「边缘发光」而不是整体过曝
+    const auraGeo = humanGeo.clone();
+    const auraMat = new THREE.PointsMaterial({
+      size: smallScreen ? 0.06 : 0.05,
+      map: glowTex,
+      color: 0x67e8f9,
+      transparent: true,
+      opacity: 0.13,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      sizeAttenuation: true,
+    });
+    const humanAura = new THREE.Points(auraGeo, auraMat);
+    humanAura.scale.setScalar(1.05);
+    figure.add(humanAura);
+    dispose.push(auraGeo, auraMat);
+
     /* ── 4. 能量环 ×3（缠绕人物的光环）── */
     const rings: THREE.Mesh[] = [];
     const ringSpecs = [
-      { r: 0.62, tilt: [Math.PI / 2.4, 0, 0.25], color: CYAN, opacity: 0.55, speed: 0.004 },
-      { r: 0.78, tilt: [Math.PI / 1.9, 0.4, -0.3], color: VIOLET, opacity: 0.45, speed: -0.0032 },
-      { r: 0.95, tilt: [Math.PI / 2.9, -0.35, 0.5], color: MAGENTA, opacity: 0.3, speed: 0.0022 },
+      { r: 0.62, tilt: [Math.PI / 2.4, 0, 0.25], color: CYAN, opacity: 0.4, speed: 0.004 },
+      { r: 0.78, tilt: [Math.PI / 1.9, 0.4, -0.3], color: VIOLET, opacity: 0.32, speed: -0.0032 },
+      { r: 0.95, tilt: [Math.PI / 2.9, -0.35, 0.5], color: MAGENTA, opacity: 0.22, speed: 0.0022 },
     ];
     for (const spec of ringSpecs) {
       const geo = new THREE.TorusGeometry(spec.r, 0.009, 8, 160);
@@ -573,6 +697,63 @@ export default function AboutScene({ className }: { className?: string }) {
     const trigramFloor = makeFloor(trigramTex, 4.6, -0.75, 0.26, 0x9fe4ff);
     const runeFloor = makeFloor(runeTex, 2.6, -0.738, 0.46, 0xffffff);
     const pentacleFloor = makeFloor(pentacleTex, 1.72, -0.726, 0.4, 0xe6d9ff);
+
+    /* ── 5.1 地面冲击波：三道由内向外扩散的圆环 ── */
+    const ripples: Array<{ mesh: THREE.Mesh; mat: THREE.MeshBasicMaterial; offset: number }> = [];
+    for (let i = 0; i < 3; i++) {
+      const geo = new THREE.RingGeometry(0.94, 1, 128);
+      const mat = new THREE.MeshBasicMaterial({
+        color: 0x7dd3fc,
+        transparent: true,
+        opacity: 0,
+        side: THREE.DoubleSide,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+      });
+      const mesh = new THREE.Mesh(geo, mat);
+      mesh.rotation.x = -Math.PI / 2;
+      mesh.position.y = -0.744;
+      figure.add(mesh);
+      ripples.push({ mesh, mat, offset: i / 3 });
+      dispose.push(geo, mat);
+    }
+
+    /* ── 5.2 能量丝带：绕体数圈的光带，比细圆环更有「能量流动」感 ── */
+    const ribbons: THREE.Mesh[] = [];
+    const ribbonSpecs = [
+      { color: 0x67e8f9, r: 0.66, turns: 2.6, y0: -0.6, y1: 0.8, speed: 0.006, opacity: 0.24, squash: 0.9 },
+      { color: 0xe879f9, r: 0.8, turns: 2.1, y0: -0.55, y1: 0.72, speed: -0.0045, opacity: 0.18, squash: 0.8 },
+      { color: 0xa78bfa, r: 0.92, turns: 3.1, y0: -0.5, y1: 0.86, speed: 0.0035, opacity: 0.15, squash: 0.95 },
+    ];
+    for (const spec of ribbonSpecs) {
+      const pts: THREE.Vector3[] = [];
+      for (let i = 0; i <= 80; i++) {
+        const t = i / 80;
+        const a = t * Math.PI * 2 * spec.turns;
+        const r = spec.r * (1 + 0.1 * Math.sin(t * Math.PI * 3));
+        pts.push(
+          new THREE.Vector3(
+            Math.cos(a) * r,
+            spec.y0 + (spec.y1 - spec.y0) * t,
+            Math.sin(a) * r * spec.squash,
+          ),
+        );
+      }
+      const curve = new THREE.CatmullRomCurve3(pts);
+      const geo = new THREE.TubeGeometry(curve, 220, 0.008, 6, false);
+      const mat = new THREE.MeshBasicMaterial({
+        color: spec.color,
+        transparent: true,
+        opacity: spec.opacity,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+      });
+      const mesh = new THREE.Mesh(geo, mat);
+      mesh.userData.speed = spec.speed;
+      figure.add(mesh);
+      ribbons.push(mesh);
+      dispose.push(geo, mat);
+    }
 
     /* ── 6. 蓝牙数据流：设备→手掌 + 绕身螺旋 ── */
     const streamCurves = [
@@ -753,7 +934,7 @@ export default function AboutScene({ className }: { className?: string }) {
     const composer = new EffectComposer(renderer);
     composer.setPixelRatio(dpr);
     const renderPass = new RenderPass(scene, camera);
-    const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), smallScreen ? 0.55 : 0.7, 0.7, 0.15);
+    const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), smallScreen ? 0.42 : 0.5, 0.85, 0.3);
     const outputPass = new OutputPass();
     composer.addPass(renderPass);
     composer.addPass(bloom);
@@ -826,11 +1007,35 @@ export default function AboutScene({ className }: { className?: string }) {
         n.scale.setScalar((i === 2 ? 8 : 10) * pulse);
       });
 
-      // 人物：呼吸 + 微旋转
+      // 人物：呼吸 + 微旋转（核心与辉光壳同步）
       const breath = 1 + Math.sin(elapsed * 0.9) * 0.012;
       humanPoints.scale.setScalar(breath);
+      humanAura.scale.setScalar(breath * 1.05);
       figure.rotation.y = Math.sin(elapsed * 0.12) * 0.28 + pointer.x * 0.18;
       figure.rotation.z = Math.sin(elapsed * 0.16) * 0.02;
+
+      // 背光光轮：缓慢自转 + 呼吸
+      haloMat.rotation += 0.0007;
+      haloMat.opacity = 0.4 + 0.14 * (0.5 + 0.5 * Math.sin(elapsed * 0.6));
+      halo.scale.setScalar(2.85 + Math.sin(elapsed * 0.6) * 0.05);
+
+      // 竖光柱：各自缓慢明暗
+      for (const s of shafts) {
+        s.mat.opacity = s.base * (0.65 + 0.35 * (0.5 + 0.5 * Math.sin(elapsed * 0.5 + s.phase)));
+      }
+
+      // 能量丝带：绕体反向旋转
+      for (const r of ribbons) {
+        r.rotation.y += r.userData.speed as number;
+      }
+
+      // 地面冲击波：由内向外扩散并淡出
+      for (const rp of ripples) {
+        const t = (elapsed * 0.22 + rp.offset) % 1;
+        const fadeIn = Math.min(1, t / 0.12);
+        rp.mesh.scale.setScalar(0.7 + t * 3.1);
+        rp.mat.opacity = (1 - t) * 0.3 * fadeIn;
+      }
 
       // 光环反向旋转
       rings.forEach((ring, i) => {
