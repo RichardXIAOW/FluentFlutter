@@ -502,8 +502,9 @@ export default function AboutScene({ className }: { className?: string }) {
       depthWrite: false,
     });
     const halo = new THREE.Sprite(haloMat);
-    halo.position.set(0, 0.44, -1.1);
-    halo.scale.setScalar(2.9);
+    // 与能量核心同轴：正对核心略靠后，光环套住晶体
+    halo.position.set(0, 0.04, -0.85);
+    halo.scale.setScalar(2.4);
     figure.add(halo);
     dispose.push(haloMat);
 
@@ -1044,7 +1045,7 @@ export default function AboutScene({ className }: { className?: string }) {
       // 背光光轮：缓慢自转 + 呼吸
       haloMat.rotation += 0.0007;
       haloMat.opacity = 0.4 + 0.14 * (0.5 + 0.5 * Math.sin(elapsed * 0.6));
-      halo.scale.setScalar(2.85 + Math.sin(elapsed * 0.6) * 0.05);
+      halo.scale.setScalar(2.4 + Math.sin(elapsed * 0.6) * 0.05);
 
       // 竖光柱：各自缓慢明暗
       for (const s of shafts) {
